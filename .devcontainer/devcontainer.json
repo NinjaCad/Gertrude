@@ -1,0 +1,15 @@
+{
+  "name": "CIS322E_SP26",
+  "image": "cis322e:latest",
+  "workspaceFolder": "/app",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-pyright.pyright"
+      ]
+    }
+  },
+  "postCreateCommand": "git config --global user.name '<Name>' && git config --global user.email '<masters_email>' && git config --global alias.dog 'log --decorate --all --oneline --graph'"
+}
