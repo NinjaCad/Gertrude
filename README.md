@@ -6,20 +6,20 @@
 3. Execute: 'ssh-keygen -t ed25519 -C "\<your email>"' to create a new SSH key using your email.
 4. Execute 'cat ~/.ssh/id_ed25519.pub' to show your public SSH key value.
 5. Copy the value.
-6. In your web brower, go to the settings of the TMU CIS322 workspace: "https://bitbucket.org/tmu_cis322/workspace/settings".
-7. On the left sidebar, click on "SSH keys".
-8. Click the "Add key" button.
-9. Under label, write "laptop git" to identify the key.
-10. Paste the copied SSH public key value from step 5 in the the "Key" field.
+6. In your web brower, go to the settings of the TMU CIS322 workspace: "https://bitbucket.org/cis322e_sp26/workspace/settings/ssh-keys".
+7. Click the "Add key" button.
+8. Under label, write "laptop git" to identify the key.
+9. Paste the copied SSH public key value from step 5 in the the "Key" field.
 
 ## Clone the Bitbucket repository
-1. In your web browser, navigate to the class repository from "https://bitbucket.org/tmu_cis322/workspace/repositories/".
+1. In your web browser, navigate to the class repository from "https://bitbucket.org/cis322e_sp26/cis322e_sp26/src/main/".
 2. The "Source" tab should be selected on the left sidebar. On the right of the screen, click on the "Clone" button.
 3. In the dropdown menu, select "SSH".
 4. Click on the copy button to the right of the text input bar.
 5. Create a "Docker" folder on your computer (recommend inside your Documents folder).
 6. Open a git bash terminal inside the newly created "Docker" folder.
-7. Paste the copied git clone command into the terminal and press [Enter] to execute.
+7. Execute the command: "git config --global core.autocrlf false".
+8. Paste the copied git clone command into the terminal and press [Enter] to execute.
 
 ## Setup Docker Container Environment
 1. Download Docker Desktop for [Windows](https://docs.docker.com/desktop/setup/install/windows-install/), [Mac](https://docs.docker.com/desktop/setup/install/mac-install/), or [Linux](https://docs.docker.com/desktop/setup/install/linux/).

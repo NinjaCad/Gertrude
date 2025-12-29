@@ -1,22 +1,10 @@
 from cardgames.Card import Card
 
 class Player:
-    def __init__(self, name, money: int = 0):
+    def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
-        self.money = money
-
-    def addMoney(self, amount: int):
-        self.money += amount
-        return self.money
-
-    def makeBet(self, amount: int):
-        if amount > self.money:
-            print("%s does not have enough money to make this bet." % self.name)
-            return self.money
-        self.money -= amount
-        return self.money
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
