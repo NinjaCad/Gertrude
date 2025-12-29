@@ -1,4 +1,4 @@
-from Deck import Deck
+from cardgames.Deck import Deck
 
 class Games:
 

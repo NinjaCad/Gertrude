@@ -1,4 +1,4 @@
-from Card import Card
+from cardgames.Card import Card
 
 class Player:
     def __init__(self, name, money: int = 0):

@@ -1,6 +1,6 @@
 import os
 import random
-from Card import Card
+from cardgames.Card import Card
 
 cardImages = []
 values = list(range(1,14))
@@ -16,7 +16,7 @@ def find_root_dir():
 class Deck:
     def __init__(self):
         root_dir = os.path.join( find_root_dir(), 'src')
-        cards_file = f'{root_dir}{os.path.sep}playing_cards.txt'
+        cards_file = os.path.join(root_dir, 'cardgames', 'playing_cards.txt')
         with open(cards_file, "r") as cards:
             cardBack = []
             for _ in range(6):
