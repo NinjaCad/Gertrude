@@ -11,5 +11,5 @@
       ]
     }
   },
-  "postCreateCommand": "git config --global user.name '<Name>' && git config --global user.email '<masters_email>' && git config --global alias.dog 'log --decorate --all --oneline --graph'"
+  "postCreateCommand": "git config --global user.name '<Name>' && git config --global user.email '<masters_email>' && git config --global alias.dog 'log --decorate --all --oneline --graph' && pip install -e ."
 }

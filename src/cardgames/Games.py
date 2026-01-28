@@ -12,7 +12,7 @@ class Games:
         print('First 5 cards in standard 52-card deck:')
         for card in self.deck.cards[:5]:
             print(card)
-        print('Press [Enter] to exit.')
+        input('Press [Enter] to exit.')
 
 if __name__ == "__main__":
     game = Games()
