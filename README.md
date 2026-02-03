@@ -27,7 +27,7 @@
 3. Open the VS Code application.
 4. Open a git bash terminal ("Terminal" >> "New Terminal")
 5. [Optional] If git bash terminal is not configured, press [Ctrl]+[Shift]+P, then type in "Terminal: Set Default Profile". Choose the git bash exe as the default terminal.
-6. Execute this command in git bash to download the docker image: `docker pull therealhoneybadger/tmu_cis322:sp2026`
+6. Execute this command in git bash to download the docker image: `docker pull therealhoneybadger/tmu_cis322:sp2026v1.1`
 7. Execute this command in git bash: `cp ~/.ssh/id_ed25519 .`
 8. **DO NOT** check this file into git as it is your *private* key. (Note: this is a generally unsafe practice, but is ok in dev-only environments such as this class setting)
 9. In the very bottom left of the VS Code window, click on the "><" button.
