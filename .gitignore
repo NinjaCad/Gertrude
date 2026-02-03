@@ -47,6 +47,4 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
-
-id_ed25519
-devcontainer.json
+src/cardgames.egg-info**
