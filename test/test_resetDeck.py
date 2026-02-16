@@ -5,7 +5,7 @@ def test_reset_deck():
 
     deck = Deck()
     for i in range(random.randint(1,52)):
-        deck1.getCard()
+        deck.getCard()
     assert len(deck.cards) != 52
 
     #here I create a copy of the deck and reset it to show the state after self.deck.reset() and before self.deck.shuffle() as resetDeck runs the two consecutively
