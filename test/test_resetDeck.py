@@ -21,16 +21,19 @@ def test_reset_deck():
         if deckA.cards[i] == deckB.cards[i]:
             matching += 1
     assert matching == 52
-    
-    #normally this is where the deck would be shuffled and we would assert the matching between the suffled and unshuffled decks to be different, but instead of calling shuffle on DeckB, I will call resetDeck on deck to simulate the true test we are doing as Decks A and B were just clones of Deck representing the middle step between sub functions
-    deck.resetDeck()
-    assert len(deck.cards) == 52
 
-    deck1 = deck
-    deck2 = deck
+    dealer = Dealer(deck)
+    #normally this is where the deck would be shuffled and we would assert the matching between the suffled and unshuffled decks to be different, but instead of calling shuffle on DeckB, I will call resetDeck on deck to simulate the true test we are doing as Decks A and B were just clones of Deck representing the middle step between sub functions
+    dealer.resetDeck()
+    assert len(deck.cards) == 52
+#this ensures that a reset does set the deck size back to normal
+
+    deck2 = Deck()
+    dealer.resetDeck()
+#this second reset shows that the deck is shuffled as it is different than the previous state even at the same amount of cards
     matching = 0
     for i in range(len(deck2.cards)):
-        if deck1.cards[i] == deck2.cards[i]:
+        if deck.cards[i] == deck2.cards[i]:
             matching += 1
     # the probability of two random decks having 7+ matching cards
     # in fixed locations is 0.0084% (about 1 in 12,000)
