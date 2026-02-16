@@ -17,9 +17,9 @@ def test_reset_deck():
 
     matching = 0
     for i in range(len(deckB.cards)):
-            if deckA.cards[i] == deckB.cards[i]:
-                matching += 1
-        assert matching == 52
+        if deckA.cards[i] == deckB.cards[i]:
+            matching += 1
+    assert matching == 52
     
     #normally this is where the deck would be shuffled and we would assert the matching between the suffled and unshuffled decks to be different, but instead of calling shuffle on DeckB, I will call resetDeck on deck to simulate the true test we are doing as Decks A and B were just clones of Deck representing the middle step between sub functions
     deck.resetDeck()
