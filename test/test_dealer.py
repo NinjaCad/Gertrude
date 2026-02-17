@@ -5,9 +5,11 @@ def test_dealCards():
     dealR = Dealer(deck)
     pl1 = Player('Player1')
     pl2 = Player('Player2')
-    dealR.dealCards(2, [pl1, pl2])
-    print(pl1.showHand())
-    print(pl2.showHand())
+    playerList = [pl1, pl2]
+    dealR.dealCards(2, playerList)
+    
+    pl1.showHand(True)
+    pl2.showHand(True)
     
 
-    return 
+    
