@@ -15,10 +15,14 @@ def test_deal_cards_big():
     assert dealer.dealCards(2, playerList) == False
 
 def test_deal_cards_amount():
+    #this function tests that when dealcards() is called
+    #and the if statement is not true
+    #then the for loop properly assigns the correct
+    #amount of cards to each player
     playerList = [pl1, pl2, pl3]
     dealer.dealCards(2, playerList)
-    for i in range(len(playerList)):
-        print(playerList[i].knownCards)
-        assert len(playerList[i].knownCards) == 2
+    assert len(playerList[0].knownCards) == 2
+    assert len(playerList[1].knownCards) == 2
+    assert len(playerList[2].knownCards) == 2
 
     
