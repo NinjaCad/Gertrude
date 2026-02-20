@@ -5,11 +5,14 @@ def test_dealCards():
     dealR = Dealer(deck)
     pl1 = Player('Player1')
     pl2 = Player('Player2')
-    playerList = [pl1, pl2]
+    pl3 = Player('Player3')
+    playerList = [pl1, pl2, pl3] * 9
+    assert dealR.dealCards(2, playerList) == False
+    
+    playerList = [pl1, pl2, pl3]
     dealR.dealCards(2, playerList)
-    
-    pl1.showHand(True)
-    pl2.showHand(True)
-    
+    for i in range(len(playerList)):
+        print(playerList[i].knownCards)
+        assert len(playerList[i].knownCards) == 2
 
     
