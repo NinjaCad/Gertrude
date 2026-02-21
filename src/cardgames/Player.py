@@ -5,6 +5,7 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+        self.chosen_card = Card("", 0, [], [])
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
