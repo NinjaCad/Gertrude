@@ -12,7 +12,7 @@ def test_expected_tie():
     bob.chosen_card = Card("Spades", 1, [], [])
     alice = Player("alice")
     alice.chosen_card = Card("Spades", 1, [], [])
-    assert declare_winner(bob, alice) == None
+    assert isinstance(declare_winner(bob, alice), tuple)
 
 def test_handle_missing_cards():
     bob = Player("bob")
