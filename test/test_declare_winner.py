@@ -1,5 +1,5 @@
 from testing_base import *
-def expected_winner():
+def test_expected_winner():
     bob = Player("bob")
     bob.chosen_card = Card("Ace of Spades", 1, [], [])
     alice = Player("alice")
@@ -7,23 +7,20 @@ def expected_winner():
     declare_winner(bob, alice)
     assert declare_winner(bob, alice) == alice
 
-def expected_tie():
+def test_expected_tie():
     bob = Player("bob")
     bob.chosen_card = Card("Ace of Spades", 1, [], [])
     alice = Player("alice")
     alice.chosen_card = Card("Ace of Spades", 1, [], [])
-    declare_winner(bob, alice)
     assert declare_winner(bob, alice) == None
 
-def handle_missing_cards():
+def test_handle_missing_cards():
     bob = Player("bob")
     alice = Player("alice")
-    declare_winner(bob, alice)
     assert declare_winner(bob, alice) == None
 
-def handle_missing_card():
+def test_handle_missing_card():
     bob = Player("bob")
     bob.chosen_card = Card("Ace of Spades", 1, [], [])
     alice = Player("alice")
-    declare_winner(bob, alice)
     assert declare_winner(bob, alice) == None
