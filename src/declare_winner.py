@@ -11,7 +11,6 @@ def declare_winner(player1, player2):
     elif card2.value > card1.value:
         print("Player 2 wins!")
         return player2
-    elif card1.value == card2.value & (card1.value != 0 | card2.value != 0):
+    elif card1.value == card2.value:
         print("It's a tie!")
         return player1, player2
-
