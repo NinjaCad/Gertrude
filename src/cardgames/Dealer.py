@@ -18,12 +18,9 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
-        if numCards * len(players) > self.deck.size:
-            return False
-        for player in players:
-            for _ in range(numCards):
-                player.addCard(self.deck.getCard())
+    def dealCards(self, players: "list[Player]"):
+        for cardNum in range(len(self.deck.cards)):
+            players[cardNum % len(players)].addCard(self.deck.getCard())
         return True
 
     def resetDeck(self):
