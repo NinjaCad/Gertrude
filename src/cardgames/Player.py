@@ -1,10 +1,12 @@
 from cardgames.Card import Card
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, pid):
         self.name = name
         self.hand = []
         self.knownCards = []
+        # player identity attribute; the server should set this during player setup
+        self.pid = pid
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
