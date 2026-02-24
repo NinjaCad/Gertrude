@@ -22,7 +22,6 @@ def test_create_players_list_and_len(myFixture):
     names, num = myFixture
     players, cardsLeft = create_players(num, names)
 
-    # Test list of players
     assert isinstance(players, list)
     assert len(players) == num
 
