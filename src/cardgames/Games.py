@@ -9,7 +9,7 @@ class Games:
         self.deck = Deck()
 
     def main(self):
-        print('Welcome to the *insert name here*!')
+        print('Welcome to the Simple BlackJack!')
         self.playerList = self.startGame(tr = True)
         #starts the game, output should be printed        
         self.gertDealer = Dealer(self.deck)
@@ -30,8 +30,12 @@ class Games:
     def startGame(self, tr):
         while tr:
             try:
-                self.amtPlayers = int(input("How many people are playing? "))
+                self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
                 #include a minimum and maximum amount of players: https://www.w3schools.com/python/ref_keyword_raise.asp
+                if self.amtPlayers > 7:
+                    raise Exception("That's too many players! Try again.")
+                if self.amtPlayer < 1:
+                    raise Exception("There needs to be at least one player! Try again.")
                 tr = False
             except ValueError:
                 print("That doesn't make any sense, try again.")
