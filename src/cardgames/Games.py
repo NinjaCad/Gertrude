@@ -13,7 +13,7 @@ class Games:
         while True:
             try:
                 # Creates between 2 and 4 players
-                num_of_players = abs(int(input("Enter amount of players (2-4): ")))
+                num_of_players = int(input("Enter amount of players (2-4): "))
                 if num_of_players in accepted_player_count:
 
                     # Inputting player name
@@ -32,9 +32,9 @@ class Games:
                                 break
                     break
                 else:
-                    print("Please enter a positive integer between 2 and 4.")
-            except:
-                print("Please enter a positive integer between 2 and 4.")
+                    print("Must be a positive integer between 2 and 4!")
+            except ValueError:
+                print("Must be a valid number!")
         return players
 
     def main(self):
