@@ -36,7 +36,7 @@ class Games:
                 break
             self.playerList[i].showHand()
         #call round() here 
-        self.round(self, self.playerList)
+        self.round(self.playerList)
 
         #call to create 
         for card in self.deck.cards[:5]:
@@ -59,7 +59,7 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(input("Player {:d}'s name is: ".format(i))))
-        self.pl_list.append(Gertrude("GERTRUDE"))
+        #self.pl_list.append(Gertrude("GERTRUDE"))
         #functionality of Gertrude() will be a child class of player
 
         return self.pl_list
@@ -71,7 +71,7 @@ class Games:
             print("{:s}'s hand: ".format(pList[i].name), end='')
             pList[i].showHand()
             turn = True
-            while(turn): # end turn if bust
+            while(turn): # (turn && bust() == False)      end turn if bust
                 move = input('Choose either to "hit" or "stand"')
                 if (move == "hit"):
                     print("hit")
