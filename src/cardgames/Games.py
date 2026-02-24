@@ -10,7 +10,6 @@ class Games:
 
     def main(self):
         print('Welcome to the Simple BlackJack!')
-        """
         self.playerList = self.startGame(tr = True)
 
         #note to self: you may need to figure out how knownCards works
@@ -34,14 +33,12 @@ class Games:
                 #or make functionality in future sprint
                 break
             self.playerList[i].showHand()
-            """
+        #call round() here 
 
 
         #call to create 
-        temp = 0
-        for card in self.deck.cards[:52]:
-            print(temp, card)
-            temp += 1
+        for card in self.deck.cards[:5]:
+            print(card)
         input('Press [Enter] to exit.')
     
     def startGame(self, tr):
@@ -60,8 +57,8 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(input("Player {:d}'s name is: ".format(i))))
-        self.pl_list.append(Player("GERTRUDE"))
-
+        self.pl_list.append(Gertrude("GERTRUDE"))
+        #functionality of Gertrude() will be a child class of player
 
         return self.pl_list
 
