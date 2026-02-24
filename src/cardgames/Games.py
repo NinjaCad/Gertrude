@@ -11,14 +11,26 @@ class Games:
     def main(self):
         print('Welcome to the Simple BlackJack!')
         self.playerList = self.startGame(tr = True)
+
+        #note to self: you may need to figure out how knownCards works
+        #you also may need to make it so that multiple rounds can be played 
+
         #starts the game, output should be printed        
         self.gertDealer = Dealer(self.deck)
+        #first deal begins here
         self.gertDealer.dealCards(1, self.playerList)
         for i in range(len(self.playerList)):
+            print("{:s}'s hand: ".format(self.playerList[i].name), end='')
             self.playerList[i].showHand()
+        #second deal begins here
         self.gertDealer.dealCards(1, self.playerList)
         for i in range(len(self.playerList)):
+            print("{:s}'s hand: ".format(self.playerList[i].name), end='')
             if self.playerList[i].name == "GERTRUDE":
+                #FIGURE OUT HOW TO PRINT JUST THE BACK OF A CARD
+                #AND just a single card from a hand of a player (should
+                #GERTRUDE even be a player object?)
+                #or make functionality in future sprint
                 break
             self.playerList[i].showHand()
             
