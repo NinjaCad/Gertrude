@@ -1,3 +1,5 @@
+from operator import truediv
+
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
@@ -34,7 +36,7 @@ class Games:
                 break
             self.playerList[i].showHand()
         #call round() here 
-
+        self.round(self, self.playerList)
 
         #call to create 
         for card in self.deck.cards[:5]:
@@ -61,6 +63,27 @@ class Games:
         #functionality of Gertrude() will be a child class of player
 
         return self.pl_list
+
+    def round(self, pList):
+        # Repeat length of players minus gertrude
+        for i in range(len(pList) - 1):
+            # Display current hand
+            print("{:s}'s hand: ".format(pList[i].name), end='')
+            pList[i].showHand()
+            turn = True
+            while(turn): # end turn if bust
+                move = input('Choose either to "hit" or "stand"')
+                if (move == "hit"):
+                    print("hit")
+                    # hit()
+                elif (move == "stand"):
+                    print("stand")
+                    # stand()
+                    turn = False
+                else:
+                    print("That is not a valid repsonse")
+            # gertrude()
+
 
 if __name__ == "__main__":
     game = Games()
