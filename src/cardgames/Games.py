@@ -16,19 +16,19 @@ class Games:
             temp += 1
         input('Press [Enter] to exit.')
 
-# def aceLogic(hand):
-    
-#     ace = 0, 
+def aceLogic(pl, hand):
+      
+    ace = [0, 13, 26, 39]
+      
+    total = sum(hand)
+    ace_count = hand.count(11)
 
-#     total = sum(hand)
-#     ace_count = hand.count(11)
+    # Downgrade Aces from 11 to 1 if busted
+    while total > 21 and ace_count > 0:
+        total -= 10   # 11 → 1
+        ace_count -= 1
 
-#     # Downgrade Aces from 11 to 1 if busted
-#     while total > 21 and ace_count > 0:
-#         total -= 10   # 11 → 1
-#         ace_count -= 1
-
-#     return total
+    return total
 
 if __name__ == "__main__":
     game = Games()
