@@ -1,4 +1,5 @@
 import random
+from cardgames.Player import Player
 
 # Proof of concept
 # TO BE ADDED: 
@@ -19,23 +20,21 @@ def start_game():
                 break
         except ValueError:
             print("That's not a valid number.")
-    # To be replaced with list of Player objects
-    # But for now, dictionary to hold player data
-    players = {}
+
+    # List of Players
+    positions = random.sample(range(numPlayers), numPlayers)
+    players = []
     for i in range(numPlayers):
         name = input(f"Enter a player name ({i+1}/{numPlayers}): ")
-        players[name] = [0, 0]
-
-    positions = random.sample(range(len(players)), len(players))
-
-    # Eventually replace with list of Player objects so cards can be added to Player.hand,
-    # Replacing data[1]
-    for i, (name, data) in enumerate(players.items()):
         # Angle for display location when HTML is set up
-        data[0] = (positions[i]) * (360/len(players)) 
-        data[1] = 52 // len(players)  
+        angle = positions[i] * (360/numPlayers)
+        players.append(Player(name, angle))
 
     # This will be placed into the overall deck eventually
-    cardsLeft = 52 % len(players)
+    cardsLeft = 52 % numPlayers
+
+    for p in players:
+        print(f"{p.name}: {p.angle}")
+    print(f"Card to be added to Deck: {cardsLeft}")
 
 start_game()
