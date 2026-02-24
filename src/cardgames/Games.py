@@ -13,14 +13,16 @@ class Games:
         self.playerList = self.startGame(tr = True)
         #starts the game, output should be printed        
         self.gertDealer = Dealer(self.deck)
+        self.gertDealer.dealCards(1, self.playerList)
         for i in range(len(self.playerList)):
-            self.gertDealer.dealCards(2, self.playerList)
+            self.playerList[i].showHand()
+        self.gertDealer.dealCards(1, self.playerList)
+        for i in range(len(self.playerList)):
+            if self.playerList[i].name == "GERTRUDE":
+                break
+            self.playerList[i].showHand()
+            
 
-            #may need to change the int 2 in the future,
-            #not currently sure if we are going to do 1 card
-            #and then another card and show the second
-            #or a different method
-            pass
 
         #call to create 
         for card in self.deck.cards[:5]:
@@ -34,7 +36,7 @@ class Games:
                 #include a minimum and maximum amount of players: https://www.w3schools.com/python/ref_keyword_raise.asp
                 if self.amtPlayers > 7:
                     raise Exception("That's too many players! Try again.")
-                if self.amtPlayer < 1:
+                if self.amtPlayers < 1:
                     raise Exception("There needs to be at least one player! Try again.")
                 tr = False
             except ValueError:
@@ -43,7 +45,7 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(input("Player {:d}'s name is: ".format(i))))
-        self.pl_list.append("GERTRUDE")
+        self.pl_list.append(Player("GERTRUDE"))
 
 
         return self.pl_list
