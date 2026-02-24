@@ -25,6 +25,13 @@ class Dealer:
             for _ in range(numCards):
                 player.addCard(self.deck.getCard())
         return True
+    
+    def addDeck_to_Hand(self, player: Player):
+        self.deck.shuffle()
+        for card in self.deck.cards:
+            player.addCard(card)
+        for a_card in player.hand:
+            self.deck.getCard()
 
     def resetDeck(self):
         self.deck.reset()
