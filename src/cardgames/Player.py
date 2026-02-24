@@ -1,7 +1,8 @@
 from cardgames.Card import Card
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, player_id=None):
+        self.id = player_id
         self.name = name
         self.hand = []
         self.knownCards = []

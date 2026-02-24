@@ -19,16 +19,17 @@ class Games:
                     # Inputting player name
                     for i in range(num_of_players):
                         while True:
-                            player = input(f"Enter name of player {i + 1}: ")
-                            if player == '':
+                            player_name = input(f"Enter name of player {i + 1}: ")
+                            if player_name == '':
                                 print("Please enter a name.")
-                            elif player in player_names:
+                            elif player_name in player_names:
                                 print("Name must be unique!")
-                            elif len(player) > 16:
+                            elif len(player_name) > 16:
                                 print("Name too long! Must be under 17 characters.")
                             else:
-                                players.append(Player(player))
-                                player_names.append(player)
+                                player_id = i + 1
+                                players.append(Player(player_name, player_id))
+                                player_names.append(player_name)
                                 break
                     break
                 else:
