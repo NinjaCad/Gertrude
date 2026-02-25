@@ -22,6 +22,10 @@ def test_amountPlayers():
             #"This round of blackjack will be played with 2 players, against the dealer, GERTRUDE"
             #"Player 1's name is: " -----> input: Matthew
             #"Player 2's name is: " -----> input: Mark
-            #EXPECTED: ['Matthew', 'Mark]
+            #EXPECTED: [cardgames.Player.Playerobject..., cardgames.Player.Playerobject...,
+                #cardgames.Player.Playerobject...] (this is printed by test_amountPlayers(), it
+                #simply shows that for loop did make player objects)
+                #one of these values may read cardgames.Gertrude.Gertrudeobject, if you are testing
+                #after the gertrude class has been made
     print(playerList)
 test_amountPlayers()

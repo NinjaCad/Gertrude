@@ -12,35 +12,12 @@ class Games:
         print('Welcome to the Simple BlackJack!')
         self.playerList = self.startGame(tr = True)
 
-        #note to self: you may need to figure out how knownCards works
-        #you also may need to make it so that multiple rounds can be played 
-
-        #the code below should be absorbed into round() 
-        # #starts the game, output should be printed        
-        # self.gertDealer = Dealer(self.deck)
-        # #first deal begins here
-        # self.gertDealer.dealCards(1, self.playerList)
-        # for i in range(len(self.playerList)):
-        #     print("{:s}'s hand: ".format(self.playerList[i].name), end='')
-        #     self.playerList[i].showHand()
-        # #second deal begins here
-        # self.gertDealer.dealCards(1, self.playerList)
-        # for i in range(len(self.playerList)):
-        #     print("{:s}'s hand: ".format(self.playerList[i].name), end='')
-        #     if self.playerList[i].name == "GERTRUDE":
-        #         #FIGURE OUT HOW TO PRINT JUST THE BACK OF A CARD
-        #         #AND just a single card from a hand of a player (should
-        #         #GERTRUDE even be a player object?)
-        #         #or make functionality in future sprint
-        #         break
-        #     self.playerList[i].showHand()
-        # #call round() here 
     
     def startGame(self, tr):
         while tr:
             try:
                 self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
-                #include a minimum and maximum amount of players: https://www.w3schools.com/python/ref_keyword_raise.asp
+                
                 if self.amtPlayers > 7:
                     print("That's too many players! Try again.")
                     continue
@@ -53,7 +30,7 @@ class Games:
         print('This round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))
         self.pl_list = []
         for i in range(self.amtPlayers):
-            self.pl_list.append(Player(input("Player {:d}'s name is: ".format(i+1))))
+            self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
         self.pl_list.append(Player("GERTRUDE"))
         #Player("GERTRUDE") will be eventually replaced 
 
