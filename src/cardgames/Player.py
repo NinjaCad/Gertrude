@@ -57,3 +57,13 @@ class Player:
             num_aces -= 1
         
         return total_score
+    
+    def show_partial_hand(self):
+        for idx in range(6):
+            for i, card in enumerate(self.hand):
+                if i == 0:
+                    image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
+                    print(image, end="")
+                else:
+                    print(" " * len(card.cardBack[idx]), end="")
+            print()
