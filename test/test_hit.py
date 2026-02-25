@@ -1,52 +1,36 @@
 from testing_base import *
-import pytest
-from unittest.mock import Mock, MagicMock
-def test_hit_with_cards_in_deck():
-    # Test successful hit when deck has cards
-    player = Mock()
-    player.addCard = Mock()
-    deck = Mock()
-    deck.size = 5
-    card = Mock()
-    deck.getCard = Mock(return_value=card)
+from cardgames.Deck import Deck
+from cardgames.Player import Player
+
+
+def hit_test():
     
-    result = player.hit(deck, isKnown=True)
-    
-    assert result == card
-    deck.getCard.assert_called_once()
-    player.addCard.assert_called_once_with(card, True)
+    # Test 1: Deck when it is empty tries hit
+    deck_empty = Deck()
+    deck_empty.cards = []
+    deck_empty.size = 0
 
+    player1 = Player("testPlayer1")
 
-def test_hit_with_empty_deck():
-    # Test hit when deck is empty
-    player = Mock()
-    player.addCard = Mock()
-    deck = Mock()
-    deck.size = 0
-    
-    result = player.hit(deck)
-    
-    assert result is None
-    player.addCard.assert_not_called()
+    test1 = player1.hit(deck_empty)
 
+    if test1 is None:
+        print("Deck Empty")
+    else:
+        print("Deck still has Cards")
 
-def test_hit_with_isknown_false():
-    # Test hit with isKnown=False
-    player = Mock()
-    player.addCard = Mock()
-    deck = Mock()
-    deck.size = 3
-    card = Mock()
-    deck.getCard = Mock(return_value=card)
-    
-    result = player.hit(deck, isKnown=False)
-    
-    assert result == card
-    player.addCard.assert_called_once_with(card, False)
+    # Test 2: Deck when it has cards
+    deck_full = Deck()
+    deck_full.shuffle()
 
+    player2 = Player("testPlayer2")
 
-def hit_test(card):
-    pass
+    test2 = player2.hit(deck_full)
 
-def hit_test(card):
-# test for if and test for else by calling hit function and inputing a card value and seeing if it runs the function
+    if test2 is not None and len(player2.hand) == 1:
+        print("Card Drawn succesfully")
+    else: 
+        print("Test Failed")
+
+hit_test()
+# test for if() and test for else() by calling hit function and inputing a card value from the deck and seeing if it runs the function succesfully

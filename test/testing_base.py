@@ -20,3 +20,7 @@ def getCard( suit, value):
       if card == my_card:
         return card
     return None
+
+
+
+    
