@@ -1,4 +1,5 @@
 from cardgames.Card import Card
+from cardgames.Deck import Deck
 
 class Player:
     def __init__(self, name):
@@ -31,3 +32,12 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+
+    def hit(self, deck, isKnown: bool = True):
+        if deck.size <= 0:
+            print("Deck is empty, you cannot hit.")
+            return None
+        
+        card = deck.getCard()
+        self.addCard(card, isKnown)
+        return card
