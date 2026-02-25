@@ -26,28 +26,28 @@ cardBack=0
 
 #Has no cards
 player.clearHand()
-    assert player.checkForFourOfAKind() == False
+assert player.checkForFourOfAKind() == False
 
 #Does not have enough cards
 list_of_cards = [Card("Spades", 1, cardImages[index], cardBack), Card("Clubs", 1, cardImages[index], cardBack), Card("Hearts", 1, cardImages[index], cardBack)]
 player.clearHand()
 player.setHand(list_of_cards)
-    assert player.checkForFourOfAKind() == False
+assert player.checkForFourOfAKind() == False
 
 #Has Enough cards but no Book
 list_of_cards = [Card("Spades", 1, cardImages[index], cardBack), Card("Clubs", 1, cardImages[index], cardBack), Card("Hearts", 1, cardImages[index], cardBack), Card("Spades", 2, cardImages[index], cardBack), Card("Clubs", 2, cardImages[index], cardBack)]
 player.clearHand()
 player.setHand(list_of_cards)
-    assert player.checkForFourOfAKind() == False
+assert player.checkForFourOfAKind() == False
 
 #Has A book
 list_of_cards = (Card("Spades", 1, cardImages[index], cardBack), Card("Clubs", 1, cardImages[index], cardBack), Card("Hearts", 1, cardImages[index], cardBack), Card("Diamonds", 1, cardImages[index], cardBack), Card("Spades", 2, cardImages[index], cardBack))
 player.clearHand()
 player.setHand(list_of_cards)
-    assert player.checkForFourOfAKind() == (['Aces'], 1)
+assert player.checkForFourOfAKind() == (['Aces'], 1)
 
 #Has 2 Books
 list_of_cards = (Card("Spades", 1, cardImages[index], cardBack), Card("Clubs", 1, cardImages[index], cardBack), Card("Hearts", 1, cardImages[index], cardBack), Card("Diamonds", 1, cardImages[index], cardBack), Card("Spades", 2, cardImages[index], cardBack), Card("Clubs", 2, cardImages[index], cardBack), Card("Hearts", 2, cardImages[index], cardBack), Card("Diamonds", 2, cardImages[index], cardBack))
 player.clearHand()
 player.setHand(list_of_cards)
-    assert player.checkForFourOfAKind() == (['Aces', 'Twos'], 2)
+assert player.checkForFourOfAKind() == (['Aces', 'Twos'], 2)
