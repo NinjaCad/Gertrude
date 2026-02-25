@@ -5,6 +5,9 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+        
+        # used to tell game loop whether or not player has stood / busted, aka whether or not they should take a turn
+        self.active = True
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
