@@ -6,5 +6,22 @@ playerList = [Player("Player1"), Player("Player2"), Player("Player3")]
 
 def test_amountPlayers():
     #call startGame(), include instructions to input for each case that you're testing
-    #https://stackoverflow.com/questions/35851323/how-to-test-a-function-with-input-call
-    assert game.startGame(True) ==  Exception("That's too many players! Try again.")
+    playerList = game.startGame(True)
+    #test case 1:
+        #"How many people are playing" -----> input: 10
+        #EXPECTED: "Thats too many players! Try again."
+    #test case 2 (restart not needed if case 1 passed): 
+        #"How many people are playing" -----> input: 0
+        #EXPECTED: "There needs to be at least one player! Try again."
+    #test case 3 (restart not needed if case 1 and 2 passed):
+        #"How many people are playing" -----> input: 1.2
+        #EXPECTED: "That doesn't make any sense, try again."
+    #test case 4 (restart not needed if case 1-3 passed): 
+        #"How many people are playing" -----> input: 2
+        #EXPECTED: 
+            #"This round of blackjack will be played with 2 players, against the dealer, GERTRUDE"
+            #"Player 1's name is: " -----> input: Matthew
+            #"Player 2's name is: " -----> input: Mark
+            #EXPECTED: ['Matthew', 'Mark]
+    print(playerList)
+test_amountPlayers()
