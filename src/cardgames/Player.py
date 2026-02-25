@@ -5,6 +5,9 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+        # When True, contributes to main game loop asking the player if they want to stand/hit/etc
+        # When False, that player will no longer be targeted in the game loop (when all players are False, round ends) 
+        self.active = True
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -31,3 +34,12 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        
+    # called to toggle active attribute of Player instances
+    def stand(self):
+        self.active = False if self.active == True else True
+    
+    # called when check_hand returns > 21, takes player out of turn rotation
+    # assumption is that gameplay loop or check_cards() will call bust() when appropriate, so no additional logic is needed in this function
+    def bust(self):
+        self.active = False
