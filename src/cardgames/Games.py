@@ -15,31 +15,26 @@ class Games:
         #note to self: you may need to figure out how knownCards works
         #you also may need to make it so that multiple rounds can be played 
 
-        #starts the game, output should be printed        
-        self.gertDealer = Dealer(self.deck)
-        #first deal begins here
-        self.gertDealer.dealCards(1, self.playerList)
-        for i in range(len(self.playerList)):
-            print("{:s}'s hand: ".format(self.playerList[i].name), end='')
-            self.playerList[i].showHand()
-        #second deal begins here
-        self.gertDealer.dealCards(1, self.playerList)
-        for i in range(len(self.playerList)):
-            print("{:s}'s hand: ".format(self.playerList[i].name), end='')
-            if self.playerList[i].name == "GERTRUDE":
-                #FIGURE OUT HOW TO PRINT JUST THE BACK OF A CARD
-                #AND just a single card from a hand of a player (should
-                #GERTRUDE even be a player object?)
-                #or make functionality in future sprint
-                break
-            self.playerList[i].showHand()
-        #call round() here 
-
-
-        #call to create 
-        for card in self.deck.cards[:5]:
-            print(card)
-        input('Press [Enter] to exit.')
+        #the code below should be absorbed into round() 
+        # #starts the game, output should be printed        
+        # self.gertDealer = Dealer(self.deck)
+        # #first deal begins here
+        # self.gertDealer.dealCards(1, self.playerList)
+        # for i in range(len(self.playerList)):
+        #     print("{:s}'s hand: ".format(self.playerList[i].name), end='')
+        #     self.playerList[i].showHand()
+        # #second deal begins here
+        # self.gertDealer.dealCards(1, self.playerList)
+        # for i in range(len(self.playerList)):
+        #     print("{:s}'s hand: ".format(self.playerList[i].name), end='')
+        #     if self.playerList[i].name == "GERTRUDE":
+        #         #FIGURE OUT HOW TO PRINT JUST THE BACK OF A CARD
+        #         #AND just a single card from a hand of a player (should
+        #         #GERTRUDE even be a player object?)
+        #         #or make functionality in future sprint
+        #         break
+        #     self.playerList[i].showHand()
+        # #call round() here 
     
     def startGame(self, tr):
         while tr:
@@ -57,10 +52,11 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(input("Player {:d}'s name is: ".format(i))))
-        self.pl_list.append(Gertrude("GERTRUDE"))
-        #functionality of Gertrude() will be a child class of player
+        self.pl_list.append(Player("GERTRUDE"))
+        #Player("GERTRUDE") will be eventually replaced 
 
         return self.pl_list
+    
 
 if __name__ == "__main__":
     game = Games()
