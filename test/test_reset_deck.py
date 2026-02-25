@@ -11,6 +11,7 @@ def test_reset_deck():
     deck.reset()
 
     assert deck.size == 52
+    print(deck.size == 52)
     
 def main():
     test_reset_deck()
