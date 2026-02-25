@@ -28,23 +28,26 @@ class Player:
                     print(image, end="")
             print()
 
-    def checkForFourOfAKind(self):
-        counts_list = (("Aces", 0), ("Twos", 0), ("Threes", 0), ("Fours", 0), ("Fives", 0), ("Sixes", 0), ("Sevens", 0), ("Eights", 0), ("Nines", 0), ("Tens", 0), ("Jacks", 0), ("Queens", 0), ("Kings", 0))
-        isFourOfAKind = []
-        numberOfFourOfAKindsInHand = 0
-        for card in self.hand:
-            index = card.value
-            (key, value) = counts_list[index-1]
-            value += 1
-        for  i in range(1,14):
-            (key, value) = counts_list[i-1]
-            if value == 4:
-                isFourOfAKind.append(key)
-                numberOfFourOfAKindsInHand += 1
-        if isFourOfAKind == []:
-            return False
+    def checkForFourOfAKind(self):      
+        if len(self.hand) >= 4:
+            counts_dict = {"Aces": 0, "Twos": 0, "Threes": 0, "Fours": 0, "Fives": 0, "Sixes": 0, "Sevens": 0, "Eights": 0, "Nines": 0, "Tens": 0, "Jacks": 0, "Queens": 0, "Kings": 0}
+            isFourOfAKind = []
+            numberOfFourOfAKindsInHand = 0
+            value_map = {1: "Aces", 2: "Twos", 3: "Threes", 4: "Fours", 5: "Fives", 6: "Sixes", 7: "Sevens", 8: "Eights", 9: "Nines", 10: "Tens", 11: "Jacks", 12: "Queens", 13: "Kings"}
+            for card in self.hand:
+                value = card.value
+                key = value_map.get(value, "")
+                counts_dict[key] += 1
+            for (key, value) in counts_dict.items():
+                if value == 4:
+                    isFourOfAKind.append(key)
+                    numberOfFourOfAKindsInHand += 1
+            if isFourOfAKind == []:
+                return False
+            else:
+                return (isFourOfAKind, numberOfFourOfAKindsInHand)
         else:
-            return isFourOfAKind, numberOfFourOfAKindsInHand
+            return False
 
 
     def clearHand(self):
