@@ -41,17 +41,19 @@ class Games:
         return players
     
     def start_game(self, players):
-        player_list = players[:]
-        random_shuffle = (player_list)
-        if len(player_list) < 4:
+        turn_list = players[:]
+        random.shuffle(turn_list)
+
+        if len(players) < 4:
             cardsdealt = 7
         else:
             cardsdealt = 5
-        for xyz in range(cardsdealt):
-            self.dealer.dealCards(1, random_shuffle)
+        for xyz in (range(cardsdealt)):
+            self.dealer.dealCards(1, turn_list)
         
-        starting_player = random_shuffle[-1]
-        return starting_player
+        list.reverse(turn_list)
+        #First player in list goes first.
+        return turn_list
 
     def main(self):
         print('Welcome to the Games application!')
@@ -59,7 +61,7 @@ class Games:
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
-        starting_player = self.start_game(players)
+        turn_list = self.start_game(players)
 
         input('Press [Enter] to exit.')
 
