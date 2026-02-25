@@ -31,3 +31,7 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        
+    # called to toggle active attribute of Player instances
+    def stand(self):
+        self.active = False if self.active == True else True
