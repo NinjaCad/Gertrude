@@ -52,7 +52,6 @@ class Games:
             self.dealer.dealCards(1, turn_list)
         
         list.reverse(turn_list)
-        #First player in list goes first.
         return turn_list
 
     def main(self):
@@ -61,7 +60,7 @@ class Games:
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
-        turn_list = self.start_game(players)
+        turn_list = self.start_game(players) #player[0] in list goes first.
 
         input('Press [Enter] to exit.')
 
