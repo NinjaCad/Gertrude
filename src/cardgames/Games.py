@@ -40,7 +40,7 @@ class Games:
                 print("Must be a valid number!")
         return players
     
-    def rand_start(self, players):
+    def start_game(self, players):
         player_list = players[:]
         random_shuffle = (player_list)
         if len(player_list) < 4:
@@ -59,7 +59,7 @@ class Games:
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
-        starting_player = self.rand_start(players)
+        starting_player = self.start_game(players)
 
         input('Press [Enter] to exit.')
 
