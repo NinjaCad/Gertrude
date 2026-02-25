@@ -70,9 +70,10 @@ class Games:
             # Display current hand
             print("{:s}'s hand: ".format(pList[i].name), end='')
             pList[i].showHand()
+
             turn = True
             while(turn): # (turn && bust() == False)      end turn if bust
-                move = input('Choose either to "hit" or "stand"')
+                move = "stand" #input('Choose either to "hit" or "stand"')
                 if (move == "hit"):
                     print("hit")
                     # hit()
@@ -82,7 +83,8 @@ class Games:
                     turn = False
                 else:
                     print("That is not a valid repsonse")
-            # gertrude()
+            # gertrude()        start gertrude's turn
+        return True
 
 
 if __name__ == "__main__":
