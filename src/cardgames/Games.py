@@ -3,7 +3,8 @@ from cardgames.Deck import Deck
 class Games:
 
     def __init__(self):
-        self.deck = Deck()
+        self.deck = Deck() #deck is created here; deck knows how, games decides when
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
 
     def main(self):
         print('Welcome to the Games application!')
