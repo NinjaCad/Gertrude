@@ -1,4 +1,5 @@
 from testing_base import *
+from cardgames.Dealer import Dealer
 
 def test_num_Cards_in_Hand():
     #To see if the whole deck is now in the player's hand
@@ -22,10 +23,20 @@ def test_player_Cards():
     player = Player("Matt")
     dealer = Dealer(deck)
     popped = []
-    for idk in range(26):
-        card = deck.cards.pop()
-        popped.append(card)
+    for i in range(26):
+        popped.append(deck.getCard())
 
     dealer.addDeck_to_Hand(player)
-    assert len(player.hand) == len(popped)
+    assert len(player.hand) == 52-len(popped)
     
+def test_add_modified_deck():
+    #Somewhat different test to see if the modified deck is still added properly
+    deck = Deck()
+    player = Player("Faith")
+    dealer = Dealer(deck)
+    #assert len(deck.cards) == 52
+    for _ in range(5):
+        deck.getCard()
+    #dealer.addDeck_to_Hand(player)
+    assert len(deck.cards) == 47
+    #assert len(player.hand) == 52-len(deck.cards)
