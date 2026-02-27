@@ -18,7 +18,7 @@ class Games:
             print(card)
         input('Press [Enter] to exit.')
 
-def win_check(deck: Deck, players: "list[Player]"):
+def win_check(players: "list[Player]"):
     first_player_to_slap = players[0]
     if len(first_player_to_slap.hand) == 0:
         print(f"{first_player_to_slap.name} won!")
