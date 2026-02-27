@@ -18,7 +18,8 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
+    def dealCards(self, players: "list[Player]"):
+        numCards = 3
         if numCards * len(players) > self.deck.size:
             return False
         for player in players:
