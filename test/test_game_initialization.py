@@ -13,14 +13,14 @@ def myFixture():
 # Tests that cardsLeft is returned as 52 % 6
 def test_create_players_cardsLeft(myFixture):
     names, num = myFixture
-    players, cardsLeft = create_players(num, names)
+    players, cards_left = create_players(num, names)
 
-    assert cardsLeft == 52 % num
+    assert cards_left == 52 % num
 
 # Tests that players is returned as a list and as long as the number of names given
 def test_create_players_list_and_len(myFixture):
     names, num = myFixture
-    players, cardsLeft = create_players(num, names)
+    players, cards_left = create_players(num, names)
 
     assert isinstance(players, list)
     assert len(players) == num
@@ -28,7 +28,7 @@ def test_create_players_list_and_len(myFixture):
 # Tests that inputted player names are the names of the Player objects
 def test_create_players_names(myFixture):
     names, num = myFixture
-    players, cardsLeft = create_players(num, names)
+    players, cards_left = create_players(num, names)
 
     player_names = [p.name for p in players]
     for name in names:
@@ -37,19 +37,19 @@ def test_create_players_names(myFixture):
 # Tests that each Player object's angle is valid:
 # -unique
 # -between 0 and 360
-# -a multipe of 60 (because 6 players were passed in, 360/6 = 60) 
+# -a multiple of 60 (because 6 players were passed in, 360/6 = 60) 
 def test_create_players_angles(myFixture):
     names, num = myFixture
-    players, cardsLeft = create_players(num, names)
+    players, cards_left = create_players(num, names)
     angles = [p.angle for p in players]
     # unique
     assert len(set(angles)) == num 
-    step = 360 / num
+    angle_offset = 360 / num
     for angle in angles:
         # within the limits of a circle
         assert 0 <= angle < 360
         # multiple of 360/6 = 60
-        assert angle % step == 0
+        assert angle % angle_offset == 0
 
 # Tests appropriate error messages are outputted for bad input
 # Tests for correct storage of input
@@ -61,7 +61,7 @@ def test_start_game_inputs(monkeypatch, capfd):
     monkeypatch.setattr('builtins.input', lambda msg: next(responses))
     
     # Run the function
-    playerNames, numPlayers = start_game()
+    player_names, num_players = start_game()
     
     # Source - https://stackoverflow.com/a/20507769
     # Posted by James Mills, modified by community. See post 'Timeline' for change history
@@ -70,5 +70,5 @@ def test_start_game_inputs(monkeypatch, capfd):
     assert "Welcome to HEART ATTACK!" in out
     assert "You need at least 2 players." in out
     assert "That's not a valid number." in out
-    assert playerNames == ['Daniel', 'David', 'Eli', 'Faith', 'Joseph', 'Rose']
-    assert numPlayers == 6
+    assert player_names == ['Daniel', 'David', 'Eli', 'Faith', 'Joseph', 'Rose']
+    assert num_players == 6
