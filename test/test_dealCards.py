@@ -3,33 +3,40 @@ from testing_base import *
 def test_deck_empty():
     deck = Deck()
     dealer = Dealer(deck)
-    playerList = [Player("Daniel"), Player("Joseph"), Player("Rose"), Player("Faith"), Player("Eli"), Player("David")]
+    player_list = [Player("Daniel"), Player("Joseph"), Player("Rose"), Player("Faith"), Player("Eli"), Player("David")]
 
-    dealer.dealCards(playerList)
+    dealer.dealCards(player_list)
 
     assert deck.size == 0
 
 def test_player_hands():
     deck = Deck()
     dealer = Dealer(deck)
-    playerList = [Player("Daniel"), Player("Joseph"), Player("Rose"), Player("Faith"), Player("Eli"), Player("David")]
+    player_list = [Player("Daniel"), Player("Joseph"), Player("Rose"), Player("Faith"), Player("Eli"), Player("David")]
 
-    expectedHandAmount = 52//len(playerList)
-    expectedPlayersWithExtra = 52 % len(playerList)
+    expected_hand_amount = 52//len(player_list)
+    expected_players_with_extra = 52 % len(player_list)
 
-    dealer.dealCards(playerList)
+    dealer.dealCards(player_list)
 
-    testVar = True
-    playersWithExtra = 0
-    for player in playerList:
-        if len(player.hand) == expectedHandAmount:
+    test_var = True
+    players_with_extra = 0
+    for player in player_list:
+        if len(player.hand) == expected_hand_amount:
             continue
-        elif len(player.hand) == expectedHandAmount + 1:
-            playersWithExtra += 1
+        elif len(player.hand) == expected_hand_amount + 1:
+            players_with_extra += 1
             continue
         else:
-            testVar = False
-    if playersWithExtra != expectedPlayersWithExtra:
-        testVar = False
+            test_var = False
+    if players_with_extra != expected_players_with_extra:
+        test_var = False
     
-    assert testVar
+    assert test_var
+
+def test_too_many_players():
+    deck = Deck()
+    dealer = Dealer(deck)
+    player_list = [Player("David") for _ in range(53)]
+
+    assert dealer.dealCards(player_list) == False
