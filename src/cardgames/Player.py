@@ -63,7 +63,9 @@ class Player:
     
     def show_partial_hand(self): # This method will need to be called every time a new card is added to the player's hand, and it will update the known cards accordingly.
         #For the dealer, we just need to call the function as many times as the dealer is supposed to reveal cards.
-        if self.knownCardsCount < len(self.hand):
-            self.knownCards[self.knownCardsCount] = True
-            self.knownCardsCount += 1
+        for i in range(len(self.hand)):
+            if self.knownCards[i]:
+                print(self.hand[i].shortImage)
+            else:
+                print(self.hand[i].cardBack)
             

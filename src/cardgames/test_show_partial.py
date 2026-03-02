@@ -1,56 +1,91 @@
-# test_show_partial_hand.py
+# test_player_show_partial_hand.py
 import pytest
 
-# Change this import to your real module path.
-# Example: from cardgames.Player import Player
-from Player import Player
+
+from Player import Player  
 
 
 class DummyCard:
-    pass
+    def __init__(self, short_image, back):
+        
+        self.shortImage = short_image
+        self.cardBack = back
 
-def test_show_partial_hand_reveals_one_more_card_each_call():
+
+def test_show_partial_hand_prints_shortimage_when_known(capsys):
+    p = Player("Alice")
+    c1 = DummyCard(short_image=["A♠"], back=["BACK"])
+    c2 = DummyCard(short_image=["K♦"], back=["BACK"])
+
+    p.addCard(c1, isKnown=True)
+    p.addCard(c2, isKnown=True)
+
+    p.show_partial_hand()
+    out = capsys.readouterr().out
+
+    assert out == "['A♠']\n['K♦']\n"
+
+
+def test_show_partial_hand_prints_back_when_unknown(capsys):
     p = Player("Dealer")
+    c1 = DummyCard(short_image=["A♠"], back=["BACK1"])
+    c2 = DummyCard(short_image=["K♦"], back=["BACK2"])
 
-    # start with all hidden
-    p.setHand([DummyCard(), DummyCard(), DummyCard()], isKnown=False)
-    assert p.knownCards == [False, False, False]
-    assert p.knownCardsCount == 0
-
-    p.show_partial_hand()
-    assert p.knownCards == [True, False, False]
-    assert p.knownCardsCount == 1
+    p.addCard(c1, isKnown=False)
+    p.addCard(c2, isKnown=False)
 
     p.show_partial_hand()
-    assert p.knownCards == [True, True, False]
-    assert p.knownCardsCount == 2
+    out = capsys.readouterr().out
 
-    p.show_partial_hand()
-    assert p.knownCards == [True, True, True]
-    assert p.knownCardsCount == 3
+    assert out == "['BACK1']\n['BACK2']\n"
 
 
-def test_show_partial_hand_after_all_revealed_does_nothing():
+def test_show_partial_hand_mixed_known_and_unknown(capsys):
     p = Player("Dealer")
-    p.setHand([DummyCard(), DummyCard()], isKnown=False)
+    c1 = DummyCard(short_image=["A♠"], back=["BACK1"])
+    c2 = DummyCard(short_image=["K♦"], back=["BACK2"])
+    c3 = DummyCard(short_image=["7♥"], back=["BACK3"])
+
+    p.addCard(c1, isKnown=True)
+    p.addCard(c2, isKnown=False)
+    p.addCard(c3, isKnown=True)
+
+    known_before = p.knownCards.copy()
 
     p.show_partial_hand()
+    out = capsys.readouterr().out
+
+    assert out == "['A♠']\n['BACK2']\n['7♥']\n"
+    assert p.knownCards == known_before
+
+
+def test_show_partial_hand_empty_hand_prints_nothing(capsys):
+    p = Player("Empty")
     p.show_partial_hand()
-    assert p.knownCards == [True, True]
-    assert p.knownCardsCount == 2
+    out = capsys.readouterr().out
+    assert out == ""
 
-    # extra call should not change anything
+
+@pytest.mark.parametrize(
+    "known_flags,expected_lines",
+    [
+        ([True], ["['A♠']"]),
+        ([False], ["['BACK']"]),
+        ([True, False], ["['A♠']", "['BACK2']"]),
+    ],
+)
+def test_show_partial_hand_parametrized(capsys, known_flags, expected_lines):
+    p = Player("Param")
+
+    cards = [
+        DummyCard(short_image=["A♠"], back=["BACK"]),
+        DummyCard(short_image=["K♦"], back=["BACK2"]),
+    ]
+
+    for i, flag in enumerate(known_flags):
+        p.addCard(cards[i], isKnown=flag)
+
     p.show_partial_hand()
-    assert p.knownCards == [True, True]
-    assert p.knownCardsCount == 2
+    out = capsys.readouterr().out
 
-
-def test_setHand_resets_knownCardsCount():
-    p = Player("Dealer")
-    p.setHand([DummyCard(), DummyCard()], isKnown=False)
-    p.show_partial_hand()
-    assert p.knownCardsCount == 1
-
-    p.setHand([DummyCard(), DummyCard(), DummyCard()], isKnown=False)
-    assert p.knownCardsCount == 0
-    assert p.knownCards == [False, False, False]
+    assert out == "\n".join(expected_lines) + ("\n" if expected_lines else "")
