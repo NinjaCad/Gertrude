@@ -33,7 +33,7 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
-        self.knownCardsCount = 0
+        
 
     def check_cards(pl, hand):
         total_score = 0
