@@ -7,7 +7,7 @@ import random
 class Dealer:
     def __init__(self, deck: Deck):
         self.deck = deck
-        self.resetDeck()
+        self.resetDeck(cuts=3)
 
     def printCards(self, cards: "list[Card]", showFront: bool, printShort: bool = True):
         for idx in range(6):
@@ -28,13 +28,13 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
 
-    def resetDeck(self):
+    def resetDeck(self, cuts: int = 3):
         self.deck.reset()
         # Shuffle the deck multiple times to ensure randomness
         for _ in range(7):
             self.deck.shuffle()
         # Cut the deck multiple times to further randomize the order
-        for _ in range(3):
+        for _ in range(cuts):
             cut = random.randint(0, self.deck.size)
             self.deck.cards = self.deck.cards[cut:] + self.deck.cards[:cut]
         
