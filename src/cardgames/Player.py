@@ -32,7 +32,7 @@ class Player:
         self.hand = []
         self.knownCards = []
 
-    def check_cards(pl, hand):
+    def check_cards(self, hand):
         total_score = 0
         num_aces = 0
 
@@ -57,3 +57,6 @@ class Player:
             num_aces -= 1
         
         return total_score
+    
+
+    
