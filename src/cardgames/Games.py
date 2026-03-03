@@ -8,27 +8,27 @@ class Games:
 
     def create_players(self):
         players = []
-        accepted_player_count = [2,3,4]
-        player_names = []
+        acceptedPlayerCount = [2,3,4]
+        playerNames = []
         while True:
             try:
                 # Creates between 2 and 4 players
-                num_of_players = int(input("Enter amount of players (2-4): "))
-                if num_of_players in accepted_player_count:
+                numOfPlayers = int(input("Enter amount of players (2-4): "))
+                if numOfPlayers in acceptedPlayerCount:
 
                     # Inputting player name
-                    for i in range(num_of_players):
+                    for i in range(numOfPlayers):
                         while True:
                             player = input(f"Enter name of player {i + 1}: ")
-                            if player == '':
+                            if player.strip() == '':
                                 print("Please enter a name.")
-                            elif player in player_names:
+                            elif player in playerNames:
                                 print("Name must be unique!")
                             elif len(player) > 16:
-                                print("Name too long! Must be under 17 characters.")
+                                print("Name is too long! Must be under 17 characters.")
                             else:
                                 players.append(Player(player))
-                                player_names.append(player)
+                                playerNames.append(player)
                                 break
                     break
                 else:
