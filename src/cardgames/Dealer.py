@@ -2,10 +2,12 @@ from cardgames.Card import Card
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 
+import random
+
 class Dealer:
     def __init__(self, deck: Deck):
         self.deck = deck
-        self.deck.shuffle()
+        self.resetDeck()
 
     def printCards(self, cards: "list[Card]", showFront: bool, printShort: bool = True):
         for idx in range(6):
@@ -28,4 +30,11 @@ class Dealer:
 
     def resetDeck(self):
         self.deck.reset()
-        self.deck.shuffle()
+        # Shuffle the deck multiple times to ensure randomness
+        for _ in range(7):
+            self.deck.shuffle()
+        # Cut the deck multiple times to further randomize the order
+        for _ in range(3):
+            cut = random.randint(0, self.deck.size)
+            self.deck.cards = self.deck.cards[cut:] + self.deck.cards[:cut]
+        
