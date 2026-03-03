@@ -1,7 +1,7 @@
 from testing_base import * 
 
 game = Games()
-playerList = [Player("Player1"), Player("Player2"), Player("Player3")]
+
 
 
 def test_amountPlayers():
