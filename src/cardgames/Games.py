@@ -10,11 +10,11 @@ class Games:
 
     def main(self):
         print('Welcome to the Simple BlackJack!')
-        self.playerList = self.startGame(tr = True)
+        self.playerList = self.startGame()
 
     
-    def startGame(self, tr):
-        while tr:
+    def startGame(self):
+        while True:
             try:
                 self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
                 
@@ -24,7 +24,7 @@ class Games:
                 if self.amtPlayers < 1:
                     print("There needs to be at least one player! Try again.")
                     continue
-                tr = False
+                break
             except ValueError:
                 print("That doesn't make any sense, try again.")
         print('This round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))

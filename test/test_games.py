@@ -6,7 +6,7 @@ playerList = [Player("Player1"), Player("Player2"), Player("Player3")]
 
 def test_amountPlayers():
     #call startGame(), include instructions to input for each case that you're testing
-    playerList = game.startGame(True)
+    playerList = game.startGame()
     #test case 1:
         #"How many people are playing" -----> input: 10
         #EXPECTED: "Thats too many players! Try again."
