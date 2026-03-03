@@ -42,13 +42,12 @@ class Player:
                 if value == 4:
                     isFourOfAKind.append(key)
                     numberOfFourOfAKindsInHand += 1
-            if isFourOfAKind == []:
-                return False
-            else:
-                return (isFourOfAKind, numberOfFourOfAKindsInHand)
+            return isFourOfAKind
         else:
-            return False
+            return []
 
+    def bookHandling(self): #Josiah requested we have this function so that we have a basis for when anyone tries to add the other book functions
+        self.checkForFourOfAKind()
 
     def clearHand(self):
         self.hand = []
