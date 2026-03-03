@@ -26,7 +26,7 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
     
-    def add_deck_to_Hand(self, player: Player):
+    def add_deck_to_hand(self, player: Player):
         self.deck.shuffle()
         for card in range(self.deck.size):
             player.addCard(self.deck.getCard())
