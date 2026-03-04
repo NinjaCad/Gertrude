@@ -83,4 +83,3 @@ class Player:
         card = deck.getCard()
         self.addCard(card, isKnown)
         return card
-    
