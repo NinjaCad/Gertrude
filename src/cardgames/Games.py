@@ -1,3 +1,6 @@
+from operator import truediv
+from ssl import Options
+
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
@@ -12,13 +15,6 @@ class Games:
         print('Welcome to the Simple BlackJack!')
         self.playerList = self.startGame()
         
-        print('This games application is under development.')
-        
-        print('First 5 cards in standard 52-card deck:')
-        temp = 0
-        for card in self.deck.cards[:52]:
-            print(temp, card)
-            temp += 1
         input('Press [Enter] to exit.')
 
     
@@ -40,15 +36,55 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
-        self.pl_list.append(Player("GERTRUDE"))
-        #Player("GERTRUDE") will be eventually replaced 
-
-        return self.pl_list
+        self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
+        self.round(self.pl_list)
 
 
+    # Loop through all the players
+    # Parameters is a player list
+    def round(self, pList):
+        # dealCards()      Need to reset player hands and hand out two cards per player
 
+        # Repeat length of players minus gertrude
+        for player in pList:
+            # Display current hand
+            print(f"{player.name}'s hand: ")
+            player.showHand()
 
+            turn = True
+            while(turn): # (turn && endTurn() == False)   end turn after certain conditions
+                # Check to see what the player can do
+                options = {}
+                options["hit"] = True
+                options["stand"] = True
+                options["split"] = False
+                options["doubleDown"] = False
+                #options["insurance"] = False
 
+                # Print what the player can do
+                move = input("Choose either to: ")
+                for key, value in pList.items():
+                    if value:  # only if True
+                        print(key)
+
+                # Call functions according to players choice
+                if (options["hit"] and (move == "hit" or move == "h")):
+                    print("hit")
+                    player.hit(True)
+                elif (options["stand"] and (move == "stand" or move == "s")):
+                    print("stand")
+                    player.stand()
+                elif (options["split"] and (move == "split" or move == "sp")):
+                    print("split")
+                    player.split()
+                elif (options["doubleDown"] and (move == "doubleDown" or move == "dd")):
+                    print("double down")
+                    player.doubleDown()
+                else:
+                    print("That is not a valid repsonse")
+
+            # playerGertrude()        start gertrude's turn
+            # calculateWinner()   end round and calculate winner
 
 if __name__ == "__main__":
     game = Games()
