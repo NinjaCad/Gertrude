@@ -18,13 +18,15 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
+    def dealCards(self, players: "list[Player]"):
+        numCards = 3
         if numCards * len(players) > self.deck.size:
             return False
         for player in players:
             for _ in range(numCards):
                 player.addCard(self.deck.getCard())
         return True
+
 
     def resetDeck(self):
         self.deck.reset()
