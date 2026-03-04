@@ -1,4 +1,8 @@
 from cardgames.Deck import Deck
+from cardgames.Card import Card
+from cardgames.Dealer import Dealer
+from cardgames.Player import Player
+import random
 
 class Games:
 
@@ -13,6 +17,14 @@ class Games:
         for card in self.deck.cards[:5]:
             print(card)
         input('Press [Enter] to exit.')
+
+def win_check(players: "list[Player]"):
+    first_player_to_slap = players[0]
+    if len(first_player_to_slap.hand) == 0:
+        print(f"{first_player_to_slap.name} won!")
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     game = Games()
