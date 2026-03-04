@@ -1,10 +1,13 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
+from cardgames.Dealer import Dealer
+import random
 
 class Games:
 
     def __init__(self):
         self.deck = Deck()
+        self.dealer = Dealer(Deck())
 
     def create_players(self):
         players = []
@@ -36,6 +39,20 @@ class Games:
             except ValueError:
                 print("Must be a valid number!")
         return players
+    
+    def start_game(self, players):
+        playerlist = players[:]
+        random.shuffle(playerlist)
+        turn_list = playerlist
+
+        if len(players) < 4:
+            cardsdealt = 7
+        else:
+            cardsdealt = 5
+        self.dealer.dealCards(cardsdealt, turn_list)
+        list.reverse(turn_list) #last dealt goes first
+
+        return turn_list
 
             
     def main(self):
@@ -44,6 +61,8 @@ class Games:
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
+        turn_list = self.start_game(players) #player[0] in list goes first.
+
         input('Press [Enter] to exit.')
         
         
