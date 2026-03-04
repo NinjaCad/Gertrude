@@ -9,8 +9,11 @@ COPY requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+# Install bash and git prompt for enhanced shell experience
 RUN curl -o /usr/share/git-prompt.sh \
     https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+RUN apt update && \
+    apt install -y bash bash-completion
 
 # Copy your application code
 COPY pytest.ini /app/
