@@ -1,12 +1,14 @@
 from cardgames.Card import Card
+from cardgames.Deck import Deck
+from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
-        
-        # used to tell game loop whether or not player has stood / busted, aka whether or not they should take a turn
+        # When True, contributes to main game loop asking the player if they want to stand/hit/etc
+        # When False, that player will no longer be targeted in the game loop (when all players are False, round ends) 
         self.active = True
 
     def addCard(self, card: Card, isKnown: bool = True):
@@ -38,3 +40,46 @@ class Player:
     # called to toggle active attribute of Player instances
     def stand(self):
         self.active = False if self.active == True else True
+    
+    # called when check_hand returns > 21, takes player out of turn rotation
+    # assumption is that gameplay loop or check_cards() will call bust() when appropriate, so no additional logic is needed in this function
+    def bust(self):
+        self.active = False
+
+    def check_cards(self, hand):
+        total_score = 0
+        num_aces = 0
+
+        for card_id in hand:
+            rank_index = card_id % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+
+            if rank_index == 0:        # It's an Ace
+                val = 11
+                num_aces += 1
+            elif rank_index >= 10:     # It's a Face Card
+                val = 10
+            else:                      # It's 2 through 10
+                val = rank_index + 1
+            
+            total_score += val
+
+        # --- Blackjack Special Rule: Adjusting Aces ---
+        # If the score is over 21 and we have an Ace (11), 
+        # change it to a 1 (subtract 10) until we are safe.
+        while total_score > 21 and num_aces > 0:
+            total_score -= 10
+            num_aces -= 1
+        
+        return total_score
+    
+    def hit(self, dealer, isKnown: bool = True):
+        # hit() now goes through dealer 
+        deck = dealer.deck
+
+        if deck.size <= 0:
+            # we can change this to endgame() function when we come across that in future sprints
+            raise RuntimeError("Deck is empty.")
+
+        card = deck.getCard()
+        self.addCard(card, isKnown)
+        return card

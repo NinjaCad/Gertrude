@@ -17,3 +17,4 @@ class Card:
             return False
         return self.suit == other.suit and \
             self.value == other.value
+
