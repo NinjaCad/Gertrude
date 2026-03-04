@@ -31,12 +31,10 @@ class Player:
 
     def hideHand(self):
         if self.hand:
-            #If the operating system is Windows
-            if os.name == "nt":
-                os.system("cls")
-            #If the operating system is not Windows
-            else:
-                os.system("clear")
+            hidden = self.name
+
+            #Clears the terminal
+            print("\x1b[2J\033[H")
 
             #Print the card backs of all cards in the player's hand
             for idx in range(6):
