@@ -1,11 +1,15 @@
 from cardgames.Card import Card
+from cardgames.Deck import Deck
+from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
-        self.knownCardsCount = 0
+        # When True, contributes to main game loop asking the player if they want to stand/hit/etc
+        # When False, that player will no longer be targeted in the game loop (when all players are False, round ends) 
+        self.active = True
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -33,9 +37,17 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
-        self.knownCardsCount = 0
+        
+    # called to toggle active attribute of Player instances
+    def stand(self):
+        self.active = False if self.active == True else True
+    
+    # called when check_hand returns > 21, takes player out of turn rotation
+    # assumption is that gameplay loop or check_cards() will call bust() when appropriate, so no additional logic is needed in this function
+    def bust(self):
+        self.active = False
 
-    def check_cards(pl, hand):
+    def check_cards(self, hand):
         total_score = 0
         num_aces = 0
 
@@ -69,3 +81,15 @@ class Player:
             else:
                 print(self.hand[i].cardBack)
             
+    def hit(self, dealer, isKnown: bool = True):
+        # hit() now goes through dealer 
+        deck = dealer.deck
+
+        if deck.size <= 0:
+            # we can change this to endgame() function when we come across that in future sprints
+            raise RuntimeError("Deck is empty.")
+
+        card = deck.getCard()
+        self.addCard(card, isKnown)
+        return card
+    
