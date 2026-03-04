@@ -1,18 +1,18 @@
 from cardgames.Card import Card
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name) -> None:
         self.name = name
         self.hand = []
-        self.knownCards = []
+        self.known_cards = []
 
     # changed addCard function to default the isKnown attrib to False, but still retain
     # some functionality if an explicit call to isKnown = True is needed for some reason.
-    def addCard(self, card: Card, isKnown: bool = False):
+    def add_card(self, card: Card, is_known: bool = False) -> None:
         self.hand.append(card)
-        self.knownCards.append(isKnown)
+        self.known_cards.append(is_known)
 
-    def setHand(self, cards: "list[Card]", isKnown: bool = False):
+    def set_hand(self, cards: "list[Card]", is_known: bool = False) -> None:
         self.hand = cards
         # remove the following line to leave all cards in hand at their default of "isKnown = False" 
         #self.knownCards = [isKnown for _ in self.hand]
@@ -29,6 +29,6 @@ class Player:
     #                 print(image, end="")
     #         print()
 
-    def clearHand(self):
+    def clear_hand(self) -> None:
         self.hand = []
-        self.knownCards = []
+        self.known_cards = []
