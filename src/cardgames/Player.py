@@ -43,3 +43,32 @@ class Player:
     # assumption is that gameplay loop or check_cards() will call bust() when appropriate, so no additional logic is needed in this function
     def bust(self):
         self.active = False
+
+    def check_cards(self, hand):
+        total_score = 0
+        num_aces = 0
+
+        for card_id in hand:
+            rank_index = card_id % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+
+            if rank_index == 0:        # It's an Ace
+                val = 11
+                num_aces += 1
+            elif rank_index >= 10:     # It's a Face Card
+                val = 10
+            else:                      # It's 2 through 10
+                val = rank_index + 1
+            
+            total_score += val
+
+        # --- Blackjack Special Rule: Adjusting Aces ---
+        # If the score is over 21 and we have an Ace (11), 
+        # change it to a 1 (subtract 10) until we are safe.
+        while total_score > 21 and num_aces > 0:
+            total_score -= 10
+            num_aces -= 1
+        
+        return total_score
+    
+
+    
