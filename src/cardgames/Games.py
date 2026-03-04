@@ -10,10 +10,19 @@ class Games:
         print('This games application is under development.')
         
         print('First 5 cards in standard 52-card deck:')
-        for card in self.deck.cards[:5]:
-            print(card)
+        temp = 0
+        for card in self.deck.cards[:52]:
+            print(temp, card)
+            temp += 1
         input('Press [Enter] to exit.')
+
+
+
+
 
 if __name__ == "__main__":
     game = Games()
     game.main()
+ 
+ 
+
