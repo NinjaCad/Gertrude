@@ -1,4 +1,3 @@
-from testing_base import *
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 
