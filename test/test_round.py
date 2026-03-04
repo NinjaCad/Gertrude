@@ -3,6 +3,8 @@ from testing_base import *
 game = Games()
 players = []
 players.append(Player("Bob"))
+players.append(Player("Bobby"))
+players.append(Player("Gertrude"))
 
 game.round(players)
 
