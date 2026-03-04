@@ -1,4 +1,6 @@
 from cardgames.Card import Card
+from cardgames.Deck import Deck
+from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -70,5 +72,15 @@ class Player:
         
         return total_score
     
+    def hit(self, dealer, isKnown: bool = True):
+        # hit() now goes through dealer 
+        deck = dealer.deck
 
+        if deck.size <= 0:
+            # we can change this to endgame() function when we come across that in future sprints
+            raise RuntimeError("Deck is empty.")
+
+        card = deck.getCard()
+        self.addCard(card, isKnown)
+        return card
     
