@@ -26,6 +26,7 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
 
+
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
