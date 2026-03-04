@@ -21,6 +21,7 @@ class Player:
     def setHand(self, cards: "list[Card]", isKnown: bool = False):
         self.hand = cards
         self.knownCards = [isKnown for _ in self.hand]
+        self.knownCardsCount = 0
 
     def showHand(self, printShort: bool = False):
         for idx in range(6):
@@ -72,6 +73,14 @@ class Player:
         
         return total_score
     
+    def show_partial_hand(self): # This method will need to be called every time a new card is added to the player's hand, and it will update the known cards accordingly.
+        #For the dealer, we just need to call the function as many times as the dealer is supposed to reveal cards.
+        for i in range(len(self.hand)):
+            if self.knownCards[i]:
+                print(self.hand[i].shortImage)
+            else:
+                print(self.hand[i].cardBack)
+            
     def hit(self, dealer, isKnown: bool = True):
         # hit() now goes through dealer 
         deck = dealer.deck
