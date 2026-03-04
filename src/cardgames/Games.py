@@ -43,16 +43,16 @@ class Games:
                         print(key)
 
                 # Call functions according to players choice
-                if (options["hit"] and move == "hit" or move == "h"):
+                if (options["hit"] and (move == "hit" or move == "h")):
                     print("hit")
                     # player.hit()
-                elif (options["stand"] and move == "stand" or move == "s"):
+                elif (options["stand"] and (move == "stand" or move == "s")):
                     print("stand")
                     # player.stand()
-                elif (options["split"] and move == "split" or move == "sp"):
+                elif (options["split"] and (move == "split" or move == "sp")):
                     print("split")
                     # player.split()
-                elif (options["doubleDown"] and move == "doubleDown" or move == "dd"):
+                elif (options["doubleDown"] and (move == "doubleDown" or move == "dd")):
                     print("double down")
                     # player.doubleDown()
                 else:
