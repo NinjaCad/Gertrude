@@ -25,22 +25,30 @@ class Card:
             return False
         return self.suit == other.suit and self.value == other.value
 
-    def _get_suit_rank(self):
+    def get_suit_rank(self):
         return Card.SUIT_RANKINGS.get(self.suit, 0)
 
-    def compare(self, other):
-        if not isinstance(other, Card):
-            raise TypeError("Can only compare one Card with anotherCard")
 
+#  Standalone comparison function
+def compare_cards(card1, card2):
+    if not isinstance(card1, Card) or not isinstance(card2, Card):
+        raise TypeError("Both arguments must be Card objects")
 
+    #  First compare values
+    if card1.value > card2.value:
+        return 1
+    elif card1.value < card2.value:
+        return -1
 
-        # If values equal, compare suits
-        suit1 = self._get_suit_rank()
-        suit2 = other._get_suit_rank()
+    #  If values are equal, compare suits
+    suit1 = card1.get_suit_rank()
+    suit2 = card2.get_suit_rank()
 
-        if suit1 > suit2:
-            return 1
-        elif suit1 < suit2:
-            return -1
+    if suit1 > suit2:
+        return 1
+    elif suit1 < suit2:
+        return -1
 
-        return 0
+    # 🔹 If both value AND suit are equal
+    return 0
+    return 0
