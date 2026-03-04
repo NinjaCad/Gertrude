@@ -11,6 +11,15 @@ class Games:
     def main(self):
         print('Welcome to the Simple BlackJack!')
         self.playerList = self.startGame()
+        
+        print('This games application is under development.')
+        
+        print('First 5 cards in standard 52-card deck:')
+        temp = 0
+        for card in self.deck.cards[:52]:
+            print(temp, card)
+            temp += 1
+        input('Press [Enter] to exit.')
 
     
     def startGame(self):
@@ -35,8 +44,15 @@ class Games:
         #Player("GERTRUDE") will be eventually replaced 
 
         return self.pl_list
-    
+
+
+
+
+
 
 if __name__ == "__main__":
     game = Games()
     game.main()
+ 
+ 
+
