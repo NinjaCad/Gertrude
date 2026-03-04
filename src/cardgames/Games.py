@@ -28,10 +28,10 @@ class HighCardDrawInstructions:
         ),
     }
 
-    @classmethod
-    def topics(cls) -> list[str]:
+    @staticmethod
+    def topics() -> list[str]:
         """Return a sorted list of available instruction topics."""
-        return sorted(cls._TOPICS.keys())
+        return sorted(HighCardDrawInstructions._TOPICS.keys())
 
     @classmethod
     def get(cls, topic: str = "overview") -> str:
