@@ -44,8 +44,9 @@ class Games:
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
-
         input('Press [Enter] to exit.')
+        
+        
         print('First 5 cards in standard 52-card deck:')
         self.deck = Deck() #deck is created here; deck knows how, games decides when
         self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
