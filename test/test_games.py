@@ -1,10 +1,7 @@
 from testing_base import * 
 
-game = Games()
 
-
-
-def test_amountPlayers():
+def main():
     #call startGame(), include instructions to input for each case that you're testing
     playerList = game.startGame()
     #test case 1:
@@ -28,4 +25,7 @@ def test_amountPlayers():
                 #one of these values may read cardgames.Gertrude.Gertrudeobject, if you are testing
                 #after the gertrude class has been made
     print(playerList)
-test_amountPlayers()
+
+if __name__ == "__main__":
+    game = Games()
+    main()
