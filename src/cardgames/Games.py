@@ -41,17 +41,17 @@ class Games:
         return players
     
     def start_game(self, players):
-        turn_list = players[:]
-        random.shuffle(turn_list)
+        playerlist = players[:]
+        random.shuffle(playerlist)
+        turn_list = playerlist
 
         if len(players) < 4:
             cardsdealt = 7
         else:
             cardsdealt = 5
-        for xyz in (range(cardsdealt)):
-            self.dealer.dealCards(1, turn_list)
-        
-        list.reverse(turn_list)
+        self.dealer.dealCards(cardsdealt, turn_list)
+        list.reverse(turn_list) #last dealt goes first
+
         return turn_list
 
     def main(self):
