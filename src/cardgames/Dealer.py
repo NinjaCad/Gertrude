@@ -18,13 +18,18 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
-        if numCards * len(players) > self.deck.size:
+    def dealCards(self, players: list[Player]):
+        players_length = len(players)
+        if players_length > 52:
             return False
-        for player in players:
-            for _ in range(numCards):
-                player.addCard(self.deck.getCard())
+        for card_index in range(len(self.deck.cards)):
+            players[card_index % players_length].addCard(self.deck.getCard())
         return True
+    
+    def add_deck_to_hand(self, player: Player):
+        self.deck.shuffle()
+        for card in range(self.deck.size):
+            player.addCard(self.deck.getCard())
 
     def resetDeck(self):
         self.deck.reset()
