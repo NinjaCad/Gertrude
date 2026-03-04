@@ -34,23 +34,24 @@ class Deck:
                 level += 1
             cardImages.append(card)
         
-        deck = []
+        deck = [] #this deck is an empty list initially
         index = 0
         for suit in suits:
             for value in values:
                 deck.append(Card(suit, value, cardImages[index], cardBack))
                 index += 1
         
-        self.cards = deck
+        self.cards = deck #cards in the deck
         self.size = len(deck)
         self.cardBack = cardBack
         self.discarded = []
-
+    
     def reset(self):
         self.cards += self.discarded
         self.discarded = []
         self.size = len(self.cards)
 
+    #def shuffle card (self?)
     def shuffle(self):
         random.shuffle(self.cards)
 
