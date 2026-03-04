@@ -28,16 +28,17 @@ def test_player_names():
     # Test by inputting nothing as a name, should not pass
     # Test by inputting the same name twice, should not pass
     # Test by inputting over 16 characters, should not pass
+    # Test by inputting nothing but spaces, should not pass
     # Test by inputting number, should pass
     print("This is the player name test. Input nothing, the same name twice, more than 16 characters, and inputting a number.")
     players = game.create_players()
-    player_names = []
+    playerNames = []
     
     # Tests to make sure there are no duplicate names
     for player in players:
-        assert player.name not in player_names
+        assert player.name not in playerNames
         print("Passed")
-        player_names.append(player.name)
+        playerNames.append(player.name)
 
 basic_test_players()
 test_input_players()
