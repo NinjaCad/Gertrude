@@ -18,7 +18,13 @@ class Card:
         for line in self.image:
             display_text += line + "\n"
 
-        return display_text
+        RED = "\033[31m"
+        RESET = "\033[0m"
+
+        if self.suit in ["Hearts", "Diamonds"]:
+            return RED + display_text + RESET
+        else:
+            return display_text
 
     def __eq__(self, other):
         if not type(other) == Card:
