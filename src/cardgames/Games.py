@@ -42,46 +42,66 @@ class Games:
 
     # Loop through all the players
     # Parameters is a player list
-    def round(self, pList):
+    def round(self, players):
         # dealCards()      Need to reset player hands and hand out two cards per player
 
         # Repeat length of players minus gertrude
-        for player in pList:
-            # Display current hand
-            print(f"{player.name}'s hand: ")
-            player.showHand()
-
+        for player in players:
             turn = True
-            while(turn): # (turn && endTurn() == False)   end turn after certain conditions
-                # Check to see what the player can do
-                options = {}
-                options["hit"] = True
-                options["stand"] = True
-                options["split"] = False
-                options["doubleDown"] = False
-                #options["insurance"] = False
 
-                # Print what the player can do
-                move = input("Choose either to: ")
-                for key, value in pList.items():
-                    if value:  # only if True
-                        print(key)
+            moves = {
+                "hit": {
+                    "enabled": True,
+                    "aliases": {"h"},
+                    "action": player.hit,
+                },
+                "stand": {
+                    "enabled": True,
+                    "aliases": {"s"},
+                    "action": player.stand,
+                },
+                "split": {
+                    "enabled": player.can_split(),
+                    "aliases": {"sp"},
+                    "action": player.split,
+                },
+                "doubleDown": {
+                    "enabled": player.can_double(),
+                    "aliases": {"dd", "double down"},
+                    "action": player.doubleDown,
+                },
+                "help": {
+                    "enabled": True,
+                    "aliases": {"h", "?"},
+                    "action": player.help,
+                },
+            }
 
-                # Call functions according to players choice
-                if (options["hit"] and (move == "hit" or move == "h")):
-                    print("hit")
-                    player.hit(True)
-                elif (options["stand"] and (move == "stand" or move == "s")):
-                    print("stand")
-                    player.stand()
-                elif (options["split"] and (move == "split" or move == "sp")):
-                    print("split")
-                    player.split()
-                elif (options["doubleDown"] and (move == "doubleDown" or move == "dd")):
-                    print("double down")
-                    player.doubleDown()
+            print(f"\n--- {player.name}'s turn ---")
+
+            while turn:
+                # refresh availability each loop
+                moves["split"]["enabled"] = player.can_split()
+                moves["doubleDown"]["enabled"] = player.can_double()
+
+                enabled_moves = [n for n, info in moves.items() if info["enabled"]]
+                print("Choose:", ", ".join(enabled_moves))
+
+                choice = input("> ").strip().lower()
+
+                selected = None
+                for name, info in moves.items():
+                    if choice == name.lower() or choice in info["aliases"]:
+                        selected = name
+                        break
+
+                if selected and moves[selected]["enabled"]:
+                    moves[selected]["action"]()
+
+                    if player.status:
+                        turn = False
                 else:
-                    print("That is not a valid repsonse")
+                    print("Not a valid move.")
 
             # playerGertrude()        start gertrude's turn
             # calculateWinner()   end round and calculate winner
