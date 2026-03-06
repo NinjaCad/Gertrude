@@ -44,7 +44,7 @@ class Games:
 
 
     # Loop through all the players
-    # Parameters is a player list
+    # Parameters is a player list and a dealer object
     def round(self, players, dealer):
         # dealCards()      Need to reset player hands and hand out two cards per player
 
@@ -52,12 +52,13 @@ class Games:
         for player in players:
             turn = True
 
+            # Easy way to make new moves with dictionary
             moves = {
                 "hit": {
                     "enabled": True,
                     "aliases": {"h"},
                     "action": player.hit,
-                    "args": (dealer,),
+                    "args": (dealer),
                 },
                 "stand": {
                     "enabled": True,
@@ -65,30 +66,30 @@ class Games:
                     "action": player.stand,
                     "args": (),
                 },
-                # "split": {
-                #     "enabled": player.can_split(),
-                #     "aliases": {"sp"},
-                #     "action": player.split,
-                #     "args": (),
-                # },
-                # "doubleDown": {
-                #     "enabled": player.can_double(),
-                #     "aliases": {"dd", "double down"},
-                #     "action": player.doubleDown,
-                #     "args": (),
-                # },
-                # "help": {
-                #     "enabled": True,
-                #     "aliases": {"h", "?"},
-                #     "action": player.help,
-                #     "args": (),
-                # },
-                #"quit": {
-                #     "enabled": True,
-                #     "aliases": {"q"},
-                #     "action": player.quit,
-                #     "args": (),
-                # },
+                "split": {
+                    "enabled": False,
+                    "aliases": {"sp"},
+                    #"action": player.split,
+                    "args": (),
+                },
+                "doubleDown": {
+                    "enabled": False,
+                    "aliases": {"dd", "double down"},
+                    #"action": player.doubleDown,
+                    "args": (),
+                },
+                "help": {
+                    "enabled": False, # True
+                    "aliases": {"h", "?"},
+                    #"action": player.help,
+                    "args": (),
+                },
+                "quit": {
+                    "enabled": False, # True
+                    "aliases": {"q"},
+                    #"action": player.quit,
+                    "args": (),
+                },
             }
 
             print(f"\n--- {player.name}'s turn ---")
@@ -100,26 +101,31 @@ class Games:
 
                 player.showHand()
 
+                # Print what moves are available based on enabled key in moves dictionary
                 enabled_moves = [n for n, info in moves.items() if info["enabled"]]
                 print("Choose:", ", ".join(enabled_moves))
 
                 choice = input("> ").strip().lower()
 
+                # Check to see what move the player chose by comparing the name and the aliases
                 selected = None
                 for name, info in moves.items():
                     if choice == name.lower() or choice in info["aliases"]:
                         selected = name
                         break
-
+                    
+                # Use the selected move to call the appropriate function with the appropriate arguments and check enabled
                 if selected and moves[selected]["enabled"]:
                     fn = moves[selected]["action"]
                     args = moves[selected]["args"]
                     fn(*args)
 
+                    # Create a list with the values of the cards in the player's hand b/c the check_cards function in Player.py doesn't work
                     hand = []
                     for card in player.hand:
                         hand.append(card.value)
 
+                    # Check if the player has busted by using the check_cards function in Player.py, and if they have, end their turn and show their hand and hand value
                     if (player.check_cards(hand) >= 21):
                         player.bust()
                     if (player.active == False):
