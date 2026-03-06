@@ -2,8 +2,8 @@ from operator import truediv
 from ssl import Options
 
 from cardgames.Deck import Deck
-#from cardgames.Player import Player
-#from cardgames.Dealer import Dealer
+from cardgames.Player import Player
+from cardgames.Dealer import Dealer
 
 
 class Games:
@@ -19,6 +19,9 @@ class Games:
 
     
     def startGame(self):
+        deck = Deck()
+        dealer = Dealer(deck)
+
         while True:
             try:
                 self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
@@ -36,13 +39,13 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
-        self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
-        self.round(self.pl_list)
+        #self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
+        self.round(self.pl_list, dealer)
 
 
     # Loop through all the players
     # Parameters is a player list
-    def round(self, players):
+    def round(self, players, dealer):
         # dealCards()      Need to reset player hands and hand out two cards per player
 
         # Repeat length of players minus gertrude
@@ -54,35 +57,48 @@ class Games:
                     "enabled": True,
                     "aliases": {"h"},
                     "action": player.hit,
+                    "args": (dealer,),
                 },
                 "stand": {
                     "enabled": True,
                     "aliases": {"s"},
                     "action": player.stand,
+                    "args": (),
                 },
-                "split": {
-                    "enabled": player.can_split(),
-                    "aliases": {"sp"},
-                    "action": player.split,
-                },
-                "doubleDown": {
-                    "enabled": player.can_double(),
-                    "aliases": {"dd", "double down"},
-                    "action": player.doubleDown,
-                },
-                "help": {
-                    "enabled": True,
-                    "aliases": {"h", "?"},
-                    "action": player.help,
-                },
+                # "split": {
+                #     "enabled": player.can_split(),
+                #     "aliases": {"sp"},
+                #     "action": player.split,
+                #     "args": (),
+                # },
+                # "doubleDown": {
+                #     "enabled": player.can_double(),
+                #     "aliases": {"dd", "double down"},
+                #     "action": player.doubleDown,
+                #     "args": (),
+                # },
+                # "help": {
+                #     "enabled": True,
+                #     "aliases": {"h", "?"},
+                #     "action": player.help,
+                #     "args": (),
+                # },
+                #"quit": {
+                #     "enabled": True,
+                #     "aliases": {"q"},
+                #     "action": player.quit,
+                #     "args": (),
+                # },
             }
 
             print(f"\n--- {player.name}'s turn ---")
 
             while turn:
                 # refresh availability each loop
-                moves["split"]["enabled"] = player.can_split()
-                moves["doubleDown"]["enabled"] = player.can_double()
+                #moves["split"]["enabled"] = player.can_split()
+                #moves["doubleDown"]["enabled"] = player.can_double()
+
+                player.showHand()
 
                 enabled_moves = [n for n, info in moves.items() if info["enabled"]]
                 print("Choose:", ", ".join(enabled_moves))
@@ -96,9 +112,19 @@ class Games:
                         break
 
                 if selected and moves[selected]["enabled"]:
-                    moves[selected]["action"]()
+                    fn = moves[selected]["action"]
+                    args = moves[selected]["args"]
+                    fn(*args)
 
-                    if player.status:
+                    hand = []
+                    for card in player.hand:
+                        hand.append(card.value)
+
+                    if (player.check_cards(hand) >= 21):
+                        player.bust()
+                    if (player.active == False):
+                        player.showHand()
+                        print(f"{player.name} ends with a hand value of {player.check_cards(hand)}.")
                         turn = False
                 else:
                     print("Not a valid move.")
@@ -109,6 +135,3 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main()
- 
- 
-

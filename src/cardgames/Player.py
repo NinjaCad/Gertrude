@@ -60,7 +60,7 @@ class Player:
             elif rank_index >= 10:     # It's a Face Card
                 val = 10
             else:                      # It's 2 through 10
-                val = rank_index + 1
+                val = rank_index
             
             total_score += val
 
