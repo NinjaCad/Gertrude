@@ -12,7 +12,7 @@ def test_printHand_basic():
     for player in players:
         player.isTurn = True
         print(f'######\nPrinting all hands except for {player.name}\'s\n')
-        game.show_opponents_hands(players)
+        game.showOpponentsHands(players)
         player.isTurn = False
 
 def test_printHand_random():
@@ -27,7 +27,7 @@ def test_printHand_random():
             player.addCard(deck.getCard())
 
     print(f'Printing {player.name}\'s cards:\n')
-    game.show_opponents_hands(players)
+    game.showOpponentsHands(players)
 
 def test_printHand_consistency():
     game = Games()
@@ -40,7 +40,7 @@ def test_printHand_consistency():
     beforeHand = players[0].hand
     beforeKnownCards = players[0].knownCards
 
-    game.show_opponents_hands(players)
+    game.showOpponentsHands(players)
     assert players[0].hand == beforeHand
     assert players[0].knownCards == beforeKnownCards
 

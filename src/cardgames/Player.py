@@ -1,10 +1,12 @@
 from cardgames.Card import Card
+from cardgames.Deck import Deck
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
+        self.books = []
         self.isTurn = False
 
     def addCard(self, card: Card, isKnown: bool = True):
@@ -49,6 +51,30 @@ class Player:
 
     def bookHandling(self): #Josiah requested we have this function so that we have a basis for when anyone tries to add the other book functions
         self.checkForFourOfAKind()
+
+    def showBooks(self):
+        valueMap = {"Aces": 1, "Twos": 2, "Threes": 3, "Fours": 4, "Fives": 5, "Sixes": 6, "Sevens": 7, "Eights": 8, "Nines": 9, "Tens": 10, "Jacks": 11, "Queens": 12, "Kings": 13}
+        deck = Deck()
+        printList = []
+        # Checks through a deck to find needed cards
+        for bookType in self.books:
+            for card in deck.cards:
+                if card.value == valueMap[bookType]:
+                    printList.append(card)
+
+        # Prints books in groups
+        for idx in range(6):
+            for i, card in enumerate(printList):
+                if (i + 1) % 4 in range(1, 4):
+                    image = card.shortImage[idx]
+                    print(image, end="")
+                else:
+                    image = card.image[idx]
+                    print(image, end=" ")
+            print()
+                
+
+            
 
     def clearHand(self):
         self.hand = []

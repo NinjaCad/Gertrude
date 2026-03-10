@@ -40,12 +40,12 @@ class Games:
                 print("Must be a valid number!")
         return players
     
-    def show_opponents_hands(self, players):
+    def showOpponentsHands(self, players):
         for player in players:
             if player.isTurn or player.hand == []:
                 continue
             
-            # Turns player.knownCards into False to only print the backs, then restores it afterwords
+            # Turns player.knownCards into Falses to only print the backs, then restores it afterwords
             print(f'{player.name}\'s hand:')
             knownCardsStore = player.knownCards
             player.knownCards = [False] * len(player.knownCards)
@@ -54,7 +54,6 @@ class Games:
             print()
 
             player.knownCards = knownCardsStore
-
     
     def start_game(self, players):
         playerlist = players[:]
