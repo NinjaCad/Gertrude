@@ -40,6 +40,22 @@ class Games:
                 print("Must be a valid number!")
         return players
     
+    def show_opponents_hands(self, players):
+        for player in players:
+            if player.isTurn or player.hand == []:
+                continue
+            
+            # Turns player.knownCards into False to only print the backs, then restores it afterwords
+            print(f'{player.name}\'s hand:')
+            knownCardsStore = player.knownCards
+            player.knownCards = [False] * len(player.knownCards)
+
+            player.showHand()
+            print()
+
+            player.knownCards = knownCardsStore
+
+    
     def start_game(self, players):
         playerlist = players[:]
         random.shuffle(playerlist)
