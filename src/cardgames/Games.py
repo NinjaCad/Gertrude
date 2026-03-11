@@ -62,10 +62,17 @@ class Games:
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
         turn_list = self.start_game(players) #player[0] in list goes first.
-
+        
+        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        while game_running:
+            for player in turn_list:
+                print(player.name)
+        #for each player in the turn list:
+            #that player takes a turn
+    
+    
         input('Press [Enter] to exit.')
-        
-        
+
         print('First 5 cards in standard 52-card deck:')
         self.deck = Deck() #deck is created here; deck knows how, games decides when
         self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
