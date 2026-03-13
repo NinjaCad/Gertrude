@@ -2,7 +2,7 @@ import os
 import random
 from cardgames.Card import Card
 
-cardImages = []
+card_images = []
 values = list(range(1,14))
 suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 
@@ -26,24 +26,24 @@ class Deck:
             level = 0
             for line in cards.readlines():
                 if len(line) == 1:
-                    cardImages.append(card)
+                    card_images.append(card)
                     level = 0
                     card = []
                     continue
                 card.append(line.replace("\n",""))
                 level += 1
-            cardImages.append(card)
+            card_images.append(card)
         
         deck = []
         index = 0
         for suit in suits:
             for value in values:
-                deck.append(Card(suit, value, cardImages[index], card_back))
+                deck.append(Card(suit, value, card_images[index], card_back))
                 index += 1
         
         self.cards = deck
         self.size = len(deck)
-        self.cardBack = card_back
+        self.card_back = card_back
         self.discarded = []
 
     def reset(self):
