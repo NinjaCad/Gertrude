@@ -5,29 +5,29 @@ import pytest
 
 # From this website: https://stackoverflow.com/questions/60154589/update-and-share-variable-between-tests-on-pytest
 @pytest.fixture(scope='module')
-def myFixture():
+def my_fixture():
     names = ['Daniel', 'David', 'Eli', 'Faith', 'Joseph', 'Rose']
     num = len(names)
     yield names, num
 
 # Tests that cardsLeft is returned as 52 % 6
-def test_create_players_cardsLeft(myFixture):
-    names, num = myFixture
+def test_create_players_cardsLeft(my_fixture):
+    names, num = my_fixture
     players, cards_left = create_players(num, names)
 
     assert cards_left == 52 % num
 
 # Tests that players is returned as a list and as long as the number of names given
-def test_create_players_list_and_len(myFixture):
-    names, num = myFixture
+def test_create_players_list_and_len(my_fixture):
+    names, num = my_fixture
     players, cards_left = create_players(num, names)
 
     assert isinstance(players, list)
     assert len(players) == num
 
 # Tests that inputted player names are the names of the Player objects
-def test_create_players_names(myFixture):
-    names, num = myFixture
+def test_create_players_names(my_fixture):
+    names, num = my_fixture
     players, cards_left = create_players(num, names)
 
     player_names = [p.name for p in players]
@@ -38,8 +38,8 @@ def test_create_players_names(myFixture):
 # -unique
 # -between 0 and 360
 # -a multiple of 60 (because 6 players were passed in, 360/6 = 60) 
-def test_create_players_angles(myFixture):
-    names, num = myFixture
+def test_create_players_angles(my_fixture):
+    names, num = my_fixture
     players, cards_left = create_players(num, names)
     angles = [p.angle for p in players]
     # unique

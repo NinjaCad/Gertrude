@@ -17,10 +17,10 @@ for i in range(1, NumPlayers+1):
     players[name] = Player(name)
 
 # Deal 5 cards to each player
-dealer.dealCards(5, list(players.values()))
+dealer.deal_cards(5, list(players.values()))
 
 # Show each player's hand
 for player in players.values():
     print(f'{player.name}:')
-    player.showHand(True)
+    player.show_hand(True)
     print()

@@ -5,7 +5,7 @@ def test_deck_empty():
     dealer = Dealer(deck)
     player_list = [Player("Daniel"), Player("Joseph"), Player("Rose"), Player("Faith"), Player("Eli"), Player("David")]
 
-    dealer.dealCards(player_list)
+    dealer.deal_cards(player_list)
 
     assert deck.size == 0
 
@@ -17,7 +17,7 @@ def test_player_hands():
     expected_hand_amount = 52//len(player_list)
     expected_players_with_extra = 52 % len(player_list)
 
-    dealer.dealCards(player_list)
+    dealer.deal_cards(player_list)
 
     test_var = True
     players_with_extra = 0
@@ -39,4 +39,4 @@ def test_too_many_players():
     dealer = Dealer(deck)
     player_list = [Player("David") for _ in range(53)]
 
-    assert dealer.dealCards(player_list) == False
+    assert dealer.deal_cards(player_list) == False
