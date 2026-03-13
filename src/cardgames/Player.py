@@ -92,3 +92,13 @@ class Player:
         card = deck.getCard()
         self.addCard(card, isKnown)
         return card
+
+class Gertrude(Player):
+    def playerGertrude(self, hand):
+        while True:
+            curr_score = super().check_cards(hand)
+            if curr_score >= 17:
+                return curr_score
+            else:
+                super().hit(True)
+

@@ -2,7 +2,7 @@ from operator import truediv
 from ssl import Options
 
 from cardgames.Deck import Deck
-from cardgames.Player import Player
+from cardgames.Player import Player, Gertrude
 from cardgames.Dealer import Dealer
 
 
@@ -34,9 +34,10 @@ class Games:
                 print("That doesn't make any sense, try again.")
         print('This round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))
         self.pl_list = []
+        self.pl_list.append(Gertrude("GERTRUDE")) 
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
-        self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
+        
         self.round(self.pl_list)
 
 
@@ -48,6 +49,9 @@ class Games:
         # Repeat length of players minus gertrude
         for player in pList:
             # Display current hand
+            if player.name == "GERTRUDE":
+                #passing over gertrude's turn
+                continue
             print(f"{player.name}'s hand: ")
             player.showHand()
 
@@ -84,6 +88,8 @@ class Games:
                     print("That is not a valid repsonse")
 
             # playerGertrude()        start gertrude's turn
+        gertscore = pList[0].playerGertrude(pList[0].hand)
+        print(gertscore) #probably replaced at some point
             # calculateWinner()   end round and calculate winner
 
 if __name__ == "__main__":
