@@ -1,6 +1,7 @@
 from testing_base import *
 
-gert = Gertrude("Gertrude")
+gertDeal = Dealer(Deck())
+gert = Gertrude("Gertrude", gertDeal)
 def test_playerGertrude():
     gertHand = [0, 12] 
     score = gert.playerGertrude(gertHand)
