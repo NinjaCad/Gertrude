@@ -1,3 +1,4 @@
+from cardgames import Card
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
@@ -54,32 +55,67 @@ class Games:
 
         return turn_list
 
+    def card_thievery(self, turn_list, host_player):
+        stepper = 1
+        for players in turn_list:
+            print("player "+str(stepper)+" "+str(players)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
+            stepper += 1
+
+        target_choice = int(0)
+        while target_choice > len(turn_list) or target_choice <= 0:
+            target_choice = int(input("/n"+"Choose player number to steal from: "+"/n"))
+            if target_choice > len(turn_list) or target_choice <= 0:
+                print("Invalid Input! Enter player number.")
+        target_player = turn_list(target_choice - 1)
+
+        #print("Put Card Names Here /n") #Place types of cards here, need card IDs
+        print("Current Hand: ")
+        print(host_player.hand)
+        print("")
+
+        thief_choice = 0
+        while thief_choice > len(target_player.hand) or thief_choice <= 0: #FIX #Needs to have card id#s
+            print("Targets Hand Length: "+str(len(target_player.hand)))
+            thief_choice = int(input("Choose card you wish to steal: "))
+            if thief_choice > len(target_player.hand) or thief_choice <= 0:
+                print("Invalid Choice! Choose number between 0 and "+str(len(target_player.hand)))
+        stolen_card = target_player.hand(thief_choice) #Temporary Card Choice until Card IDs
+        
+        return stolen_card
+
+        
+
             
     def main(self):
         print('Welcome to the Games application!')
         print('This games application is under development.')
+
+        self.deck = Deck() #deck is created here; deck knows how, games decides when
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
-        turn_list = self.start_game(players) #player[0] in list goes first.
+        turn_list = self.start_game(players)
         
         game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
             for player in turn_list:
                 print(player.name)
+
+                card_steal = True
+                while card_steal == True:
+                    thief_answer = (str(input("Would you like to steal a card?"))).lower()
+                    if thief_answer == "y" or "yes":
+                        self.card_thievery(turn_list, player)
+                    elif thief_answer == "n" or "no":
+                        card_steal = False
+                    else:
+                        print("Invalid Input, Type 'y' for Yes or 'n' for No.")
+
         #for each player in the turn list:
             #that player takes a turn
-    
-    
-        input('Press [Enter] to exit.')
 
-        print('First 5 cards in standard 52-card deck:')
-        self.deck = Deck() #deck is created here; deck knows how, games decides when
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
-
-        for card in self.deck.cards[:5]:
-            print(card)
-        print('Press [Enter] to exit.')
+        
 
 if __name__ == "__main__":
     game = Games()
