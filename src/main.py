@@ -9,17 +9,16 @@ from cardgames.Games import HighCardDrawInstructions
 
 
 # print instructions
-HighCardDrawInstructions.get("overview") 
+print(HighCardDrawInstructions.get("overview"))
 
-# create 2 players and dealer
+# initiate variables
 player1 = Player("Player 1")
 player2 = Player("Player 2")
-
 deck = Deck()
 deck.shuffle()
+dealer = Dealer(deck)
 
 # deal cards to players
-dealer = Dealer(deck)
 dealer.dealCards(3, [player1, player2])
 
 # player1 chooses a card
@@ -31,5 +30,7 @@ player1.chosen_card = player1.hand[0]
 # player2 chooses a card
 # stand in code
 player2.chosen_card = player2.hand[0]
+
+# display winner
 winner = declare_winner(player1, player2)
 print("The winner is: ", winner)
