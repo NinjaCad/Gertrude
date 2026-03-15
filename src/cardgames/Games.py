@@ -19,6 +19,7 @@ class Games:
 
     
     def startGame(self):
+        gertDealer = Dealer(Deck())
         while True:
             try:
                 self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
@@ -88,7 +89,7 @@ class Games:
                     print("That is not a valid repsonse")
 
             # playerGertrude()        start gertrude's turn
-        gertscore = pList[0].playerGertrude(pList[0].hand)
+        gertscore = pList[0].gertTurn()
         print(gertscore) #probably replaced at some point
             # calculateWinner()   end round and calculate winner
 

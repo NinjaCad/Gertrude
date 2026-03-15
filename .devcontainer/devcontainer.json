@@ -1,0 +1,19 @@
+{
+  "name": "CIS322E_SP26",
+  "image": "therealhoneybadger/tmu_cis322:sp2026v1.1",
+  "workspaceFolder": "/app",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-pyright.pyright"
+      ]
+    }
+  },
+  "mounts": [
+    "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind",
+    "source=${localEnv:HOME}/.ssh/id_ed25519,target=/root/.ssh/id_ed25519,type=bind"
+  ],
+  "postCreateCommand": "pip install -e . && chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_ed25519"
+}
