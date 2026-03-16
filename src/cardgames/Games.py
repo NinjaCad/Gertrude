@@ -4,6 +4,8 @@ from cardgames.Dealer import Dealer
 from cardgames.Player import Player
 import random
 
+GAME_STATE = {"current_card" : None, "current_player" : None}
+
 class Games:
 
     def __init__(self):
