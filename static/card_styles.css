@@ -1,0 +1,298 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-size: 100%;
+    box-sizing: border-box;
+}
+
+html, body {
+    min-height: 100%;
+}
+
+    /* Monochrome color palette: */
+        /* Lightest: #dcdde0 */
+        /* Lighter: #b5b8c4 */
+        /* Medium: #8c91ab */
+        /* Darker: #3b4b97 */
+        /* Darkest: #0e1c58 */
+
+html {
+    min-height: 100%;
+    background: linear-gradient(135deg, #8c91ab, #0e1c58);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;   /* makes footer stick to bottom */
+    font-family: 'Roboto', sans-serif;
+    font-size: 1.1rem;
+    max-width: 1700px;
+    margin: 0 auto;
+    background: transparent;
+    color: #dcdde0;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Audiowide', cursive;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding-top: 1rem;
+}
+
+header {
+    position: relative;         /* needed for overlay positioning */
+    min-height: 150px;
+    width: 100%;
+    padding: 1.5em;
+    background: transparent;    /* transparent header to show background gradient */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #dcdde0;
+    text-align: center;
+}
+
+header h1 {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+    position: relative;
+    z-index: 1;
+    font-size: 3.5em;
+}
+
+nav ul {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5em 3em;
+}
+
+nav li {
+    flex: 1;
+    list-style: none;
+}
+
+nav li a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    padding: .6em 1.5em;
+    border-radius: 6px;
+    text-decoration: none;
+    background-color: #b5b8c4;
+    color: #0e1c58;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+nav li a:hover {
+    background-color: #8c91ab; /* accent color */
+    color: #0e1c58;
+}
+
+#Quotation {
+    padding: 1%;
+    display: none;
+    text-align: center;
+}
+
+#Quotation * {
+    padding: 1% .1% .1% 1%; /* top right bottom left */
+    display: block;
+}
+
+article {
+    flex: 4;
+    padding: 2% 5% 0% 2%; /* top right bottom left */
+    background: transparent; /* transparent to show background gradient */
+    color: #dcdde0;
+}
+
+article p::first-letter {
+    font-size: 2.5em;
+    color: #0e1c58; 
+    float: left;
+    padding-top: .15em;
+    padding-bottom: .0em;
+    padding-right: .2em;
+    line-height: .55em;
+}
+
+.aside-content p {
+    font-size: 0.9rem;
+    /* placeholder for future formating if desired */
+}   
+
+h2 {
+    font-size: 24px;
+}
+
+aside {
+    position: fixed;
+    top: 0;
+    right: -170px;          /* mostly hidden off-screen */
+    width: 200px;
+    height: 100vh;
+    background: linear-gradient(135deg, #3b4b97, #0e1c58);
+    padding: 1rem;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.2);
+    transition: right 0.3s ease;
+    z-index: 1000;
+}
+
+.tab {
+    position: absolute;
+    top: 50%;
+    left: -35px;               /* sticks out from the side */
+    transform: translateY(-50%) rotate(-90deg); /* rotate text */
+    transform-origin: center;   /* rotate around center */
+    width: 100px;               /* enough width for rotated text */
+    background: #b5b8c4;       /* accent color */
+    color: #0e1c58;        /* lighter text for contrast */
+    text-align: center;
+    font-weight: bold;
+    border-radius: 4px 4px 0 0;
+    text-decoration: none;
+    line-height: 40px;          /* spacing inside tab */
+    z-index: 1001;
+}
+
+.tab:hover {
+    color: #0e1c58;  /* dark text on teal background for contrast */
+    background-color: #8c91ab; /* slightly lighter teal on hover */
+}
+
+aside:hover {               /* Hover effect: expand the sidebar */
+    right: 0;               /* slide fully into view */
+}
+
+.aside-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 0.9rem;
+    padding-bottom: 8px;
+}
+
+aside:hover .aside-content {
+    opacity: 1;
+}
+
+.aside-content ul {
+    list-style: none;
+}
+
+.aside-content li a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.aside-content li a:hover {
+    color: #8c91ab; /* accent on hover */
+}
+
+footer {
+    display: grid;
+    justify-items: center;
+    min-height: 80px;
+    gap: 10px;
+    padding: 15px 0;
+    background: linear-gradient(135deg, #3b4b97, #0e1c58);
+    color: #dcdde0;
+}
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    color: #8c91ab;
+}
+
+@media (max-width: 900px) {
+    h1 {
+        font-size: 2.1em;
+    }
+}
+
+@media (max-width: 700px) {
+    nav ul {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 0.5em;
+        padding: 0.5em 3em;
+        margin: 0;
+        list-style: none;
+    }
+
+    article {
+        width: 100%;
+        padding: 3% 3% 10% 3%; /* top right bottom left */
+    }
+    aside {
+        position: relative;
+        right: 0;
+        left: 0;
+        width: 100%;         /* full width */
+        padding: 0.5rem;
+        box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+        transition: none;
+        height: auto;
+        margin-top: auto; /* push to bottom if content is short */
+    }
+    .tab {
+        position: absolute;
+        top: 10px;
+        left: 44%;                 /* center at top */
+        transform: translateY(-50%) rotate(0deg); /* horizontal */
+        border-radius: 4px 4px 0 0;
+        padding: 5px 10px;
+        font-weight: bold;
+        text-align: center;
+        line-height: 30px;
+    }
+    .aside-content {
+        padding-top: 40px;
+        opacity: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .aside-content ul {
+        display: flex;
+        flex-direction: row;
+        gap: 2em;
+        padding: .5em;
+        margin: 0;
+        list-style: none;
+    }
+    .aside-content li {
+        display: flex;
+    }
+}
+
+@media (min-width: 700px) {
+    #Quotation {
+        display: block;
+    }
+}
+
+article p {
+    margin-bottom: 1em;
+}
+
+article ul {
+    padding-left: 1.5em;
+}
+
+h3 {
+    font-size: 20px;
+    padding: 1em;
+}

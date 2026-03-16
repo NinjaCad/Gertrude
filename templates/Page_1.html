@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Heart Attack</title>
+        
+        <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
+
+        <!-- <link rel="stylesheet" href="card_styles.css"> -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='card_styles.css') }}">
+
+    </head>
+    <body>
+        <header>
+            <h1>Scrumptious Bytes</h1>
+        </header>
+        <nav>
+            <ul>
+                <li><a href="Page_1.html">Home</a></li>
+                <li><a href="Page_3.html">Walkthroughs</a></li>
+                <li><a href="#footer">Contact</a></li>
+            </ul>
+        </nav>        
+        <main>
+            <article>
+                <div id="Quotation">
+                        <q>Fast hands, faster brains, and zero hesitation.</q>
+                        <cite>The Internet</cite>
+                </div>
+
+                <h2>Heart Attack</h2>
+
+                <p>Test your mettle, test your reflexes, and see if you can survive the heart attack! Enter your name in the box below and click "Submit" and you will be placed in a waiting room until the game starts.</p>
+                <form action="/join" method="POST" class="player-input">
+                    <label for="player_name">Name:</label>
+                    <input type="text" id="player_name" name="player_name" placeholder="Enter your name" required>
+                    <button type="submit">Submit</button>
+                </form>
+            </article>
+
+            <aside>
+                <a href="#" class="tab">
+                    Credits
+                </a>
+
+                <div class="aside-content">
+                    <h3>Attribution:</h3>
+                    <ul>
+                        <li><a href="https://www.flaticon.com/free-icons/playing-cards" title="playing cards icons">Favicon by Md Tanvirul Haque</a></li>
+                        <li><a href="https://www.instagram.com/reels/DUfa4L9Efe9/" title="Instagram Reel">Quote by "The Internet"</a></li>
+                        <li><a href="https://stackoverflow.com/questions/12277933/send-data-from-a-textbox-into-flask" title="StackOverflow.com link">How to Send data from a textbox into Flask</a></li>
+                    </ul>
+                </div>
+            </aside>
+            
+        </main>
+        <footer id="footer">
+            <small>E-mail: <a href="mailto:ScrumptiousBytes2026@gmail.com">ScrumptiousBytes2026@gmail.com</a></small>
+            <small>&copy; ScrumptiousBytes 2026</small>
+        </footer>
+    </body>
+</html>
