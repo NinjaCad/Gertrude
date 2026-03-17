@@ -1,6 +1,6 @@
 from cardgames.Card import Card
-from cardgames.Deck import Deck
-from cardgames.Dealer import Dealer
+#from cardgames.Deck import Deck
+#from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -70,8 +70,12 @@ class Player:
         while total_score > 21 and num_aces > 0:
             total_score -= 10
             num_aces -= 1
+        if total_score > 21:
+            self.bust()  # Player busts if score exceeds 21 even after adjusting Aces
+            return -1
+        else:
+            return total_score
         
-        return total_score
     
     def show_partial_hand(self): # This method will need to be called every time a new card is added to the player's hand, and it will update the known cards accordingly.
         #For the dealer, we just need to call the function as many times as the dealer is supposed to reveal cards.
