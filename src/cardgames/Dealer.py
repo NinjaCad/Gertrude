@@ -26,7 +26,7 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
 
-    def checkIfAllThirteenBooksHaveBeenFormed(self, players: "list[Player]"):
+    def checkIfAllThirteenBooksHaveBeenFormed(self, players):
         totalBooks = 0
         for player in players:
             totalBooks += player.books
