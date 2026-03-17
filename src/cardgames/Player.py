@@ -56,6 +56,7 @@ class Player:
                     for card in self.hand:
                         if card.value == value_map.get(listOfBooks[i], ""):
                             self.hand.remove(card)
+                            self.knownCards.pop(self.hand.index(card))
 
     def clearHand(self):
         self.hand = []
