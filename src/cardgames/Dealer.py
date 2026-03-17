@@ -21,19 +21,19 @@ class Dealer:
     def dealCards(self, numCards: int, players: "list[Player]"):
         """Deal `numCards` cards round-robin to each player.
         If there aren't enough cards return False.
-        By convention a player named 'GERTRUDE' receives their second card face-down
+        'GERTRUDE' receives their second card face-down
         (known=False)."""
         if numCards * len(players) > self.deck.size:
             return False
 
-        for round_num in range(numCards):
+        for deal_pass in range(numCards):
             for player in players:
                 # Dealer (GERTRUDE) hides their second card
                 isKnown = True
                 try:
                     name = getattr(player, "name", "")
-                    if isinstance(name, str) and name.upper() == "GERTRUDE" and round_num == 1:
-                        isKnown = False
+                    if isinstance(name, str) and name.upper() == "GERTRUDE" and deal_pass == 1:
+                        isKnown = False #the card is hidden!
                 except Exception:
                     pass
 
