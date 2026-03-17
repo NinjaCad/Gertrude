@@ -4,13 +4,13 @@ class Card:
         self.suit = suit
         self.value = value
         self.image = image
-        self.shortImage = []
+        self.short_image = []
         if self.image:
             for line in self.image:
-                self.shortImage.append(line[:4])
+                self.short_image.append(line[:4])
 
     def __str__(self, short: bool = False):
-        return '\n'.join(self.shortImage if short else self.image)
+        return '\n'.join(self.short_image if short else self.image)
 
     def __eq__(self, other):
         if not type(other) == Card:

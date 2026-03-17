@@ -7,14 +7,14 @@ class Dealer:
         self.deck = deck
         self.deck.shuffle()
 
-    def print_cards(self, cards: "list[Card]", showFront: bool, printShort: bool = True):
+    def print_cards(self, cards: "list[Card]", show_front: bool, print_short: bool = True):
         for idx in range(6):
             for i, card in enumerate(cards):
-                if printShort and i < len(cards)-1:
-                    image = card.shortImage[idx] if showFront else card.card_back[idx]
+                if print_short and i < len(cards)-1:
+                    image = card.short_image[idx] if show_front else card.card_back[idx]
                     print(image, end="")
                 else:
-                    image = card.image[idx] if showFront else card.card_back[idx]
+                    image = card.image[idx] if show_front else card.card_back[idx]
                     print(image, end="")
             print()
 

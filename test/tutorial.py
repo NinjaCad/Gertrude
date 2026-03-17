@@ -8,11 +8,11 @@ dealer = Dealer(deck)
 players = {}
 while True:
     try:
-        NumPlayers = int(input("Enter player count: "))
+        num_players = int(input("Enter player count: "))
         break
     except ValueError:
         print("Please enter number of players: ")
-for i in range(1, NumPlayers+1):
+for i in range(1, num_players+1):
     name = input("Player {} name: ".format(i))
     players[name] = Player(name)
 
