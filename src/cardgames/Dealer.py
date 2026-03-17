@@ -23,13 +23,13 @@ class Dealer:
         if players_length > 52:
             return False
         for card_index in range(len(self.deck.cards)):
-            players[card_index % players_length].addCard(self.deck.getCard())
+            players[card_index % players_length].add_card(self.deck.getCard())
         return True
     
     def add_deck_to_hand(self, player: Player):
         self.deck.shuffle()
         for card in range(self.deck.size):
-            player.addCard(self.deck.getCard())
+            player.add_card(self.deck.getCard())
 
     def resetDeck(self):
         self.deck.reset()

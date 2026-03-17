@@ -1,11 +1,25 @@
 from cardgames.Card import Card
 
 class Player:
-    def __init__(self, name, angle):
+    def __init__(self, name, angle=0):      #player angle defaults to 0 if not passed in
         self.name = name
         self.angle = angle
         self.hand = []
         self.known_cards = []
+
+    #method to return the name of the player to keep the original object protected
+    def get_name(self):
+        player_name = self.name
+        return player_name
+
+    #method to change the name of the player 
+    def set_name(self, name):
+        self.name = name
+
+    #method to return the hand of the player to keep the original object protected
+    def get_hand(self):
+        player_hand = self.hand[:]
+        return player_hand
 
     # changed addCard function to default the isKnown attrib to False, but still retain
     # some functionality if an explicit call to isKnown = True is needed for some reason.
