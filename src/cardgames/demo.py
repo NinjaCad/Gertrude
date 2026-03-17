@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="../../templates", static_folder="../../static")
 
 class Player:
     def __init__ (self, name: str):
@@ -30,7 +30,7 @@ def join():
     unique_name = unique_name_generator(name, player_list)
     new_player = Player(unique_name)
     player_list.append(new_player)
-    return redirect(url_for("page_2.html"))
+    return redirect(url_for("waiting_room"))
 
 @app.route("/page_2")
 def waiting_room():
