@@ -18,11 +18,6 @@ class Dealer:
                     print(image, end="")
             print()
 
-    # GERT-33 dealCards()
-    # inputs: players (list of player objects)
-    # outputs: none
-    # goals: a) given the list of players, give every player 2 cards
-    #        b) for gertrude, make sure to give player aspect the cards. one of gertrude's cards is hidden
     def dealCards(self, numCards: int, players: "list[Player]"):
         if numCards * len(players) > self.deck.size:
             return False
@@ -34,5 +29,3 @@ class Dealer:
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
-
-
