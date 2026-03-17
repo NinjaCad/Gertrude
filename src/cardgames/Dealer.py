@@ -31,3 +31,16 @@ class Dealer:
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
+
+    def redraw_three_card_options(self, player: Player):
+        # Allows a playeret to spend a token to draw 3 more cards.
+        if self.deck.size < 3:
+            self.resetDeck()
+            if self.deck.size < 3:
+                return False
+        if not player.consume_redraw_token():
+            return False
+        player.clearHand()
+        for _ in range(3):
+            player.addCard(self.deck.getCard())
+        return True
