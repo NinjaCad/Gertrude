@@ -5,6 +5,8 @@ from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 
+import random
+
 
 class Games:
 
@@ -12,11 +14,12 @@ class Games:
         self.deck = Deck()
 
     def main(self):
-        print('Welcome to the Simple BlackJack!')
+        print('\nWelcome to the Simple BlackJack!')
         self.playerList = self.startGame()
+        # playerGertrude()        start gertrude's turn
+        # calculateWinner()   end round and calculate winner
         
         input('Press [Enter] to exit.')
-
     
     def startGame(self):
         while True:
@@ -36,59 +39,196 @@ class Games:
         self.pl_list = []
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
-        self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
-        self.round(self.pl_list)
+        #self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
+        self.round()
 
 
     # Loop through all the players
-    # Parameters is a player list
-    def round(self, pList):
+    # Parameters is a player list and a dealer object
+    def round(self):
+        dealer = Dealer(self.deck)
+        
         # dealCards()      Need to reset player hands and hand out two cards per player
 
-        # Repeat length of players minus gertrude
-        for player in pList:
-            # Display current hand
-            print(f"{player.name}'s hand: ")
-            player.showHand()
-
+        # Repeat length of players minus gertrude (Currently gertrude is not part of the player list and just gets called in a seperate function)
+        for player in self.pl_list:
             turn = True
-            while(turn): # (turn && endTurn() == False)   end turn after certain conditions
-                # Check to see what the player can do
-                options = {}
-                options["hit"] = True
-                options["stand"] = True
-                options["split"] = False
-                options["doubleDown"] = False
-                #options["insurance"] = False
 
-                # Print what the player can do
-                move = input("Choose either to: ")
-                for key, value in pList.items():
-                    if value:  # only if True
-                        print(key)
+            # Easy way to make new moves with dictionary
+            moves = {
+                "hit": {
+                    "enabled": True,
+                    "aliases": {"h"},
+                    "action": lambda: player.hit(dealer),
+                },
+                "stand": {
+                    "enabled": True,
+                    "aliases": {"s"},
+                    "action": player.stand,
+                },
+                "split": {
+                    "enabled": False,
+                    "aliases": {"sp"},
+                    #"action": player.split,       doesnt exist yet
+                },
+                "Double Down": {
+                    "enabled": False,
+                    "aliases": {"dd"},
+                    #"action": player.doubleDown,           doesnt exist yet
+                },
+                "help": {
+                    "enabled": True,
+                    "aliases": {"?"},
+                    "action": None,
+                },
+                "trash talk": {
+                    "enabled": True,
+                    "aliases": {"tt"},
+                    "action": self.trashTalk,
+                },
+                "quit": {
+                    "enabled": True,
+                    "aliases": {"q"},
+                    "action": self.quit,
+                },
+            }
+            print(f"\n--- {player.name}'s turn ---")
+            print(f"--- {player.name}'s hand ---")
+            #player.showHand()     right now its empty b/c dealCards() does'nt exist yet
 
-                # Call functions according to players choice
-                if (options["hit"] and (move == "hit" or move == "h")):
-                    print("hit")
-                    player.hit(True)
-                elif (options["stand"] and (move == "stand" or move == "s")):
-                    print("stand")
-                    player.stand()
-                elif (options["split"] and (move == "split" or move == "sp")):
-                    print("split")
-                    player.split()
-                elif (options["doubleDown"] and (move == "doubleDown" or move == "dd")):
-                    print("double down")
-                    player.doubleDown()
+            while turn:
+                # refresh availability each loop because the commands change
+                #moves["split"]["enabled"] = (lambda: player.can_split())
+                #moves["doubleDown"]["enabled"] = (lambda: player.can_double())
+                moves["help"]["action"] = (lambda: self.help(player, moves))
+
+                # Print what moves are available based on enabled key in moves dictionary
+                enabled_moves = [n for n, info in moves.items() if info["enabled"]]
+                print("Choose:", ", ".join(enabled_moves))
+
+                choice = input("> ").strip().lower()
+
+                # Check to see what move the player chose by comparing the name and the aliases
+                selected = None
+                for name, info in moves.items():
+                    if choice == name.lower() or choice in info["aliases"]:
+                        selected = name
+                        break
+                    
+                # Use the selected move to call the appropriate function with the appropriate arguments and check enabled
+                if selected and moves[selected]["enabled"]:
+                    # Call the function associated with the move, if it has one
+                    moves[selected]["action"]()
+
+                    # Print hand only after valid move
+                    print(f"\n--- {player.name}'s hand ---")
+                    player.showHand()
+
+                    # Create a list with the values of the cards in the player's hand b/c the check_cards function in Player.py only takes values
+                    hand_values = [card.value for card in player.hand]
+                    total = player.check_cards(hand_values)
+
+                    # Check if the player has busted by using the check_cards function in Player.py, and if they have, end their turn and show their hand value
+                    if (total >= 21):
+                        player.bust()
+
+                    if (player.active == False):
+                        print(f"{player.name} ends with a hand value of {total}.")
+                        turn = False
                 else:
-                    print("That is not a valid repsonse")
+                    print("Not a valid move.")
 
-            # playerGertrude()        start gertrude's turn
-            # calculateWinner()   end round and calculate winner
+    def help(self, player, moves: dict):
+        # Basics of the game
+        print("""
+        BLACKJACK (21) - HOW TO PLAY:
+
+        GOAL:
+        Beat the dealer by getting closer to 21 without going over.
+
+        CARD VALUES:
+        - Number cards (2–10) = face value
+        - Face cards (J, Q, K) = 10
+        - Ace = 1 or 11
+
+        SETUP:
+        - You and the dealer each get 2 cards
+        - Your cards are face up
+        - Dealer has 1 face up, 1 face down
+
+        PLAYER ACTIONS:
+        - Hit: Take another card
+        - Stand: Keep your hand
+        - Double Down: Double bet, take 1 card only
+        - Split: If you have 2 matching cards, split into 2 hands
+
+        BUST:
+        - If your total goes over 21, you lose immediately
+
+        DEALER RULES:
+        - Dealer reveals hidden card after your turn
+        - Must hit until at least 17
+        - Must stand on 17 or higher
+
+        WINNING:
+        - Higher than dealer without busting = win
+        - Dealer busts = win
+        - Lower than dealer = lose
+        - Tie = push (bet returned)
+
+        BLACKJACK:
+        - Ace + 10-value card
+        - Best possible hand
+        - Pays extra (usually 3:2)
+
+        TIPS:
+        - Hit if under 12
+        - Stand on 17+
+        - Play aggressive if dealer has 7 or higher
+        - Be cautious if dealer has 4–6
+        """)
+        # Print all the commands, their alternate name(s), and if they they can use it
+        print("\nCOMMANDS CURRENTLY AVAILABLE:")
+        for name, info in moves.items():
+            aliases = ", ".join(sorted(info.get("aliases", [])))
+            status = "enabled" if info.get("enabled") else "disabled"
+            if aliases:
+                print(f"  - {name} ({aliases}) [{status}]")
+            else:
+                print(f"  - {name} [{status}]")
+        
+        # Create a list with the values of the cards in the player's hand b/c the check_cards function in Player.py only takes values
+        hand_values = [card.value for card in player.hand]
+        total = player.check_cards(hand_values)
+        print("\nCURRENT HAND VALUE:", total)
+        print()
+    
+    def trashTalk(self):
+        lines = [
+        "Gertrude smirks: 'You call that a hand? I've seen better from a toddler.'",
+        "Gertrude laughs: 'Bold move… unfortunately, a bad one.'",
+        "Gertrude sighs: 'You sure you know the rules, or are you just guessing?'",
+        "Gertrude grins: 'Go ahead, hit again. I love watching this.'",
+        "Gertrude chuckles: 'Oh no… this isn't going to end well for you.'",
+        "Gertrude raises an eyebrow: 'Risky. I almost respect it… almost.'",
+        "Gertrude smirks: 'You’re making this way too easy for me.'",
+        "Gertrude laughs softly: 'House always wins, sweetheart.'",
+        "Gertrude leans in: 'You might want to rethink that strategy.'",
+        "Gertrude shrugs: 'I’ll try not to embarrass you too much.'"
+        ]
+    
+        print("\n" + random.choice(lines) + "\n")
+
+    def quit(self):
+        print("Quitting game. Goodbye!")
+        raise SystemExit(0)
 
 if __name__ == "__main__":
     game = Games()
     game.main()
- 
- 
 
+"""
+To run game:
+cd into to /app/src
+python -m cardgames.Games
+"""

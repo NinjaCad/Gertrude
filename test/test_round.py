@@ -1,12 +1,13 @@
 from testing_base import *
 
-game = Games()
-players = []
-players.append(Player("Bob"))
-players.append(Player("Bobby"))
-players.append(Player("Gertrude"))
+def checkRound():
+    game = Games()
+    players = []
+    players.append(Player("Bob"))
+    players.append(Player("Bobby"))
+    players.append(Player("Gertrude"))
 
-game.round(players)
+    #game.round(players)
 
 # test case 1:
 # TRY: input: "stand" -> prints: "stand"
