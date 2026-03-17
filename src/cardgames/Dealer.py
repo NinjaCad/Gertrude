@@ -26,6 +26,14 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
 
+    def checkIfAllThirteenBooksHaveBeenFormed(self, players: "list[Player]"):
+        totalBooks = 0
+        for player in players:
+            totalBooks += player.books
+        if totalBooks == 13:
+            return True
+        return False
+
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
