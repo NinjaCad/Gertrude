@@ -1,11 +1,4 @@
 """
-██████╗ ██╗     ███████╗ █████╗ ███████╗███████╗    ██████╗ ███████╗ █████╗ ██████╗ 
-██╔══██╗██║     ██╔════╝██╔══██╗██╔════╝██╔════╝    ██╔══██╗██╔════╝██╔══██╗██╔══██╗
-██████╔╝██║     █████╗  ███████║███████╗█████╗      ██████╔╝█████╗  ███████║██║  ██║
-██╔═══╝ ██║     ██╔══╝  ██╔══██║╚════██║██╔══╝      ██╔══██╗██╔══╝  ██╔══██║██║  ██║
-██║     ███████╗███████╗██║  ██║███████║███████╗    ██║  ██║███████╗██║  ██║██████╔╝
-╚═╝     ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ 
-
 PLEASE READ BEFORE DOING ANYTHING
 
 To run game:
@@ -15,14 +8,8 @@ To run game:
 Only add files individually and never use "git add ."
     run: git add file.py
 
-If you accidentally add a file thats not a python file, or you want to unstage a file, use:
-    run: git rm --cached file.txt
-
 Make sure to comment on whatever new function you make
 """
-
-from operator import truediv
-from ssl import Options
 
 from cardgames.Deck import Deck
 from cardgames.Player import Player
@@ -58,7 +45,7 @@ class Games:
     def startGame(self):
         while True:
             try:
-                self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
+                self.amtPlayers = int(input("How many people are playing? (7 players max.): "))
                 
                 if self.amtPlayers > 7:
                     print("That's too many players! Try again.")
