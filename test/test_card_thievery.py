@@ -2,7 +2,6 @@ from testing_base import *
 
 def test_cardsteal():
     deck = Deck()
-    dealer = Dealer(deck)
 
     game = Games()
     Dory = Player("Dory")
@@ -20,12 +19,17 @@ def test_cardsteal():
     #Select card between 0 and 5 for players hand, anything higher or below should not work.
     #Words should not work. Temporary use of numbers until card ids.
 
-    dealer.dealCards(5, players)
+    for unit in range(5):
+        for player in players:
+            player.addCard(deck.getCard())
+
     targeted_player = game.card_thievery(players, Dory)
 
     print("")
+    assert len(Dory.hand) == 6
     print("Dory's Hand:")
     print(len(Dory.hand))
+    assert len(targeted_player.hand) == 4
     print("Target's Hand:")
     print(len(targeted_player.hand))
 
