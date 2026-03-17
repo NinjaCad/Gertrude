@@ -58,30 +58,42 @@ class Games:
     def card_thievery(self, turn_list, host_player):
         stepper = 1
         for players in turn_list:
-            print("player "+str(stepper)+" "+str(players)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
+            if players != host_player:
+                print("player "+str(stepper)+" "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
             stepper += 1
 
         target_choice = int(0)
         while target_choice > len(turn_list) or target_choice <= 0:
-            target_choice = int(input("/n"+"Choose player number to steal from: "+"/n"))
-            if target_choice > len(turn_list) or target_choice <= 0:
+            try:
+                target_choice = int(input("\n"+"Choose player number to steal from: "))
+                if target_choice > len(turn_list) or target_choice <= 0 or (turn_list[target_choice - 1]).name == host_player.name:
+                    print("Invalid Input! Enter player number.")
+                    target_choice = int(0)
+            except:
                 print("Invalid Input! Enter player number.")
-        target_player = turn_list(target_choice - 1)
-
-        #print("Put Card Names Here /n") #Place types of cards here, need card IDs
-        print("Current Hand: ")
-        print(host_player.hand)
+        target_player = turn_list[target_choice - 1]
         print("")
 
+        #print("Put Card Names Here /n") #Place types of cards here, need card IDs
+        #print("Current Hand: ") #Doesn't matter without card ids
+        #print(host_player.hand)
+        #print("") 
+
         thief_choice = 0
-        while thief_choice > len(target_player.hand) or thief_choice <= 0: #FIX #Needs to have card id#s
+        while thief_choice > len(target_player.hand) or thief_choice <= 0: 
             print("Targets Hand Length: "+str(len(target_player.hand)))
-            thief_choice = int(input("Choose card you wish to steal: "))
-            if thief_choice > len(target_player.hand) or thief_choice <= 0:
-                print("Invalid Choice! Choose number between 0 and "+str(len(target_player.hand)))
-        stolen_card = target_player.hand(thief_choice) #Temporary Card Choice until Card IDs
-        
-        return stolen_card
+            try:
+                thief_choice = int(input("Choose card you wish to steal: "))
+                if thief_choice > len(target_player.hand) or thief_choice <= 0:
+                    print("Invalid Choice! Choose number between 0 and "+str(len(target_player.hand))+"\n")
+            except:
+                print("Invalid Choice! Choose number between 0 and "+str(len(target_player.hand))+"\n")
+        #Temporary Card Choice until Card IDs, equivalent to them holding the backs of their cards up for choice.
+
+        host_player.addCard(target_player.hand[thief_choice])
+        target_player.removeCard(target_player.hand[thief_choice])
+
+        return target_player
 
         
 
