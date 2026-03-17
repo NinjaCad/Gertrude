@@ -1,3 +1,26 @@
+"""
+██████╗ ██╗     ███████╗ █████╗ ███████╗███████╗    ██████╗ ███████╗ █████╗ ██████╗ 
+██╔══██╗██║     ██╔════╝██╔══██╗██╔════╝██╔════╝    ██╔══██╗██╔════╝██╔══██╗██╔══██╗
+██████╔╝██║     █████╗  ███████║███████╗█████╗      ██████╔╝█████╗  ███████║██║  ██║
+██╔═══╝ ██║     ██╔══╝  ██╔══██║╚════██║██╔══╝      ██╔══██╗██╔══╝  ██╔══██║██║  ██║
+██║     ███████╗███████╗██║  ██║███████║███████╗    ██║  ██║███████╗██║  ██║██████╔╝
+╚═╝     ╚══════╝╚══════╝╚═╝  ╚═╝╚══════╝╚══════╝    ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═════╝ 
+
+PLEASE READ BEFORE DOING ANYTHING
+
+To run game:
+    cd into: /app/src
+    run: python -m cardgames.Games
+
+Only add files individually and never use "git add ."
+    run: git add file.py
+
+If you accidentally add a file thats not a python file, or you want to unstage a file, use:
+    run: git rm --cached file.txt
+
+Make sure to comment on whatever new function you make
+"""
+
 from operator import truediv
 from ssl import Options
 
@@ -14,11 +37,22 @@ class Games:
         self.deck = Deck()
 
     def main(self):
-        print('\nWelcome to the Simple BlackJack!')
+        print('\nWelcome to the Gertrude\'s BlackJack!')
+
+        # Sets up game and player list, which will be used for rounds
         self.playerList = self.startGame()
-        # playerGertrude()        start gertrude's turn
-        # calculateWinner()   end round and calculate winner
-        
+
+        while True:
+            # bet()
+            # dealCards()
+            self.round()
+
+            # playerGertrude()        start gertrude's turn
+            # calculateWinner()   end round and calculate winner
+
+            break
+
+        print("\nThanks for playing!")
         input('Press [Enter] to exit.')
     
     def startGame(self):
@@ -37,23 +71,17 @@ class Games:
                 print("That doesn't make any sense, try again.")
         print('This round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))
         self.pl_list = []
+        self.pl_list.append(Player("GERTRUDE"))
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
-        #self.pl_list.append(Player("GERTRUDE")) #Player("GERTRUDE") will be eventually replaced
-        self.round()
+        return self.pl_list
 
-
-    # Loop through all the players
-    # Parameters is a player list and a dealer object
+    # Loop through all the players and there actions
     def round(self):
-        dealer = Dealer(self.deck)
-        
-        # dealCards()      Need to reset player hands and hand out two cards per player
+        dealer = Dealer(self.deck) # Eventually this will be from the Gertrude object in player list
 
-        # Repeat length of players minus gertrude (Currently gertrude is not part of the player list and just gets called in a seperate function)
-        for player in self.pl_list:
-            turn = True
-
+        # Repeat length of players minus gertrude
+        for player in self.playerList[1:]:
             # Easy way to make new moves with dictionary
             moves = {
                 "hit": {
@@ -81,11 +109,6 @@ class Games:
                     "aliases": {"?"},
                     "action": None,
                 },
-                "trash talk": {
-                    "enabled": True,
-                    "aliases": {"tt"},
-                    "action": self.trashTalk,
-                },
                 "quit": {
                     "enabled": True,
                     "aliases": {"q"},
@@ -96,7 +119,7 @@ class Games:
             print(f"--- {player.name}'s hand ---")
             #player.showHand()     right now its empty b/c dealCards() does'nt exist yet
 
-            while turn:
+            while True:
                 # refresh availability each loop because the commands change
                 #moves["split"]["enabled"] = (lambda: player.can_split())
                 #moves["doubleDown"]["enabled"] = (lambda: player.can_double())
@@ -120,75 +143,77 @@ class Games:
                     # Call the function associated with the move, if it has one
                     moves[selected]["action"]()
 
-                    # Print hand only after valid move
-                    print(f"\n--- {player.name}'s hand ---")
-                    player.showHand()
+                    # Print hand only after valid move and it's not help or quit, because those dont change the hand
+                    if selected not in ["help", "quit"]:
+                        print(f"\n--- {player.name}'s hand ---")
+                        player.showHand()
 
-                    # Create a list with the values of the cards in the player's hand b/c the check_cards function in Player.py only takes values
-                    hand_values = [card.value for card in player.hand]
-                    total = player.check_cards(hand_values)
+                    total = player.check_cards(player.hand)
 
-                    # Check if the player has busted by using the check_cards function in Player.py, and if they have, end their turn and show their hand value
+                    # Check if the player has busted by using the check_cards function in Player.py
                     if (total >= 21):
                         player.bust()
+                        self.trashTalk()
 
+                    # Check if the player's turn has ended, and if so, end their turn and print their hand value
                     if (player.active == False):
                         print(f"{player.name} ends with a hand value of {total}.")
-                        turn = False
+                        break
                 else:
                     print("Not a valid move.")
 
+    # Simple that prints the rules, the available commands, and the player's current hand and hand value
     def help(self, player, moves: dict):
         # Basics of the game
         print("""
-        BLACKJACK (21) - HOW TO PLAY:
+BLACKJACK (21) - HOW TO PLAY:
 
-        GOAL:
-        Beat the dealer by getting closer to 21 without going over.
+GOAL:
+Beat the dealer by getting closer to 21 without going over.
 
-        CARD VALUES:
-        - Number cards (2–10) = face value
-        - Face cards (J, Q, K) = 10
-        - Ace = 1 or 11
+CARD VALUES:
+  - Number cards (2–10) = face value
+  - Face cards (J, Q, K) = 10
+  - Ace = 1 or 11
 
-        SETUP:
-        - You and the dealer each get 2 cards
-        - Your cards are face up
-        - Dealer has 1 face up, 1 face down
+SETUP:
+  - You and the dealer each get 2 cards
+  - Your cards are face up
+  - Dealer has 1 face up, 1 face down
 
-        PLAYER ACTIONS:
-        - Hit: Take another card
-        - Stand: Keep your hand
-        - Double Down: Double bet, take 1 card only
-        - Split: If you have 2 matching cards, split into 2 hands
+PLAYER ACTIONS:
+  - Hit: Take another card
+  - Stand: Keep your hand
+  - Double Down: Double bet, take 1 card only
+  - Split: If you have 2 matching cards, split into 2 hands
 
-        BUST:
-        - If your total goes over 21, you lose immediately
+BUST:
+  - If your total goes over 21, you lose immediately
 
-        DEALER RULES:
-        - Dealer reveals hidden card after your turn
-        - Must hit until at least 17
-        - Must stand on 17 or higher
+DEALER RULES:
+  - Dealer reveals hidden card after your turn
+  - Must hit until at least 17
+  - Must stand on 17 or higher
 
-        WINNING:
-        - Higher than dealer without busting = win
-        - Dealer busts = win
-        - Lower than dealer = lose
-        - Tie = push (bet returned)
+WINNING:
+  - Higher than dealer without busting = win
+  - Dealer busts = win
+  - Lower than dealer = lose
+  - Tie = push (bet returned)
 
-        BLACKJACK:
-        - Ace + 10-value card
-        - Best possible hand
-        - Pays extra (usually 3:2)
+BLACKJACK:
+  - Ace + 10-value card
+  - Best possible hand
+  - Pays extra (usually 3:2)
 
-        TIPS:
-        - Hit if under 12
-        - Stand on 17+
-        - Play aggressive if dealer has 7 or higher
-        - Be cautious if dealer has 4–6
+TIPS:
+  - Hit if under 12
+  - Stand on 17+
+  - Play aggressive if dealer has 7 or higher
+  - Be cautious if dealer has 4–6
         """)
         # Print all the commands, their alternate name(s), and if they they can use it
-        print("\nCOMMANDS CURRENTLY AVAILABLE:")
+        print("COMMANDS CURRENTLY AVAILABLE:")
         for name, info in moves.items():
             aliases = ", ".join(sorted(info.get("aliases", [])))
             status = "enabled" if info.get("enabled") else "disabled"
@@ -197,12 +222,18 @@ class Games:
             else:
                 print(f"  - {name} [{status}]")
         
+        # Print current hand
+        print("\nCURRENT HAND:")
+        player.showHand()
+
         # Create a list with the values of the cards in the player's hand b/c the check_cards function in Player.py only takes values
-        hand_values = [card.value for card in player.hand]
-        total = player.check_cards(hand_values)
+        #hand_values = [card.value for card in player.hand]
+        #total = player.check_cards(hand_values)
+        total = player.check_cards(player.hand)
         print("\nCURRENT HAND VALUE:", total)
         print()
     
+    # Just some fun trash talk lines that gertrude can say for some reason
     def trashTalk(self):
         lines = [
         "Gertrude smirks: 'You call that a hand? I've seen better from a toddler.'",
@@ -219,6 +250,7 @@ class Games:
     
         print("\n" + random.choice(lines) + "\n")
 
+    # Quit function that ends the game when the player inputs "quit" or "q"
     def quit(self):
         print("Quitting game. Goodbye!")
         raise SystemExit(0)
@@ -226,9 +258,3 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main()
-
-"""
-To run game:
-cd into to /app/src
-python -m cardgames.Games
-"""

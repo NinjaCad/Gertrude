@@ -52,7 +52,7 @@ class Player:
         num_aces = 0
 
         for card_id in hand:
-            rank_index = card_id % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+            rank_index = card_id.value % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
 
             if rank_index == 0:        # It's an Ace
                 val = 11
