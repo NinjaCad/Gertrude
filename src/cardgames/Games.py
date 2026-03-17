@@ -42,18 +42,17 @@ class Games:
     
     def showOpponentsHands(self, players):
         for player in players:
-            if player.isTurn or player.hand == []:
+            if player.isTurn or player.hand == []: # Skips the player whos turn it is, as well as players with empty hands
                 continue
             
-            # Turns player.knownCards into Falses to only print the backs, then restores it afterwords
             print(f'{player.name}\'s hand:')
             knownCardsStore = player.knownCards
-            player.knownCards = [False] * len(player.knownCards)
+            player.knownCards = [False] * len(player.knownCards) # Changes cards in opponents' hands to not be visible
 
             player.showHand()
             print()
 
-            player.knownCards = knownCardsStore
+            player.knownCards = knownCardsStore # Reverses cards to be visible
     
     def start_game(self, players):
         playerlist = players[:]
