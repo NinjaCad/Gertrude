@@ -2,6 +2,7 @@ from testing_base import *
 import random
 
 def test_printHand_basic():
+    print("Running basic test:")
     game = Games()
     players = [Player('1'), Player('2'), Player('3'), Player('4')]
     deck = Deck()
@@ -15,7 +16,8 @@ def test_printHand_basic():
         game.showOpponentsHands(players)
         player.isTurn = False
 
-def test_printHand_random():
+def test_printHand_amounts():
+    print("Running custom amounts test:")
     game = Games()
     players = [Player('1'), Player('2'), Player('3'), Player('4')]
     deck = Deck()
@@ -30,6 +32,7 @@ def test_printHand_random():
     game.showOpponentsHands(players)
 
 def test_printHand_consistency():
+    print("Running consistency test:")
     game = Games()
     players = [Player('1')]
     deck = Deck()
@@ -43,8 +46,9 @@ def test_printHand_consistency():
     game.showOpponentsHands(players)
     assert players[0].hand == beforeHand
     assert players[0].knownCards == beforeKnownCards
+    print("Consistency test passed!")
 
 if __name__ == "__main__":
     test_printHand_basic()
-    test_printHand_random()
+    test_printHand_amounts()
     test_printHand_consistency()
