@@ -1,5 +1,5 @@
 from cardgames.Card import Card
-
+#from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -51,7 +51,7 @@ class Player:
         num_aces = 0
 
         for card_id in hand:
-            rank_index = card_id % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+            rank_index = card_id.value % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
 
             if rank_index == 0:        # It's an Ace
                 val = 11
@@ -82,7 +82,7 @@ class Player:
             
     def hit(self, dealer, isKnown: bool = True):
         # hit() now goes through dealer 
-        deck = self.dealer.deck
+        deck = dealer.deck
 
         if deck.size <= 0:
             # we can change this to endgame() function when we come across that in future sprints
@@ -96,8 +96,8 @@ class Gertrude(Player):
     def gertTurn(self, dealer):
         while True:
             curr_score = super().check_cards(self.hand)
-            if curr_score >= 17:
+            if curr_score >= 17: #the dealer can't hit if their score is 17 or more
                 return curr_score
-            else:
+            else: #the dealer needs to hit if their score is less than 17
                 super().hit(dealer, True)
 
