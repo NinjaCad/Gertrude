@@ -163,7 +163,7 @@ class Games:
                     print("Not a valid move.")
 
     # Simple that prints the rules, the available commands, and the player's current hand and hand value
-    def help(self, player, moves: dict):
+    def help(self, player: Player, moves: dict = {}):
         # Basics of the game
         print("""
 BLACKJACK (21) - HOW TO PLAY:
