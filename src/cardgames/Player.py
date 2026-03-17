@@ -1,6 +1,6 @@
 from cardgames.Card import Card
 from cardgames.Deck import Deck
-from cardgames.Dealer import Dealer
+# from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -10,6 +10,10 @@ class Player:
         # When True, contributes to main game loop asking the player if they want to stand/hit/etc
         # When False, that player will no longer be targeted in the game loop (when all players are False, round ends) 
         self.active = True
+        
+        # GERT-18 initialize money and bet attributes for player
+        self.money = 100
+        self.bet_money = 0
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -122,13 +126,50 @@ class Player:
     # GERT-18 bet()
     # inputs: none
     # ouputs: none
-    # goal: a) create new self.money and self.bet attributes
-    #       b) set self.bet based on user input
+    # goal: a) create new self.money and self.bet_money attributes
+    #       b) set self.bet_money based on user input
+    def bet(self):
+        # GERT-30 call trashtalk when player makes a bet
+        
+        while True: # while loop guarantees valid input
+            bet = input(f"{self.name}, how much do you want to bet? ")
+            
+            try: # guarantee that bet is an integer
+                bet = int(bet)
+            except ValueError:
+                print("Please enter a valid integer amount.")
+                continue
+            
+            if bet < 0: # guarantee bet is positive
+                print("Bet amount cannot be negative. Please enter a valid amount.")
+                continue
+            
+            elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
+                print(f"You cannot go more than $100 in debt. Be responsible!")
+                continue
+            
+            else: # if all checks are passed, set bet and break loop
+                self.bet_money = bet
+                break
+            
+        return
+
     
     # GERT-18 resolve_bet()
-    # inputs: win (boolean)
+    # inputs: win (boolean), Gertrude (Player object)
     # outputs: none
-    # goal: add or subtract bet attribute from money attribute based on whether or not player one
+    # goal: a) add or subtract bet attribute from money attribute based on whether or not player one
+    #       b) add or subtract bet attribute from Gertrude's money attribute based on whether or not player one won
+    def resolve_bet(self, win, dealer):
+        
+        if win: # player gets money from dealer if they win
+            self.money += self.bet_money
+            dealer.money -= self.bet_money
+        else: # player gives money to dealer if they lose
+            self.money -= self.bet_money
+            dealer.money += self.bet_money
+            
+        self.bet_money = 0 # reset bet after resolving
     
     # GERT-30 trashtalk()
     # inputs: player (player object)
