@@ -1,6 +1,8 @@
 from testing_base import * 
 
-def checkHelp():
+def test_help():
+    game = Games()
+
     #TEST CASE #1:
     moves = {
             "hit": {
@@ -12,7 +14,8 @@ def checkHelp():
                 "aliases": {"s"},
             }
             }
-    game.help(Player("tester"), moves)
+    test1 = Player("test1")
+    game.help(test1, moves)
     #EXCEPTED OUTPUT:
         # BLACKJACK (21) - HOW TO PLAY:
 
@@ -75,6 +78,9 @@ def checkHelp():
         # CURRENT HAND VALUE: 0
     
     # TEST CASE #2:
+        #deck = Deck()
+        #test2.hand.append(deck.getCard())
+        #test2.hand.append(deck.getCard())
     moves = {
             "split": {
                 "enabled": False,
@@ -174,5 +180,4 @@ def checkHelp():
         # CURRENT HAND VALUE: 21
 
 if __name__ == "__main__":
-    game = Games()
-    checkHelp()
+    test_help()
