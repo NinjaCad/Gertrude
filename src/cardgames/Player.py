@@ -50,12 +50,12 @@ class Player:
         num_aces = 0
 
         for card_id in hand:
-            rank_index = card_id.value % 13  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+            rank_index = card_id.value  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
 
-            if rank_index == 0:        # It's an Ace
+            if rank_index == 1:        # It's an Ace
                 val = 11
                 num_aces += 1
-            elif rank_index >= 10:     # It's a Face Card
+            elif rank_index >= 11:     # It's a Face Card
                 val = 10
             else:                      # It's 2 through 10
                 val = rank_index

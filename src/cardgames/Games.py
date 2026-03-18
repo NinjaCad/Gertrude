@@ -1,5 +1,5 @@
 """
-PLEASE READ BEFORE DOING ANYTHING
+PLEASE READ
 
 To run game:
     cd into: /app/src
@@ -8,7 +8,7 @@ To run game:
 Only add files individually and never use "git add ."
     run: git add file.py
 
-Make sure to comment on whatever new function you make
+Make sure to comment on everything new you make and ask if you need help or clarification
 """
 
 from cardgames.Deck import Deck
@@ -32,18 +32,22 @@ class Games:
         self.playerList = self.startGame()
 
         while True:
-            for player in self.playerList[1:]:
-                player.bet()
+            #for player in self.playerList[1:]:
+                #player.bet()
 
             self.dealer.dealCards(2, self.playerList)
             
             self.round()
 
-            self.playerList[0].gertTurn(self.dealer)
+            #self.playerList[0].gertTurn(self.dealer)
         
-            self.calculateWinner()
+            #self.calculateWinner()
 
-            break
+            quit = input("Play another round? (y/n): ").strip().lower()
+            while quit not in ["y", "yes", "n", "no"]:
+                quit = input("Not a valid input. Do you want to play another round? (y/n): ").strip().lower()
+            if quit in ["n", "no"]:
+                break
 
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
@@ -90,7 +94,7 @@ class Games:
                     "aliases": {"sp"},
                     #"action": player.split,
                 },
-                "Double Down": {
+                "double down": {
                     "enabled": False,
                     "aliases": {"dd"},
                     #"action": player.doubleDown,
@@ -99,11 +103,6 @@ class Games:
                     "enabled": True,
                     "aliases": {"?"},
                     "action": None,
-                },
-                "quit": {
-                    "enabled": True,
-                    "aliases": {"q"},
-                    "action": self.quit,
                 },
             }
 
@@ -141,12 +140,12 @@ class Games:
                     # Call the function associated with the move, if it has one
                     moves[selected]["action"]()
 
-                    # Print hand only after valid move and it's not help or quit, because those dont change the hand
-                    if selected not in ["help", "quit"]:
+                    # Print hand only after valid move and it's not help or quit, because those don't change the hand
+                    if selected is not "help":
                         print(f"\n--- {player.name}'s hand ---")
                         player.showHand()
                 else:
-                    print("Not a valid move.")
+                    print("Not a valid input.")
 
     # Simple that prints the rules, the available commands, and the player's current hand and hand value
     def help(self, player: Player, moves: dict = {}):
@@ -198,6 +197,7 @@ TIPS:
   - Play aggressive if dealer has 7 or higher
   - Be cautious if dealer has 4–6
         """)
+
         # Print all the commands, their alternate name(s), and if they they can use it
         print("COMMANDS CURRENTLY AVAILABLE:")
         for name, info in moves.items():
@@ -217,27 +217,24 @@ TIPS:
         print("\nCURRENT HAND VALUE:", total)
         print()
     
-    # Just some fun trash talk lines that gertrude can say for some reason
+    # Just some fun trash talk lines that gertrude when the player busts
     def trashTalk(self):
         lines = [
-        "Gertrude smirks: 'You call that a hand? I've seen better from a toddler.'",
-        "Gertrude laughs: 'Bold move… unfortunately, a bad one.'",
-        "Gertrude sighs: 'You sure you know the rules, or are you just guessing?'",
-        "Gertrude grins: 'Go ahead, hit again. I love watching this.'",
-        "Gertrude chuckles: 'Oh no… this isn't going to end well for you.'",
-        "Gertrude raises an eyebrow: 'Risky. I almost respect it… almost.'",
-        "Gertrude smirks: 'You’re making this way too easy for me.'",
-        "Gertrude laughs softly: 'House always wins, sweetheart.'",
-        "Gertrude leans in: 'You might want to rethink that strategy.'",
-        "Gertrude shrugs: 'I’ll try not to embarrass you too much.'"
+            "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
+            "Gertrude nods at your cards: 'Ah yes, the classic strategy: ignore the number 21.'",
+            "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
+            "Gertrude leans in: 'You were so close… to making a smarter decision.'",
+            "Gertrude grins: 'You hit like 21 is just a suggestion.'",
+            "Gertrude laughs: 'Don’t worry—lots of people panic-hit. Not *winners*, but people.'",
+            "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
+            "Gertrude shrugs: 'I’ve seen better decisions at a roulette table.'",
+            "Gertrude politely: 'Next time, try stopping before your hand catches fire.'",
+            "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
+            "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
+            "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'"
         ]
     
         print("\n" + random.choice(lines) + "\n")
-
-    # Quit function that ends the game when the player inputs "quit" or "q"
-    def quit(self):
-        print("Quitting game. Goodbye!")
-        raise SystemExit(0)
 
 if __name__ == "__main__":
     game = Games()
