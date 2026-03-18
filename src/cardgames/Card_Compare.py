@@ -32,7 +32,11 @@ class Card:
         if not isinstance(other, Card):
             raise TypeError("Can only compare one Card with anotherCard")
 
-
+        # compare values
+        if self.value > other.value:
+            return 1
+        elif self.value < other.value:
+            return -1
 
         # If values equal, compare suits
         suit1 = self._get_suit_rank()
