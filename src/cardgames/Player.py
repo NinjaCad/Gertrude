@@ -28,6 +28,13 @@ class Player:
                     print(image, end="")
             print()
 
+    #cmena sprint 2
+    def sortHand(self):
+        paired = list(zip(self.hand, self.knownCards))
+        paired.sort(key=lambda p: p[0].value)
+        self.hand = [card for card, _ in paired]
+        self.knownCards = [known for _, known in paired]
+
     def checkForFourOfAKind(self):      
         if len(self.hand) >= 4:
             counts_dict = {"Aces": 0, "Twos": 0, "Threes": 0, "Fours": 0, "Fives": 0, "Sixes": 0, "Sevens": 0, "Eights": 0, "Nines": 0, "Tens": 0, "Jacks": 0, "Queens": 0, "Kings": 0}
