@@ -32,16 +32,16 @@ class Games:
         self.playerList = self.startGame()
 
         while True:
-            #for player in self.playerList[1:]:
-                #player.bet()
+            for player in self.playerList[1:]:
+                player.bet()
 
             self.dealer.dealCards(2, self.playerList)
             
             self.round()
 
-            #self.playerList[0].gertTurn(self.dealer)
+            self.playerList[0].gertTurn(self.dealer)
         
-            #self.calculateWinner()
+            self.calculateWinner()
 
             break
 
@@ -106,6 +106,7 @@ class Games:
                     "action": self.quit,
                 },
             }
+
             print(f"\n--- {player.name}'s turn ---")
             print(f"--- {player.name}'s hand ---")
             player.showHand()
@@ -211,9 +212,7 @@ TIPS:
         print("\nCURRENT HAND:")
         player.showHand()
 
-        # Create a list with the values of the cards in the player's hand b/c the check_cards function in Player.py only takes values
-        #hand_values = [card.value for card in player.hand]
-        #total = player.check_cards(hand_values)
+        # Prints the total value of the player's hand
         total = player.check_cards(player.hand)
         print("\nCURRENT HAND VALUE:", total)
         print()
