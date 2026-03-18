@@ -107,6 +107,12 @@ class Games:
             #player.showHand()     right now its empty b/c dealCards() does'nt exist yet
 
             while True:
+                # Check if the player's turn has ended, and if so, end their turn and print their hand value
+                total = player.check_cards(player.hand)
+                if (player.active == False):
+                    print(f"{player.name} ends with a hand value of {total}.")
+                    break
+                
                 # refresh availability each loop because the commands change
                 #moves["split"]["enabled"] = (lambda: player.can_split())
                 #moves["doubleDown"]["enabled"] = (lambda: player.can_double())
@@ -134,18 +140,6 @@ class Games:
                     if selected not in ["help", "quit"]:
                         print(f"\n--- {player.name}'s hand ---")
                         player.showHand()
-
-                    total = player.check_cards(player.hand)
-
-                    # Check if the player has busted by using the check_cards function in Player.py
-                    if (total >= 21):
-                        player.bust()
-                        self.trashTalk()
-
-                    # Check if the player's turn has ended, and if so, end their turn and print their hand value
-                    if (player.active == False):
-                        print(f"{player.name} ends with a hand value of {total}.")
-                        break
                 else:
                     print("Not a valid move.")
 
