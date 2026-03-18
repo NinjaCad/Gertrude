@@ -1,6 +1,6 @@
 {
   "name": "CIS322E_SP26",
-  "image": "therealhoneybadger/tmu_cis322:sp2026v1.1",
+  "image": "therealhoneybadger/tmu_cis322:sp2026v1.2",
   "workspaceFolder": "/app",
   "workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind",
   "customizations": {
