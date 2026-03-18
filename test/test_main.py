@@ -1,4 +1,4 @@
-from main import *
+from testing_base import *
 
 # ensure 3 cards are dealt to each player
 def test_deal_three_cards():
