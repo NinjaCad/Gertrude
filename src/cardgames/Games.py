@@ -24,18 +24,24 @@ class Games:
         self.deck = Deck()
 
     def main(self):
+        self.dealer = Dealer(self.deck)
+
         print('\nWelcome to the Gertrude\'s BlackJack!')
 
         # Sets up game and player list, which will be used for rounds
         self.playerList = self.startGame()
 
         while True:
-            # bet()
-            # dealCards()
+            #for player in self.playerList[1:]:
+                #player.bet()
+
+            self.dealer.dealCards(2, self.playerList)
+            
             self.round()
 
-            # playerGertrude()        start gertrude's turn
-            # calculateWinner()   end round and calculate winner
+            #self.playerList[0].gertTurn(self.dealer)
+        
+            #self.calculateWinner()
 
             break
 
@@ -65,8 +71,6 @@ class Games:
 
     # Loop through all the players and there actions
     def round(self):
-        dealer = Dealer(self.deck) # Eventually this will be from the Gertrude object in player list
-
         # Repeat length of players minus gertrude
         for player in self.playerList[1:]:
             # Easy way to make new moves with dictionary
@@ -74,7 +78,7 @@ class Games:
                 "hit": {
                     "enabled": True,
                     "aliases": {"h"},
-                    "action": lambda: player.hit(dealer),
+                    "action": lambda: player.hit(self.dealer),
                 },
                 "stand": {
                     "enabled": True,
@@ -84,12 +88,12 @@ class Games:
                 "split": {
                     "enabled": False,
                     "aliases": {"sp"},
-                    #"action": player.split,       doesnt exist yet
+                    #"action": player.split,
                 },
                 "Double Down": {
                     "enabled": False,
                     "aliases": {"dd"},
-                    #"action": player.doubleDown,           doesnt exist yet
+                    #"action": player.doubleDown,
                 },
                 "help": {
                     "enabled": True,
@@ -104,7 +108,7 @@ class Games:
             }
             print(f"\n--- {player.name}'s turn ---")
             print(f"--- {player.name}'s hand ---")
-            #player.showHand()     right now its empty b/c dealCards() does'nt exist yet
+            player.showHand()
 
             while True:
                 # Check if the player's turn has ended, and if so, end their turn and print their hand value
