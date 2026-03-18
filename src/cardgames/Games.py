@@ -19,7 +19,7 @@ class Games:
 
     
     def startGame(self):
-        gertDealer = Dealer(Deck())
+
         while True:
             try:
                 self.amtPlayers = int(input("How many people are playing? (7 players max.) "))
