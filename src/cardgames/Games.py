@@ -58,27 +58,7 @@ class HighCardDrawInstructions:
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
-
-class Games:
-
-    def __init__(self):
-        self.deck = Deck()
-
-    def main(self):
-        print('Welcome to High Card Draw!')
-        print('This games application is under development.')
-        
-        
-        # Example usage of New Feature: instructions display.
-        # This is the demo only - the rules system itself is tested through pytest.
-        print("\nHigh Card Draw Instructions (overview):")
-        print(HighCardDrawInstructions.get("overview"))
-        input('Press [Enter] to exit.')
-
-if __name__ == "__main__":
-    game = Games()
-    game.main()
-
+    
 def declare_winner(player1, player2):
     card1 = player1.chosen_card
     card2 = player2.chosen_card
@@ -92,59 +72,75 @@ def declare_winner(player1, player2):
     except TypeError: # tie
         print("Error: Both players must have chosen a card to declare a winner.")
 
-
-def main():
-    # NOTEE: this show_cards function is supposed to show multiple cards, but it currently only shows one.
-    def show_cards(card: Card):
-        face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
-        card_name = face_names.get(card.value, card.value)
+def show_cards(card: Card):
+            face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+            card_name = face_names.get(card.value, card.value)
     
-        display_text = f"--- {card_name} of {card.suit} ---\n"
+            display_text = f"--- {card_name} of {card.suit} ---\n"
     
-        for line in card.image:
-            display_text += line + "\n"
+            for line in card.image:
+                display_text += line + "\n"
         
-        return display_text
+            return display_text
 
-    #  print instructions
-    print(HighCardDrawInstructions.get("overview"))
-    print(HighCardDrawInstructions.get("winning"), "\n")
+class Games:
 
-    # initiate variables
-    player1 = Player("Player 1")
-    player2 = Player("Player 2")
-    deck = Deck()
-    deck.shuffle()
-    dealer = Dealer(deck)
+    def __init__(self):
+        self.deck = Deck()
 
-    # deal cards to players
-    dealer.dealCards(3, [player1, player2])
+    def main(self):
+        print('Welcome to High Card Draw!')
+        
+        # Example usage of New Feature: instructions display.
+        # This is the demo only - the rules system itself is tested through pytest.
+        print("\nHigh Card Draw Instructions (overview):")
+        print(HighCardDrawInstructions.get("overview"))
+        input('Press [Enter] to start.')
 
-    # display player 1's cards
-    for card in player1.hand:
-        print(show_cards(card))
-    # player1 chooses a card
-    # I am waiting for the function that allows player to choose a card
-    # stand in code
-    player1.chosen_card = player1.hand[0]
+        #  print instructions
+        print(HighCardDrawInstructions.get("overview"))
 
-    # swap turn function
-    # I am also waiting on the code to switch turns
-    switch = input("Enter 's' to switch turns: ")
-    if switch == "s":
-        print("Switched turns. Player 2's turn to choose a card.")
-    # player2 chooses a card
-    # stand in code
-    for card in player1.hand:
-        print(show_cards(card))
-    player2.chosen_card = player2.hand[0]
+        # initiate variables
+        player1 = Player("Player 1")
+        player2 = Player("Player 2")
+        deck = Deck()
+        deck.shuffle()
+        dealer = Dealer(deck)
 
-    # display winner
-    winner = declare_winner(player1, player2)
-    print("The winner is: ", winner)
-    print(player1.name+" chose: ")
-    print(player1.chosen_card)
-    print(player2.name+" chose: ")
-    print(player2.chosen_card)
+        # deal cards to players
+        dealer.dealCards(3, [player1, player2])
 
-main()
+        # display player 1's cards
+        for card in player1.hand:
+            print(show_cards(card))
+        # player1 chooses a card
+        # I am waiting for the function that allows player to choose a card
+        # stand in code
+        player1.chosen_card = player1.hand[0]
+
+        # swap turn function
+        # I am also waiting on the code to switch turns
+        switch = input("Enter 's' to switch turns: ")
+        if switch == "s":
+            print("Switched turns. Player 2's turn to choose a card.")
+        # player2 chooses a card
+        # stand in code
+        for card in player2.hand:
+            print(show_cards(card))
+        player2.chosen_card = player2.hand[0]
+
+        # display winner
+        winner = declare_winner(player1, player2)
+        print("The winner is: ", winner)
+        print(player1.name+" chose: ")
+        print(player1.chosen_card)
+        print(player2.name+" chose: ")
+        print(player2.chosen_card)
+
+
+if __name__ == "__main__":
+    game = Games()
+    game.main()
+
+
+Games.main()
