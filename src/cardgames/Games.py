@@ -1,9 +1,9 @@
-from Player import *
-from Deck import *
-from Card_Compare import *
-from Deck import *
-from Player import *
-from Dealer import *
+from .Player import *
+from .Deck import *
+from .Card_Compare import *
+from .Deck import *
+from .Player import *
+from .Dealer import *
 
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
@@ -88,14 +88,15 @@ class Games:
     def __init__(self):
         self.deck = Deck()
 
-    def main(self):
+    def main(self, test_mode= False):
         print('Welcome to High Card Draw!')
         
         # Example usage of New Feature: instructions display.
         # This is the demo only - the rules system itself is tested through pytest.
         print("\nHigh Card Draw Instructions (overview):")
         print(HighCardDrawInstructions.get("overview"))
-        input('Press [Enter] to start.')
+        if not test_mode:
+            input('Press [Enter] to start.')
 
         #  print instructions
         print(HighCardDrawInstructions.get("overview"))
@@ -120,9 +121,10 @@ class Games:
 
         # swap turn function
         # I am also waiting on the code to switch turns
-        switch = input("Enter 's' to switch turns: ")
-        if switch == "s":
-            print("Switched turns. Player 2's turn to choose a card.")
+        if not test_mode:
+            switch = input("Enter 's' to switch turns: ")
+            if switch == "s":
+                print("Switched turns. Player 2's turn to choose a card.")
         # player2 chooses a card
         # stand in code
         for card in player2.hand:
@@ -137,10 +139,12 @@ class Games:
         print(player2.name+" chose: ")
         print(player2.chosen_card)
 
+        return player1, player2, deck
+
 
 if __name__ == "__main__":
     game = Games()
-    game.main()
+    game.main(test_mode=False)
 
 
-Games.main()
+
