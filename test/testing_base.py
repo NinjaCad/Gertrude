@@ -13,7 +13,7 @@ from cardgames.Dealer import Dealer
 from cardgames.Games import Games
 from cardgames.Player import Player
 from declare_winner import declare_winner
-from main import *
+
 
 def getCard( suit, value):
     deck = Deck()
