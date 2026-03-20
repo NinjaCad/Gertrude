@@ -9,8 +9,7 @@ class Player:
 
     #method to return the name of the player to keep the original object protected
     def get_name(self):
-        player_name = self.name
-        return player_name
+        return self.name
 
     #method to change the name of the player 
     def set_name(self, name):
@@ -18,8 +17,7 @@ class Player:
 
     #method to return the hand of the player to keep the original object protected
     def get_hand(self):
-        player_hand = self.hand[:]
-        return player_hand
+        return self.hand[:]
 
     # changed addCard function to default the isKnown attrib to False, but still retain
     # some functionality if an explicit call to isKnown = True is needed for some reason.
