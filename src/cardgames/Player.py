@@ -1,6 +1,5 @@
 from cardgames.Card import Card
 from cardgames.Deck import Deck
-from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -91,4 +90,4 @@ class Player:
 
         card = deck.getCard()
         self.addCard(card, isKnown)
-        return card
+        return card 
