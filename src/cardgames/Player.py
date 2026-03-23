@@ -53,11 +53,7 @@ class Player:
         self.checkForFourOfAKind()
 
     def showBooks(self):
-        valueMap = {"Aces": 1, "Twos": 2, "Threes": 3,
-                    "Fours": 4, "Fives": 5, "Sixes": 6,
-                    "Sevens": 7, "Eights": 8, "Nines": 9,
-                    "Tens": 10, "Jacks": 11, "Queens": 12,
-                    "Kings": 13}
+        valueMap = {"Aces": 1, "Twos": 2, "Threes": 3, "Fours": 4, "Fives": 5, "Sixes": 6, "Sevens": 7, "Eights": 8, "Nines": 9, "Tens": 10, "Jacks": 11, "Queens": 12, "Kings": 13}
         deck = Deck()
         printList = []
         # Looks through a deck to find needed cards
