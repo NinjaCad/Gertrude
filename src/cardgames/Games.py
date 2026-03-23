@@ -127,9 +127,9 @@ class Games:
                 print("Switched turns. Player 2's turn to choose a card.")
         # player2 chooses a card
         # stand in code
-        for card in player2.hand:
-            print(show_cards(card))
-        player2.chosen_card = player2.hand[0]
+            for card in player2.hand:
+                print(show_cards(card))
+            player2.chosen_card = player2.hand[0]
 
         # display winner
         winner = declare_winner(player1, player2)
