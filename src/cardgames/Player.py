@@ -1,11 +1,13 @@
-from cardgames.Card import Card
+from cardgames.Card_Compare import Card
 import os
+
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
+        self.chosen_card = Card("", 0, [], [])
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)

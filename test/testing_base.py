@@ -7,11 +7,13 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from cardgames.Card import Card
+from cardgames.Card_Compare import Card
 from cardgames.Deck import Deck
 from cardgames.Dealer import Dealer
 from cardgames.Games import Games
 from cardgames.Player import Player
+from declare_winner import declare_winner
+
 
 def getCard( suit, value):
     deck = Deck()
