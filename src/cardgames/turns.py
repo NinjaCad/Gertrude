@@ -37,7 +37,7 @@ def switch_turn(
     if not players:
         raise ValueError("players must be a non-empty list")
 
-    if current_player_index < 0 or current_player_index >= len(players):
+    if not (0 <= current_player_index < len(players)):
         raise IndexError(f"current_player_index out of range: {current_player_index}")
 
     current_player = players[current_player_index]
@@ -46,6 +46,9 @@ def switch_turn(
     next_player_index = (current_player_index + 1) % len(players)
     next_player = players[next_player_index]
 
+    if not next_player.hand:
+        raise ValueError(f"{next_player.name} has no cards in hand")
+
     # Prompt until valid.
     while True:
         raw = input_fn(
@@ -53,12 +56,11 @@ def switch_turn(
         ).strip()
 
         try:
-            choice_1_based = int(raw)
+            choice_idx = int(raw) - 1
         except ValueError:
             print_fn("Please enter a number.")
             continue
 
-        choice_idx = choice_1_based - 1
         if 0 <= choice_idx < len(next_player.hand):
             return next_player_index, choice_idx
 
