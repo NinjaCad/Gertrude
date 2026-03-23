@@ -119,4 +119,4 @@ class Games:
 
 if __name__ == "__main__":
     game = Games()
-    game.main()
+    game.main(test_mode=False)
