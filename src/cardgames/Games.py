@@ -3,20 +3,31 @@ from cardgames.Card import Card
 from cardgames.Dealer import Dealer
 from cardgames.Player import Player
 import random
-from flask import Flask, render_template, url_for, Response
+from flask import Flask, render_template, url_for, Response, request, session, redirect
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1"
 
+#The player objects will be appended to this list. 
+player_list = []
 GAME_STATE = {"current_card" : None, "current_player" : None}
 
-@app.route("/")
-@app.route("/home")
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
+    if request.method == 'GET':
+        return render_template("page_1.html")
+    elif request.method == 'POST':
+        name = request.form.get("player_name")
+        session['name'] = name
+        player_list.append(Player(name))
+        return redirect(url_for('lobby'))
 
-@app.route("/lobby")
+@app.route("/lobby", methods=['GET', 'POST'])
 def lobby():
-    return render_template("page_2.html", playerList=player_list)
+    if 'name' not in session:
+        return redirect(url_for('home'))
+    return render_template("page_2.html", name=session['name'], player_list=player_list)
 
 @app.route("/game")
 def game():
@@ -28,9 +39,6 @@ def stream():
         while True:
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
-
-#The player objects will be appended to this list. 
-players_list = []
 
 def win_check(players: "list[Player]"):
     first_player_to_slap = players[0]
