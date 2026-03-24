@@ -26,10 +26,10 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
 
-    def checkIfAllThirteenBooksHaveBeenFormed(self, players):
+    def checkFor13Books(self, players):
         totalBooks = 0
         for player in players:
-            totalBooks += player.books
+            totalBooks += player.numBooks
         if totalBooks == 13:
             return True
         return False

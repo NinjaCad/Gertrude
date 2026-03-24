@@ -5,7 +5,7 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
-        self.books = 0
+        self.numBooks = 0
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -50,7 +50,7 @@ class Player:
     def bookHandling(self): #adds player books count (score increase) and removes the four of a kind cards from play
             valueMap = {'Aces': 1, 'Twos': 2, 'Threes': 3, 'Fours': 4, 'Fives': 5, 'Sixes': 6, 'Sevens': 7, 'Eights': 8, 'Nines': 9, 'Tens': 10, 'Jacks': 11, 'Queens': 12, 'Kings': 13}
             listOfBooks = self.checkForFourOfAKind()
-            self.books += len(listOfBooks)
+            self.numBooks += len(listOfBooks)
             for book in listOfBooks:
                 bookValue = valueMap.get(book, 0)
                 remainingHand = []

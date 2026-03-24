@@ -19,17 +19,17 @@ for player in players:
     print()
 
 def test_empty_hand_bookless():
-    player1.books = 0
+    player1.numBooks = 0
     #Has no cards
     player.clearHand()
     player.bookHandling()
-    assert player.books == 0
-    assert dealer.checkIfAllThirteenBooksHaveBeenFormed(players) == False 
+    assert player.numBooks == 0
+    assert dealer.checkFor13Books(players) == False 
     assert player.hand == []
     assert len(player.knownCards) == len(player.hand)
 
 def test_small_hand_bookless():
-    player.books = 0
+    player.numBooks = 0
     #Does not have enough cards
     cardImages=[0]
     index=0
@@ -42,13 +42,13 @@ def test_small_hand_bookless():
     player.setHand(list_of_cards)
     assert player.checkForFourOfAKind() == []
     player.bookHandling()
-    assert player.books == 0
-    assert dealer.checkIfAllThirteenBooksHaveBeenFormed(players) == False
+    assert player.numBooks == 0
+    assert dealer.checkFor13Books(players) == False
     assert player.hand == list_of_cards
     assert len(player.knownCards) == len(player.hand)
 
 def test_big_hand_bookless():
-    player.books = 0
+    player.numBooks = 0
     #Has Enough cards but no Book
     cardImages=[0]
     index=0
@@ -58,14 +58,14 @@ def test_big_hand_bookless():
     player.setHand(list_of_cards)
     assert player.checkForFourOfAKind() == []
     player.bookHandling()
-    assert player.books == 0
-    assert dealer.checkIfAllThirteenBooksHaveBeenFormed(players) == False
+    assert player.numBooks == 0
+    assert dealer.checkFor13Books(players) == False
     assert player.hand == list_of_cards
     assert len(player.knownCards) == len(player.hand)
 
 
 def test_book_in_hand():
-    player.books = 0
+    player.numBooks = 0
     #Has A book
     cardImages=[0]
     index=0
@@ -75,13 +75,13 @@ def test_book_in_hand():
     player.setHand(list_of_cards)
     assert player.checkForFourOfAKind() == ['Aces']
     player.bookHandling()
-    assert player.books == 1
-    assert dealer.checkIfAllThirteenBooksHaveBeenFormed(players) == False
+    assert player.numBooks == 1
+    assert dealer.checkFor13Books(players) == False
     assert player.hand == [Card("Spades", 2, cardImages[index], cardBack)]
     assert len(player.knownCards) == len(player.hand)
 
 def test_books_in_hand():
-    player.books = 0
+    player.numBooks = 0
     #Has 2 Books
     cardImages=[0]
     index=0
@@ -91,15 +91,15 @@ def test_books_in_hand():
     player.setHand(list_of_cards)
     assert player.checkForFourOfAKind() == ['Aces', 'Twos']
     player.bookHandling()
-    assert player.books == 2
-    assert dealer.checkIfAllThirteenBooksHaveBeenFormed(players) == False
+    assert player.numBooks == 2
+    assert dealer.checkFor13Books(players) == False
     assert player.hand == []
     assert len(player.knownCards) == len(player.hand)
 
 
 def test_last_book_in_hand():
-    player1.books = 6
-    player2.books = 6
+    player1.numBooks = 6
+    player2.numBooks = 6
     #Has the 13th Book
     cardImages=[0]
     index=0
@@ -110,7 +110,7 @@ def test_last_book_in_hand():
     player1.setHand(list_of_cards)
     assert player1.checkForFourOfAKind() == ['Aces']
     player1.bookHandling()
-    assert player1.books == 7 
-    assert dealer.checkIfAllThirteenBooksHaveBeenFormed(players) == True
+    assert player1.numBooks == 7 
+    assert dealer.checkFor13Books(players) == True
     assert player1.hand == []
     assert len(player1.knownCards) == 0
