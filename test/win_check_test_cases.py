@@ -6,8 +6,8 @@ def test_player_won():
     deck = Deck()
     players = [Player("Harry"), Player("Ron"), Player("Hermione")]
     dealer = Dealer(deck)
-    dealer.dealCards(10, players)
-    players[0].clearHand()
+    dealer.deal_cards(players)
+    players[0].clear_hand()
     assert win_check(players) == True
 
 def test_player_did_not_win():
@@ -15,5 +15,5 @@ def test_player_did_not_win():
     deck = Deck()
     players = [Player("Ted"), Player("George"), Player("Anna"), Player("Katie")]
     dealer = Dealer(deck)
-    dealer.dealCards(10, players)
+    dealer.deal_cards(players)
     assert win_check(players) == False
