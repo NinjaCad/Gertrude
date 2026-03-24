@@ -12,7 +12,7 @@ def test_setHand_handLen():
     # initialize test player
     test_player1 = Player("Eli")
     # call setHand function passing in test hand
-    test_player1.setHand(test_dealt_hand)
+    test_player1.set_hand(test_dealt_hand)
     # compare the test hand against the expected length
     assert len(test_player1.hand) == 5
 
@@ -27,7 +27,7 @@ def test_setHand_specific():
     # initialize test player
     test_player1 = Player("Joseph")
     # call setHand function passing in test hand
-    test_player1.setHand(test_dealt_hand)
+    test_player1.set_hand(test_dealt_hand)
     # compare the test hand against the expected knownCards list
     assert test_player1.hand == [test_deck.cards[0], test_deck.cards[12], test_deck.cards[26], test_deck.cards[35], test_deck.cards[4]]
 
@@ -42,9 +42,9 @@ def test_setHand_knownCards():
     # initialize test player
     test_player1 = Player("Daniel")
     # call setHand function passing in test hand
-    test_player1.setHand(test_dealt_hand)
+    test_player1.set_hand(test_dealt_hand)
     # compare the test hand against the expected knownCards list
-    assert len(test_player1.knownCards) == 0
+    assert len(test_player1.known_cards) == 0
  
 
 def test_setHand_empty():
@@ -55,7 +55,7 @@ def test_setHand_empty():
     # initialize test player
     test_player2 = Player("Rose")
     # call setHand function passing in test hand
-    test_player2.setHand(test_empty_hand)
+    test_player2.set_hand(test_empty_hand)
     # compare the test hand against the expected length
     assert len(test_player2.hand) == 0
 
