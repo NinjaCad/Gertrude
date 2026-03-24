@@ -5,28 +5,26 @@ from cardgames.Player import Player
 import random
 from flask import Flask, render_template, url_for, Response
 
-player_list = ["Rose", "Joseph", "Daniel"] #PLACEHOLDER TO BE REMOVED
-
 app = Flask(__name__)
 
 @app.route("/")
 @app.route("/home")
 def home():
-    return "<h1>PLACEHOLDER</h1>"
+    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
 
 @app.route("/lobby")
 def lobby():
-    return render_template("Page_2.html", playerList=player_list)
+    return render_template("page_2.html", playerList=player_list)
 
 @app.route("/game")
 def game():
-    return "<h1>PLACEHOLDER</h1>"
+    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
 
 @app.route("/stream")
 def stream():
     def event_stream():
         while True:
-            yield "<h1>PLACEHOLDER</h1>"
+            yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
 
 def win_check(players: "list[Player]"):
