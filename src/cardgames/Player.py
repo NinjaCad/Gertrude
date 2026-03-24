@@ -4,7 +4,7 @@ class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
-        self.knownCards = []
+        self.knownCards = []   
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -12,6 +12,10 @@ class Player:
             self.knownCards.append(True)
         else:
             self.knownCards.append(False)
+    
+    def removeCard(self, card: Card):
+        self.hand.remove(card)
+        #Not sure if we are using known cards at the moment, can add later.
 
     def setHand(self, cards: "list[Card]", isKnown: bool = False):
         self.hand = cards

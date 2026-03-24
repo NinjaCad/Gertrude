@@ -1,3 +1,4 @@
+from cardgames import Card
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
@@ -54,25 +55,88 @@ class Games:
 
         return turn_list
 
-            
+    def card_thievery(self, turn_list, host_player):
+        stepper = 1
+        player_number = []
+        player_dict = {}
+        for players in turn_list:
+            if players != host_player and len(players.hand) != 0:
+                print("player "+str(stepper)+": "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
+                player_number.append(str(stepper))
+                player_dict[(str(players.name)).lower()] = stepper      
+                
+            stepper += 1
+
+        target_choice = ""
+        while target_choice not in player_number:
+            target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
+            if target_choice in player_dict:
+                target_choice = str(player_dict[target_choice])
+            elif target_choice not in player_number and target_choice not in player_dict:
+                print("Invalid Input! Enter player name or number.")
+                target_choice = ""
+        target_player = turn_list[int(target_choice) - 1]
+        print("")
+
+        #print("Put Card Names Here /n") #Place types of cards here
+        #print(host_player.hand) #Put Function for showing cards in hand here
+
+        thief_choice = 0
+        value_dict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
+        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
+
+        while thief_choice not in value_dict:
+            thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
+            if thief_choice not in value_dict:
+                print("Invalid Choice! Choose Card Type, eg: aces.")
+
+        stolen_cards = 0
+        card_counter = 0
+        target_list = target_player.hand[:]
+        for card in target_list:
+            if card.value == value_dict[thief_choice]:
+                host_player.addCard(card)
+                target_player.removeCard(card)
+                stolen_cards += 1
+            card_counter += 1
+        
+        if stolen_cards == 0:
+            print("Go Fish!") #Place Go Fish Here
+
+        return target_player
+
+        
+
     def main(self):
         print('Welcome to the Games application!')
         print('This games application is under development.')
+
+        self.deck = Deck() #deck is created here; deck knows how, games decides when
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
-        turn_list = self.start_game(players) #player[0] in list goes first.
-
-        input('Press [Enter] to exit.')
+        turn_list = self.start_game(players)
         
-        
-        print('First 5 cards in standard 52-card deck:')
-        self.deck = Deck() #deck is created here; deck knows how, games decides when
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
+        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        while game_running:
+            for player in turn_list:
+                print(player.name)
 
-        for card in self.deck.cards[:5]:
-            print(card)
-        print('Press [Enter] to exit.')
+                card_steal = True
+                while card_steal == True:
+                    thief_answer = (str(input("Would you like to steal a card?"))).lower()
+                    if thief_answer == "y" or "yes":
+                        self.card_thievery(turn_list, player)
+                    elif thief_answer == "n" or "no":
+                        card_steal = False
+                    else:
+                        print("Invalid Input, Type 'y' for Yes or 'n' for No.")
+
+        #for each player in the turn list:
+            #that player takes a turn
+
+        
 
 if __name__ == "__main__":
     game = Games()
