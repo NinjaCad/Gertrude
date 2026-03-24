@@ -3,22 +3,31 @@ from cardgames.Card import Card
 from cardgames.Dealer import Dealer
 from cardgames.Player import Player
 import random
+from flask import Flask, render_template, url_for, Response
+
+app = Flask(__name__)
 
 GAME_STATE = {"current_card" : None, "current_player" : None}
 
-class Games:
+@app.route("/")
+@app.route("/home")
+def home():
+    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
 
-    def __init__(self):
-        self.deck = Deck()
+@app.route("/lobby")
+def lobby():
+    return render_template("page_2.html", playerList=player_list)
 
-    def main(self):
-        print('Welcome to the Games application!')
-        print('This games application is under development.')
-        
-        print('First 5 cards in standard 52-card deck:')
-        for card in self.deck.cards[:5]:
-            print(card)
-        input('Press [Enter] to exit.')
+@app.route("/game")
+def game():
+    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
+
+@app.route("/stream")
+def stream():
+    def event_stream():
+        while True:
+            yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
+    return Response(event_stream(), mimetype="text/event-stream")
 
 #The player objects will be appended to this list. 
 players_list = []
@@ -32,5 +41,4 @@ def win_check(players: "list[Player]"):
         return False
 
 if __name__ == "__main__":
-    game = Games()
-    game.main()
+    app.run('0.0.0.0', port=5000)
