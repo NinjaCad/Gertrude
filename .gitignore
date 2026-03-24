@@ -47,4 +47,8 @@ Thumbs.db
 *.flv
 *.mov
 *.wmv
-src/cardgames.egg-info**
+src/cardgames.egg-info**reportNams.html
+reportNams.html
+src/cardgames.egg-info/
+reportNams.html
+src/cardgames.egg-info/

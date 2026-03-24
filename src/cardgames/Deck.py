@@ -2,7 +2,7 @@ import os
 import random
 from cardgames.Card import Card
 
-cardImages = []
+card_images = []
 values = list(range(1,14))
 suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
 
@@ -18,32 +18,32 @@ class Deck:
         root_dir = os.path.join( find_root_dir(), 'src')
         cards_file = os.path.join(root_dir, 'cardgames', 'playing_cards.txt')
         with open(cards_file, "r") as cards:
-            cardBack = []
+            card_back = []
             for _ in range(6):
                 line = cards.readline()
-                cardBack.append(line.replace("\n",""))
+                card_back.append(line.replace("\n",""))
             card = []
             level = 0
             for line in cards.readlines():
                 if len(line) == 1:
-                    cardImages.append(card)
+                    card_images.append(card)
                     level = 0
                     card = []
                     continue
                 card.append(line.replace("\n",""))
                 level += 1
-            cardImages.append(card)
+            card_images.append(card)
         
         deck = []
         index = 0
         for suit in suits:
             for value in values:
-                deck.append(Card(suit, value, cardImages[index], cardBack))
+                deck.append(Card(suit, value, card_images[index], card_back))
                 index += 1
         
         self.cards = deck
         self.size = len(deck)
-        self.cardBack = cardBack
+        self.card_back = card_back
         self.discarded = []
 
     def reset(self):
@@ -54,7 +54,7 @@ class Deck:
     def shuffle(self):
         random.shuffle(self.cards)
 
-    def getCard(self):
+    def get_card(self):
         card = self.cards.pop()
         self.size -= 1
         self.discarded.append(card)

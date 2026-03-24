@@ -7,6 +7,8 @@ from flask import Flask, render_template, url_for, Response
 
 app = Flask(__name__)
 
+GAME_STATE = {"current_card" : None, "current_player" : None}
+
 @app.route("/")
 @app.route("/home")
 def home():
@@ -26,6 +28,9 @@ def stream():
         while True:
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
+
+#The player objects will be appended to this list. 
+players_list = []
 
 def win_check(players: "list[Player]"):
     first_player_to_slap = players[0]

@@ -8,19 +8,19 @@ dealer = Dealer(deck)
 players = {}
 while True:
     try:
-        NumPlayers = int(input("Enter player count: "))
+        num_players = int(input("Enter player count: "))
         break
     except ValueError:
         print("Please enter number of players: ")
-for i in range(1, NumPlayers+1):
+for i in range(1, num_players+1):
     name = input("Player {} name: ".format(i))
     players[name] = Player(name)
 
 # Deal 5 cards to each player
-dealer.dealCards(5, list(players.values()))
+dealer.deal_cards(5, list(players.values()))
 
 # Show each player's hand
 for player in players.values():
     print(f'{player.name}:')
-    player.showHand(True)
+    player.show_hand(True)
     print()

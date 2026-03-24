@@ -22,9 +22,27 @@
 
         <ul id="playerList">
             {%for player in playerList%}                  <!--Jinja2 for loop-->
-                <li>{{player}}</li>
+                <li>{{player.name}}</li>
             {%endfor%}
         </ul>
+
+        <p>
+  
+            <Strong>How to Play:</Strong>
+                <br><br>
+                <ol>
+                    <li>On their turn a player will play a card by pressing the "play card" button</li>
+                    <li>If the card played matches the card rank displayed slap the card using the "slap card" button as quickly as possible</li>
+                    <li>The player who slaps the card last adds the entire stack to their hand</li>
+                    <li>If a player slaps the card when the card played and the displayed rank do not match they take the entire stack</li>
+                </ol>
+
+          <Strong>To Win:</Strong>
+                <br><br>
+                <ol>
+                    <li>Once your hand is empty be the first to slap the deck when appropriate to win the game</li>
+                </ol>
+        </p>
 
             <br><br><br>
 
@@ -34,6 +52,7 @@
                 </button>
             </h1>
     </body>
+
 
     <script>
     </script>

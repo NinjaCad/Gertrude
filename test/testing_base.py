@@ -13,7 +13,7 @@ from cardgames.Dealer import Dealer
 from cardgames.Games import app
 from cardgames.Player import Player
 
-def getCard( suit, value):
+def get_card( suit, value):
     deck = Deck()
     my_card = Card( suit.capitalize(), value, None, None)
     for card in deck.cards:

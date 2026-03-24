@@ -24,7 +24,7 @@ def test_player_cards():
     dealer = Dealer(deck)
     popped = []
     for i in range(26):
-        popped.append(deck.getCard())
+        popped.append(deck.get_card())
 
     dealer.add_deck_to_hand(player)
     assert len(player.hand) == 52-len(popped)
@@ -35,5 +35,5 @@ def test_add_modified_deck():
     player = Player("Faith")
     dealer = Dealer(deck)
     for _ in range(5):
-        deck.getCard()
+        deck.get_card()
     assert len(deck.cards) == 47
