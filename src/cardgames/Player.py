@@ -47,6 +47,10 @@ class Player:
     def bust(self):
         self.active = False
 
+
+    #This function takes the card in a players hand and assigns in to its respective point value. 
+    #Built into this function is ace logic (1 vs 11) and busting if the score goes over 21
+    #Each players score is then returned 
     def check_cards(self, hand):
         total_score = 0
         num_aces = 0
@@ -72,7 +76,7 @@ class Player:
             num_aces -= 1
         if total_score > 21:
             self.bust()  # Player busts if score exceeds 21 even after adjusting Aces
-            return -1
+            return -1  # -1 represents a player who busted
         else:
             return total_score
         

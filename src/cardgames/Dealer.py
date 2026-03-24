@@ -28,19 +28,20 @@ class Dealer:
 
         for deal_pass in range(numCards):
             for player in players:
-                # Dealer (GERTRUDE) hides their second card
+                # 1. Default to True (most cards are face-up)
                 isKnown = True
-                try:
-                    name = getattr(player, "name", "")
-                    if isinstance(name, str) and name.upper() == "GERTRUDE" and deal_pass == 1:
-                        isKnown = False #the card is hidden!
-                except Exception:
-                    pass
-
+                
+                # We check isinstance to prevent AttributeErrors without needing try/except.
+                name = getattr(player, "name", "")
+                
+                if isinstance(name, str) and name.upper() == "GERTRUDE":
+                    if deal_pass == 1:
+                        isKnown = False  # The dealer's second card is hidden
+                
                 card = self.deck.getCard()
                 player.addCard(card, isKnown)
         return True
-
+    
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()

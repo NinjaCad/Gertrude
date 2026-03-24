@@ -2,21 +2,20 @@ from testing_base import *
 
 
 def test_1():
-    # Test that dealCards correctly deals 2 cards to each player
-    # and that GERTRUDE's second card is hidden.
+    #Verifies 2 cards are dealt to all, and GERTRUDE's visibility rule.
     deck = Deck()
     dealer = Dealer(deck)
     players = [Player("Alice"), Player("Bob"), Player("GERTRUDE")]
     
-    success = dealer.dealCards(2, players)
+    assert dealer.dealCards(2, players) is True
     
-    assert success is True
-    assert len(players[0].hand) == 2
-    assert len(players[1].hand) == 2
-    assert len(players[2].hand) == 2
-    assert players[0].knownCards == [True, True]
-    assert players[1].knownCards == [True, True]
-    assert players[2].knownCards == [True, False]
+    for p in players:
+        # Check hand size for everyone
+        assert len(p.hand) == 2, f"{p.name} should have 2 cards"
+        
+        # Check visibility logic
+        expected_visibility = [True, False] if p.name == "GERTRUDE" else [True, True]
+        assert p.knownCards == expected_visibility, f"Visibility mismatch for {p.name}"
 
 
 def test_2():
@@ -42,20 +41,3 @@ def test_3():
     for player in players:
         assert len(player.hand) == 2
         assert player.knownCards == [True, True]
-
-def test_4():
-    #test that checks if GERTRUDE's second card is hidden 
-    deck = Deck()
-    dealer = Dealer(deck)
-    players = [Player("Alice"), Player("Bob"), Player("Charlie"), Player("GERTRUDE")] 
-
-    success = dealer.dealCards(2, players)
-    assert success is True
-    assert len(players[0].hand) == 2
-    assert len(players[1].hand) == 2
-    assert len(players[2].hand) == 2
-    assert len(players[3].hand) == 2
-    assert players[0].knownCards == [True, True]
-    assert players[1].knownCards == [True, True]
-    assert players[2].knownCards == [True, True]
-    assert players[3].knownCards == [True, False]   
