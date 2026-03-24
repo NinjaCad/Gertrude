@@ -13,12 +13,12 @@ def test_addCard():
     test_player = Player("Player1_Tester")
 
     # call setHand function passing in test hand
-    test_player.setHand(test_dealt_hand)
+    test_player.set_hand(test_dealt_hand)
 
     # compare the test hand against the expected length
     assert len(test_player.hand) == 5
     # compare the test hand against the expected knownCards list
-    assert len(test_player.knownCards) == 0
+    assert len(test_player.known_cards) == 0
 
     # Outputs the test hand for visual confirmation
     for card in test_dealt_hand:
