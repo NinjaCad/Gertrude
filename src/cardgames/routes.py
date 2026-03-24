@@ -11,3 +11,7 @@ def play_card():
         card = global_card_change()
 
     return render_template("page_3.html", card=card)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
