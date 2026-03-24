@@ -11,13 +11,9 @@ Only add files individually and never use "git add ."
 Make sure to comment on everything new you make and ask if you need help or clarification
 """
 
-from encodings import aliases
-
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
-
-import random
 
 
 class Games:
@@ -34,23 +30,34 @@ class Games:
         self.playerList = self.startGame()
 
         while True:
+            # Each player places bets
             for player in self.playerList[1:]:
                 player.bet()
 
+            # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
             
+            # Each player takes turn
             self.round()
 
+            # Gertrude takes turn
             self.playerList[0].gertTurn(self.dealer)
-        
-            self.calculateWinner()
 
+            # Calculate results
+            results = self.calculateWinner()
+
+            # Give money to winner
+            for player in results:
+                player.resolve_bet(player, self.dealer)
+
+            # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
             while quit not in ["y", "yes", "n", "no"]:
                 quit = input("Not a valid input. Do you want to play another round? (y/n): ").strip().lower()
             if quit in ["n", "no"]:
                 break
-
+        
+        # End game
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
     
@@ -117,7 +124,7 @@ class Games:
                     #    player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
                         print(player.help(enabled_moves + aliases))
-                        continue 
+                        continue
                     else:
                         print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
                         continue
