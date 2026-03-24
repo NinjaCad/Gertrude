@@ -20,6 +20,9 @@ class Games:
             print(card)
         input('Press [Enter] to exit.')
 
+#The player objects will be appended to this list. 
+players_list = []
+
 def win_check(players: "list[Player]"):
     first_player_to_slap = players[0]
     if len(first_player_to_slap.hand) == 0:
