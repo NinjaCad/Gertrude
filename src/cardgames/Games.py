@@ -1,14 +1,9 @@
 """
-PLEASE READ
+GERTRUDE'S BLACKJACK TIPS
 
 To run game:
-    cd into: /app/src
-    run: python -m cardgames.Games
-
-Only add files individually and never use "git add ."
-    run: git add file.py
-
-Make sure to comment on everything new you make and ask if you need help or clarification
+    cd into src:   cd /app/src
+    start new game:   python -m cardgames.Games
 """
 
 from cardgames.Deck import Deck
