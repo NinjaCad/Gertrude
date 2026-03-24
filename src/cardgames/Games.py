@@ -40,5 +40,12 @@ def win_check(players: "list[Player]"):
     else:
         return False
 
+def blank(game_state, player_list):                                              #counter function
+    """Increments counter and returns (rank, player_index)"""
+    game_state['counter'] += 1
+    current_count = game_state['counter']
+    return current_count % 13, current_count % len(player_list)                  #return rank and person who turn it is
+
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
+

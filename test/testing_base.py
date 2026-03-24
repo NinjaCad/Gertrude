@@ -9,8 +9,8 @@ if str(ROOT) not in sys.path:
 
 from cardgames.Card import Card
 from cardgames.Deck import Deck
+from cardgames.Games import blank
 from cardgames.Dealer import Dealer
-from cardgames.Games import app
 from cardgames.Player import Player
 
 def get_card( suit, value):
