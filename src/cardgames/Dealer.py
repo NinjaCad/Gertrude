@@ -1,6 +1,6 @@
-from cardgames.Card import Card
-from cardgames.Deck import Deck
-from cardgames.Player import Player
+from Card_Compare import Card
+from Deck import Deck
+from Player import Player
 
 class Dealer:
     def __init__(self, deck: Deck):
@@ -25,6 +25,7 @@ class Dealer:
             for _ in range(numCards):
                 player.addCard(self.deck.getCard())
         return True
+
 
     def resetDeck(self):
         self.deck.reset()
