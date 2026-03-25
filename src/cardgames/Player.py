@@ -1,6 +1,8 @@
 import random
 
 from cardgames.Card import Card
+#from cardgames.Deck import Deck
+#from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -61,6 +63,10 @@ class Player:
         # GERT-30 call trashtalk when player busts
         self.active = False
 
+
+    #This function takes the card in a players hand and assigns in to its respective point value. 
+    #Built into this function is ace logic (1 vs 11) and busting if the score goes over 21
+    #Each players score is then returned 
     # check_cards()
     # inputs: none
     # outputs: score of hand (integer)
@@ -90,8 +96,12 @@ class Player:
         while total_score > 21 and num_aces > 0:
             total_score -= 10
             num_aces -= 1
+        if total_score > 21:
+            self.bust()  # Player busts if score exceeds 21 even after adjusting Aces
+            return -1  # -1 represents a player who busted
+        else:
+            return total_score
         
-        return total_score
     
     # show_partial_hand()
     # inputs: none
