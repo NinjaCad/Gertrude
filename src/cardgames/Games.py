@@ -107,11 +107,11 @@ class Games:
         return total 
     
     def calculateWinner(self, playerList):
-        dealer = playerList[-1] # exclude Gurtrude.dealer  
+        dealer = playerList[0] # exclude Gurtrude.dealer  
         dealerScore = self.getHandValue(dealer)
         results = {}
 
-        for player in playerList[:-1]: 
+        for player in playerList[1:]: 
             playerScore = self.getHandValue(player)
 
             if playerScore > 21:
