@@ -1,4 +1,5 @@
 from cardgames.Card import Card
+from cardgames.Deck import Deck
 
 class Player:
     def __init__(self, name):
@@ -6,6 +7,8 @@ class Player:
         self.hand = []
         self.knownCards = []
         self.numBooks = 0
+        self.books = []
+        self.isTurn = False
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -61,6 +64,34 @@ class Player:
                         remainingKnown.append(self.knownCards[i])
                 self.hand = remainingHand
                 self.knownCards = remainingKnown    
+
+    def showBooks(self):
+        valueMap = {"Aces": 1, "Twos": 2, "Threes": 3, "Fours": 4, "Fives": 5, "Sixes": 6, "Sevens": 7, "Eights": 8, "Nines": 9, "Tens": 10, "Jacks": 11, "Queens": 12, "Kings": 13}
+        deck = Deck()
+        printList = []
+        # Looks through a deck to find needed cards
+        for bookType in self.books:
+            for card in deck.cards:
+                try:
+                    if card.value == valueMap[bookType]:
+                        printList.append(card)
+                except KeyError:
+                    print("Error! Value in player.books is not correct!")
+                    break
+
+        # Prints books in groups
+        for idx in range(6):
+            for i, card in enumerate(printList):
+                if (i + 1) % 4 in range(1, 4):
+                    image = card.shortImage[idx]
+                    print(image, end="")
+                else:
+                    image = card.image[idx]
+                    print(image, end=" ")
+            print()
+                
+
+            
 
     def clearHand(self):
         self.hand = []
