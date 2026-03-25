@@ -67,19 +67,27 @@ class Games:
         self.dealer.dealCards(cardsdealt, turn_list)
         list.reverse(turn_list) #last dealt goes first
 
+        self.turn_list = turn_list
         return turn_list
 
-    def card_thievery(self, turn_list, host_player):
+
+
+    def current_players(self, host_player): #Lists players that still have cards
         stepper = 1
         player_number = []
         player_dict = {}
-        for players in turn_list:
+        for players in self.turn_list:
             if players != host_player and len(players.hand) != 0:
                 print("player "+str(stepper)+": "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
                 player_number.append(str(stepper))
                 player_dict[(str(players.name)).lower()] = stepper      
                 
             stepper += 1
+        return(player_number, player_dict) #Returns player number in turnlist and list of names
+
+
+    def card_thievery(self, host_player):
+        player_number, player_dict = self.current_players(host_player)
 
         target_choice = ""
         while target_choice not in player_number:
@@ -89,7 +97,7 @@ class Games:
             elif target_choice not in player_number and target_choice not in player_dict:
                 print("Invalid Input! Enter player name or number.")
                 target_choice = ""
-        target_player = turn_list[int(target_choice) - 1]
+        target_player = self.turn_list[int(target_choice) - 1]
         print("")
 
         #print("Put Card Names Here /n") #Place types of cards here
