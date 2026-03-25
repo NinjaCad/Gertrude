@@ -16,6 +16,7 @@ class Games:
         self.deck = Deck()
 
     def main(self):
+        self.dealer = Dealer(self.deck)
 
         print('\nWelcome to the Gertrude\'s BlackJack!')
 
@@ -23,8 +24,6 @@ class Games:
         self.playerList = self.startGame()
 
         while True:
-            self.dealer = Dealer(self.deck)
-            
             # Each player places bets
             for player in self.playerList[1:]:
                 player.bet()
