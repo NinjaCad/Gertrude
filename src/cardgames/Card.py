@@ -16,7 +16,7 @@ class Card:
             self.suit = suits["D"]["symbol"]
 
         elif suit_inp == 'C':
-            self.__class__suit = suits["C"]["symbol"]
+            self.suit = suits["C"]["symbol"]
         
         values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"]
         self.value = value
