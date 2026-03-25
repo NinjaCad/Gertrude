@@ -41,8 +41,8 @@ class Games:
             results = self.calculateWinner(self.playerList)
 
             # Give money to winner
-            for player in results:
-                player.resolve_bet(player, self.dealer)
+            for player, condition in results.items():
+                player.resolve_bet(condition, self.playerList[0])
 
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
@@ -132,26 +132,26 @@ class Games:
 
     def calculateWinner(self, playerList):
         dealer = playerList[0] # exclude Gurtrude.dealer  
-        dealerScore = dealer.check_hand(dealer)
+        dealerScore = dealer.check_cards()
         results = {}
 
         for player in playerList[1:]: 
-            playerScore = player.check_hand(player)
+            playerScore = player.check_cards()
 
             if playerScore > 21:
-                results[player.name] = False 
+                results[player] = False 
                 print(player.name , "You bust!")
             elif dealerScore > 21:
-                results[player.name] = True 
+                results[player] = True 
                 print(player.name , "You win! Dealer busts!")
             elif playerScore > dealerScore:
-                results[player.name] = True 
+                results[player] = True 
                 print(player.name , "You win! you take all for having a higher score than the dealer!")
             elif playerScore < dealerScore:
-                results[player.name] = False 
+                results[player] = False 
                 print(player.name , "You lose! Dealer takes all for a higher score!")
             else:
-                results[player.name] = False
+                results[player] = False
                 print(player.name , "Push! You Tied with the dealer.")
         return results 
 

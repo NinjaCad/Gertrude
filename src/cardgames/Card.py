@@ -40,7 +40,7 @@ class Card:
 """
         self.shortImage = [f'{self.suit}{self.value}']
 
-        return self.shortImage, self.image
+        #return self.shortImage, self.image
 
     def __str__(self, short: bool = False):
         return '\n'.join(self.shortImage if short else self.image)
