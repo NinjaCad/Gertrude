@@ -1,21 +1,7 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 
-class Games:
-
-    def __init__(self):
-        self.deck = Deck()
-
-    def main(self):
-        print('Welcome to the Games application!')
-        print('This games application is under development.')
-        
-        print('First 3 cards in standard 52-card deck:')
-        for card in self.deck.cards[:3]:
-            print(card)
-        input('Press [Enter] to exit.')
-
-    def select_card(self, player): # Function by Tyson
+def select_card(self, player): # Function by Tyson
         # Denotes the change of turn 
         print(f"\n--- {player.name}'s Turn ---")
         
@@ -31,7 +17,7 @@ class Games:
                 if 1 <= choice <= max_choice:
                     # Assign the chosen card using player.hand
                     player.chosen_card = player.hand[choice - 1]
-                    print("Great! You selected your card.")
+                    print("Great! You selected {player.chosen_card}.")
                     break 
                 else:
                     # error handling in case they pick a number outside the options
@@ -39,6 +25,22 @@ class Games:
                     
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
+
+class Games:
+
+    def __init__(self):
+        self.deck = Deck()
+
+    def main(self):
+        print('Welcome to the Games application!')
+        print('This games application is under development.')
+        
+        print('First 3 cards in standard 52-card deck:')
+        for card in self.deck.cards[:3]:
+            print(card)
+        input('Press [Enter] to exit.')
+
+
 
 if __name__ == "__main__":
     game = Games()
