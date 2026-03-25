@@ -74,28 +74,26 @@ class Games:
         print(HighCardDrawInstructions.get("overview"))
         input('Press [Enter] to exit.')
 
-    def get_game_stats(self, winner, player1, player2, game_stats=None):
+    def get_game_stats(self, winner: str, players: list, game_stats=None):
         #Below is for every time a game has been ran
 
         #Set up game_stats dict if it is empty
         if game_stats == None:
             game_stats = {}
-            for player in [player1, player2]:
+            for player in players:
                 game_stats[player] = {}
                 game_stats[player]["Wins"] = 0
                 game_stats[player]["Win-Rate"] = ""
             game_stats["Ties"] = 0
-
-        game_stats = copy.deepcopy(game_stats)
-
+        
         #Error handling
+        game_stats = copy.deepcopy(game_stats)
         keys = list(game_stats.keys())
         if winner not in keys and winner != "It's a tie!":
-            return game_stats
-        if player1 not in keys:
-            return game_stats
-        if player2 not in keys:
-            return game_stats
+            raise ValueError("Invalid winner")
+        for player in players:
+            if player not in keys:
+                raise ValueError("Player not found")
 
         #Increment the number of wins or ties
         if winner == "It's a tie!":
@@ -105,12 +103,12 @@ class Games:
 
         #Total games is the sum of Player1 wins, Player2 wins, and ties
         total_games = 0
-        for player in [player1, player2]:
+        for player in players:
             total_games += game_stats[player]["Wins"]
         total_games += game_stats["Ties"]
 
         #Calculate and update the win rate for both players
-        for player in [player1, player2]:
+        for player in players:
             win_rate = game_stats[player]["Wins"] / total_games * 100
             value = f"{win_rate:.1f}" + "%"
             game_stats[player]["Win-Rate"] = value
