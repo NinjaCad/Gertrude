@@ -1,9 +1,5 @@
-from .Player import *
-from .Deck import *
-from .Card_Compare import *
-from .Deck import *
-from .Player import *
-from .Dealer import *
+from cardgames.Deck import Deck
+import copy
 
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
@@ -142,9 +138,54 @@ class Games:
         return player1, player2, deck
 
 
+    def get_game_stats(self, winner: str, players: list, game_stats=None):
+        #Below is for every time a game has been ran
+
+        #Set up game_stats dict if it is empty
+        if game_stats == None:
+            game_stats = {}
+            for player in players:
+                game_stats[player] = {}
+                game_stats[player]["Wins"] = 0
+                game_stats[player]["Win-Rate"] = ""
+            game_stats["Ties"] = 0
+        
+        #Error handling
+        game_stats = copy.deepcopy(game_stats)
+        keys = list(game_stats.keys())
+        if winner not in keys and winner != "It's a tie!":
+            raise ValueError("Invalid winner")
+        for player in players:
+            if player not in keys:
+                raise ValueError("Player not found")
+
+        #Increment the number of wins or ties
+        if winner == "It's a tie!":
+            game_stats["Ties"] += 1
+        else:
+            game_stats[winner]["Wins"] += 1
+
+        #Total games is the sum of Player1 wins, Player2 wins, and ties
+        total_games = 0
+        for player in players:
+            total_games += game_stats[player]["Wins"]
+        total_games += game_stats["Ties"]
+
+        #Calculate and update the win rate for both players
+        for player in players:
+            win_rate = game_stats[player]["Wins"] / total_games * 100
+            value = f"{win_rate:.1f}" + "%"
+            game_stats[player]["Win-Rate"] = value
+
+        return game_stats
+
 if __name__ == "__main__":
     game = Games()
+<<<<<<< HEAD
+    game.main(test_mode=False)
+=======
     game.main(test_mode=False)
 
 
 
+>>>>>>> 501a6b107e9a5caccd8d6db7c20a3e0966998f18

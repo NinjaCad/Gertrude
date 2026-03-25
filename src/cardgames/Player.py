@@ -1,5 +1,4 @@
-from cardgames.Card_Compare import Card
-import os
+from cardgames.Card_Compare import *
 
 
 class Player:
