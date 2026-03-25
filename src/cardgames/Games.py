@@ -135,6 +135,8 @@ class Games:
         game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
             for player in turn_list:
+                player.isTurn = True
+                print(f"\n{player.name}'s turn")
                 print(player.name)
 
                 player.isTurn = True
