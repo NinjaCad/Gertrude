@@ -11,7 +11,7 @@ from cardgames.Card import Card
 from cardgames.Deck import Deck
 from cardgames.Dealer import Dealer
 from cardgames.Games import Games
-from cardgames.Player import Player
+from cardgames.Player import Player, Gertrude
 
 def getCard( suit, value):
     deck = Deck()

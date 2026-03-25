@@ -84,35 +84,14 @@ class Games:
                     print("That is not a valid repsonse")
 
             # playerGertrude()        start gertrude's turn
-            # calculateWinner()   end round and calculate winner
-
-    def getHandValue(self , player): 
-        total = 0
-        aces = 0 
-
-        for card in player.hand:
-            if card.value == 1: # for Aces
-                total += 11
-                aces += 1
-            elif card.value >= 11: # Any other face card such as Jack, Queen, King
-                total += 10
-                    
-            else: 
-                total += card.value
-                
-        while total > 21 and aces > 0: 
-            total -= 10 
-            aces -= 1 
-
-        return total 
     
     def calculateWinner(self, playerList):
         dealer = playerList[0] # exclude Gurtrude.dealer  
-        dealerScore = self.getHandValue(dealer)
+        dealerScore = self.check_hand(dealer)
         results = {}
 
         for player in playerList[1:]: 
-            playerScore = self.getHandValue(player)
+            playerScore = self.check_hand(player)
 
             if playerScore > 21:
                 results[player.name] = False 

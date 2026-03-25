@@ -1,12 +1,13 @@
 from testing_base import *
 
-game = Games()
-players = []
-players.append(Player("Bob"))
-players.append(Player("Bobby"))
-players.append(Player("Gertrude"))
+def test_round():
+    game = Games()
+    players = []
+    players.append(Player("Bob"))
+    players.append(Player("Bobby"))
+    players.append(Player("Gertrude"))
 
-game.round(players)
+    #game.round()
 
 # test case 1:
 # TRY: input: "stand" -> prints: "stand"
@@ -17,5 +18,5 @@ game.round(players)
 # EXCEPT: "Couldn't call hit()"
 #
 # test case 3:
-# TRY: input: "hir" -> prints: "That is not a valid repsonse"
+# TRY: input: "hit" -> prints: "That is not a valid repsonse"
 # EXCEPT: "Failed to accept else statement"
