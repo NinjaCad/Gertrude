@@ -38,7 +38,7 @@ class Games:
             self.playerList[0].gertTurn(self.dealer)
 
             # Calculate results
-            results = self.calculateWinner()
+            results = self.calculateWinner(self.playerList)
 
             # Give money to winner
             for player in results:
@@ -130,7 +130,7 @@ class Games:
                 else:
                     print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
 
-def calculateWinner(self, playerList):
+    def calculateWinner(self, playerList):
         dealer = playerList[0] # exclude Gurtrude.dealer  
         dealerScore = self.check_hand(dealer)
         results = {}
