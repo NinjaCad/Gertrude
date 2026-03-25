@@ -4,7 +4,7 @@ from cardgames.Card import Card
 
 cardImages = []
 values = list(range(1,14))
-suits = ["Spades", "Clubs", "Hearts", "Diamonds"]
+suits = ["S", "C", "H", "D"]
 
 def find_root_dir():
     cwd = os.getcwd()
@@ -38,7 +38,7 @@ class Deck:
         index = 0
         for suit in suits:
             for value in values:
-                deck.append(Card(suit, value, cardImages[index], cardBack))
+                deck.append(Card(suit, value))
                 index += 1
         
         self.cards = deck
