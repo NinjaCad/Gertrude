@@ -132,7 +132,8 @@ class Player:
         card = deck.getCard()
         self.addCard(card, isKnown)
         return card
-    
+
+
         # Simple that prints the rules, the available commands, and the player's current hand and hand value
     def help(self, moves: list):
         # Basics of the game
@@ -265,3 +266,13 @@ TIPS:
     # inputs: player (player object)
     # outputs: none
     # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )
+class Gertrude(Player):
+    def gertTurn(self, dealer):
+        while True:
+            curr_score = super().check_cards()
+            if curr_score >= 17: #the dealer can't hit if their score is 17 or more
+                return curr_score
+            else: #the dealer needs to hit if their score is less than 17
+                super().hit(dealer, True)
+
+    

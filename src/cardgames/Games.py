@@ -7,7 +7,7 @@ To run game:
 """
 
 from cardgames.Deck import Deck
-from cardgames.Player import Player
+from cardgames.Player import Player, Gertrude
 from cardgames.Dealer import Dealer
 
 class Games:
@@ -56,6 +56,7 @@ class Games:
         input('Press [Enter] to exit.')
     
     def startGame(self):
+
         while True:
             try:
                 self.amtPlayers = int(input("How many people are playing? (7 players max.): "))
@@ -71,9 +72,10 @@ class Games:
                 print("That doesn't make any sense, try again.")
         print('This round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))
         self.pl_list = []
-        self.pl_list.append(Player("GERTRUDE"))
+        self.pl_list.append(Gertrude("GERTRUDE")) 
         for i in range(self.amtPlayers):
             self.pl_list.append(Player(str(input("Player {:d}'s name is: ".format(i+1)))))
+        
         return self.pl_list
 
     # Loop through all the players and there actions
