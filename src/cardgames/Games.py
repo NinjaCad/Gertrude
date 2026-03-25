@@ -137,18 +137,31 @@ class Games:
             for player in turn_list:
                 print(player.name)
 
-                card_steal = True
-                while card_steal == True:
-                    thief_answer = (str(input("Would you like to steal a card?"))).lower()
-                    if thief_answer == "y" or "yes":
-                        self.card_thievery(turn_list, player)
-                    elif thief_answer == "n" or "no":
-                        card_steal = False
-                    else:
-                        print("Invalid Input, Type 'y' for Yes or 'n' for No.")
-
+                player.isTurn = True
+                print(f"\n{player.name}'s turn")
         #for each player in the turn list:
             #that player takes a turn
+                if (self.dealer.deck.size) == 0:
+                    print("Draw pile is empty. Cannot pick up new cards.")
+                else:
+                    while True:
+                        choice = input("Do you want to draw a card? (y/n)").lower()
+                        if choice == 'y':
+                            card = self.dealer.deck.getCard()
+                            player.hand.append(card) #we're assuming the player has a hand
+                            print(f"You drew: {card}")
+                            break
+                        elif choice == 'n':
+                            break
+                        else:
+                            print("Invalid input. Please enter 'y' or 'n'.")
+                
+                #print("Next, choose a player to ask and a card value") would come next                    
+                #end of player's turn
+                player.isTurn = False
+    
+        input('Press [Enter] to exit.')
+
 
         
 
