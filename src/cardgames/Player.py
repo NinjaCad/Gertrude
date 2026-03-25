@@ -1,5 +1,6 @@
 from cardgames.Card_Compare import *
 
+
 class Player:
     def __init__(self, name):
         self.name = name
@@ -22,12 +23,29 @@ class Player:
         for idx in range(6):
             for i, card in enumerate(self.hand):
                 if printShort and i < len(self.hand)-1:
-                    image = card.shortImage[idx]    if self.knownCards[i] else card.cardBack[idx]
+                    image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
-                    image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
+                    image = card.image if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
+
+    def hideHand(self):
+        if self.hand:
+            hidden = self.name
+
+            #Clears the terminal
+            print("\x1b[2J\033[H")
+
+            #Print the card backs of all cards in the player's hand
+            for idx in range(6):
+                for card in self.hand:
+                    print(card.cardBack[idx], end="")
+                print()
+            
+            print(f"{self.name}'s hand is now hidden.")
+        else:
+            print(f"{self.name} has no cards to hide.")
 
     def clearHand(self):
         self.hand = []

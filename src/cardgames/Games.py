@@ -4,7 +4,7 @@ import copy
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
 # ==========================================================
-
+#
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game.
@@ -54,25 +54,89 @@ class HighCardDrawInstructions:
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
+    
+def declare_winner(player1, player2):
+    card1 = player1.chosen_card
+    card2 = player2.chosen_card
+    try:
+        if card1.compare(card2)==1: # player1 wins
+            return player1.name
+        elif card1.compare(card2)==-1: # player2 wins
+            return player2.name
+        elif card1.compare(card2)==0:
+            return "It's a tie!"
+    except TypeError: # tie
+        print("Error: Both players must have chosen a card to declare a winner.")
+
+def show_cards(card: Card):
+            face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+            card_name = face_names.get(card.value, card.value)
+    
+            display_text = f"--- {card_name} of {card.suit} ---\n"
+    
+            for line in card.image:
+                display_text += line + "\n"
+        
+            return display_text
 
 class Games:
 
     def __init__(self):
         self.deck = Deck()
 
-    def main(self):
-        print('Welcome to the Games application!')
-        print('This games application is under development.')
+    def main(self, test_mode= False):
+        print('Welcome to High Card Draw!')
         
-        print('First 5 cards in standard 52-card deck:')
-        for card in self.deck.cards[:5]:
-            print(card)
-
         # Example usage of New Feature: instructions display.
         # This is the demo only - the rules system itself is tested through pytest.
         print("\nHigh Card Draw Instructions (overview):")
         print(HighCardDrawInstructions.get("overview"))
-        input('Press [Enter] to exit.')
+        if not test_mode:
+            input('Press [Enter] to start.')
+
+        #  print instructions
+        print(HighCardDrawInstructions.get("overview"))
+
+        # initiate variables
+        player1 = Player("Player 1")
+        player2 = Player("Player 2")
+        deck = Deck()
+        deck.shuffle()
+        dealer = Dealer(deck)
+
+        # deal cards to players
+        dealer.dealCards(3, [player1, player2])
+
+        # display player 1's cards
+        for card in player1.hand:
+            print(show_cards(card))
+        # player1 chooses a card
+        # I am waiting for the function that allows player to choose a card
+        # stand in code
+        player1.chosen_card = player1.hand[0]
+
+        # swap turn function
+        # I am also waiting on the code to switch turns
+        if not test_mode:
+            switch = input("Enter 's' to switch turns: ")
+            if switch == "s":
+                print("Switched turns. Player 2's turn to choose a card.")
+        # player2 chooses a card
+        # stand in code
+            for card in player2.hand:
+                print(show_cards(card))
+            player2.chosen_card = player2.hand[0]
+
+        # display winner
+        winner = declare_winner(player1, player2)
+        print("The winner is: ", winner)
+        print(player1.name+" chose: ")
+        print(player1.chosen_card)
+        print(player2.name+" chose: ")
+        print(player2.chosen_card)
+
+        return player1, player2, deck
+
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
         #Below is for every time a game has been ran
@@ -117,4 +181,11 @@ class Games:
 
 if __name__ == "__main__":
     game = Games()
+<<<<<<< HEAD
     game.main(test_mode=False)
+=======
+    game.main(test_mode=False)
+
+
+
+>>>>>>> 501a6b107e9a5caccd8d6db7c20a3e0966998f18
