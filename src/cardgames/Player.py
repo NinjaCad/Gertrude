@@ -10,6 +10,10 @@ class Player:
         # When True, contributes to main game loop asking the player if they want to stand/hit/etc
         # When False, that player will no longer be targeted in the game loop (when all players are False, round ends) 
         self.active = True
+        
+        # GERT-18 initialize money and bet attributes for player
+        self.money = 100
+        self.bet_money = 0
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -22,7 +26,8 @@ class Player:
         self.hand = cards
         self.knownCards = [isKnown for _ in self.hand]
         self.knownCardsCount = 0
-
+    
+    # GERT-16
     def showHand(self, printShort: bool = False):
         for idx in range(6):
             for i, card in enumerate(self.hand):
@@ -38,15 +43,30 @@ class Player:
         self.hand = []
         self.knownCards = []
         
-    # called to toggle active attribute of Player instances
+    # stand()
+    # inputs: none
+    # outputs: none
+    # goal: change self.active to false when player stands so they can no longer make moves
     def stand(self):
         self.active = False if self.active == True else True
+    
+    # bust()
+    # inputs: none
+    # outputs: none
+    # goal: change self.active to false when player busts so they can no longer make moves
     
     # called when check_hand returns > 21, takes player out of turn rotation
     # assumption is that gameplay loop or check_cards() will call bust() when appropriate, so no additional logic is needed in this function
     def bust(self):
+        # GERT-30 call trashtalk when player busts
         self.active = False
 
+    # check_cards()
+    # inputs: none
+    # outputs: score of hand (integer)
+    # goal: determine the score of the player's hand
+    # suggestions: a) hand parameter is not necessary, as player class can target self.hand. so use self.hand instead of hand
+    #              b) GERT-37 before returning, check if the score is > 21 and bust if so
     def check_cards(self):
         total_score = 0
         num_aces = 0
@@ -73,6 +93,11 @@ class Player:
         
         return total_score
     
+    # show_partial_hand()
+    # inputs: none
+    # outputs: none
+    # goal: print value of every known card and the back of every unkown card (GERT-16)
+    # suggestions: none
     def show_partial_hand(self): # This method will need to be called every time a new card is added to the player's hand, and it will update the known cards accordingly.
         #For the dealer, we just need to call the function as many times as the dealer is supposed to reveal cards.
         for i in range(len(self.hand)):
@@ -80,7 +105,12 @@ class Player:
                 print(self.hand[i].shortImage)
             else:
                 print(self.hand[i].cardBack)
-            
+    
+    # hit()
+    # inputs: dealer (Dealer object), isKnown (boolean)
+    # outputs: card (Card object)
+    # goal: add a card from the game deck to the player hand
+    # suggestions: none
     def hit(self, dealer, isKnown: bool = True):
         # hit() now goes through dealer 
         deck = dealer.deck
@@ -173,3 +203,55 @@ TIPS:
         ]
     
         return "\n" + random.choice(lines) + "\n"
+    # GERT-18 bet()
+    # inputs: none
+    # ouputs: none
+    # goal: a) create new self.money and self.bet_money attributes
+    #       b) set self.bet_money based on user input
+    def bet(self):
+        # GERT-30 call trashtalk when player makes a bet
+        
+        while True: # while loop guarantees valid input
+            bet = input(f"{self.name}, how much do you want to bet? ")
+            
+            try: # guarantee that bet is an integer
+                bet = int(bet)
+            except ValueError:
+                print("Please enter a valid integer amount.")
+                continue
+            
+            if bet < 0: # guarantee bet is positive
+                print("Bet amount cannot be negative. Please enter a valid amount.")
+                continue
+            
+            elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
+                print(f"You cannot go more than $100 in debt. Be responsible!")
+                continue
+            
+            else: # if all checks are passed, set bet and break loop
+                self.bet_money = bet
+                break
+            
+        return
+
+    
+    # GERT-18 resolve_bet()
+    # inputs: win (boolean), Gertrude (Player object)
+    # outputs: none
+    # goal: a) add or subtract bet attribute from money attribute based on whether or not player one
+    #       b) add or subtract bet attribute from Gertrude's money attribute based on whether or not player one won
+    def resolve_bet(self, win, dealer):
+        
+        if win: # player gets money from dealer if they win
+            self.money += self.bet_money
+            dealer.money -= self.bet_money
+        else: # player gives money to dealer if they lose
+            self.money -= self.bet_money
+            dealer.money += self.bet_money
+            
+        self.bet_money = 0 # reset bet after resolving
+    
+    # GERT-30 trashtalk()
+    # inputs: player (player object)
+    # outputs: none
+    # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )

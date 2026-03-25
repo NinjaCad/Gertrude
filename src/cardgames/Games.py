@@ -10,7 +10,6 @@ from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 
-
 class Games:
 
     def __init__(self):
