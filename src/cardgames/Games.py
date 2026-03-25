@@ -1,10 +1,40 @@
 from cardgames.Deck import Deck
+from cardgames.Player import Player
 import copy
+
+def select_card(self, player): # Function by Tyson
+        # Denotes the change of turn 
+        print(f"\n--- {player.name}'s Turn ---")
+        
+        if len(player.hand) == 0: # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
+
+        player.showHand(printShort=True)
+        
+        while True:
+            try:
+                max_choice = len(player.hand)
+                # Prompting player to pick a card
+                choice = int(input(f"Select a card to play (1-{max_choice}): "))
+                
+                # Check if choice is valid
+                if 1 <= choice <= max_choice:
+                    # Assign the chosen card using player.hand
+                    player.chosen_card = player.hand[choice - 1]
+                    print("Great! You selected {player.chosen_card}.")
+                    break 
+                else:
+                    # error handling in case they pick a number outside the options
+                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
+                    
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
 # ==========================================================
-#
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game.
@@ -87,6 +117,11 @@ class Games:
     def main(self, test_mode= False):
         print('Welcome to High Card Draw!')
         
+        print('First 3 cards in standard 52-card deck:')
+        for card in self.deck.cards[:3]:
+            print(card)
+        input('Press [Enter] to exit.')
+
         # Example usage of New Feature: instructions display.
         # This is the demo only - the rules system itself is tested through pytest.
         print("\nHigh Card Draw Instructions (overview):")
@@ -113,7 +148,7 @@ class Games:
         # player1 chooses a card
         # I am waiting for the function that allows player to choose a card
         # stand in code
-        player1.chosen_card = player1.hand[0]
+        self.select_card(player1)
 
         # swap turn function
         # I am also waiting on the code to switch turns
@@ -125,7 +160,7 @@ class Games:
         # stand in code
             for card in player2.hand:
                 print(show_cards(card))
-            player2.chosen_card = player2.hand[0]
+            self.select_card(player2)
 
         # display winner
         winner = declare_winner(player1, player2)
@@ -181,11 +216,5 @@ class Games:
 
 if __name__ == "__main__":
     game = Games()
-<<<<<<< HEAD
-    game.main(test_mode=False)
-=======
     game.main(test_mode=False)
 
-
-
->>>>>>> 501a6b107e9a5caccd8d6db7c20a3e0966998f18
