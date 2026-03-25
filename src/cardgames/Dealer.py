@@ -45,5 +45,3 @@ class Dealer:
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
-
-
