@@ -17,7 +17,7 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
+    def dealCards(self, numCards: int, players):
         """Deal `numCards` cards round-robin to each player.
         If there aren't enough cards return False.
         'GERTRUDE' receives their second card face-down
