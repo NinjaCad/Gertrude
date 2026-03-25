@@ -5,6 +5,11 @@ def select_card(self, player): # Function by Tyson
         # Denotes the change of turn 
         print(f"\n--- {player.name}'s Turn ---")
         
+        if len(player.hand) == 0: # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
+
         player.showHand(printShort=True)
         
         while True:
