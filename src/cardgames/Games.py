@@ -6,6 +6,7 @@ from cardgames.page_1 import *
 from cardgames.page_2 import *
 from cardgames.page_3 import *
 import random
+import time
 from flask import Flask, render_template, url_for, Response, request, session, redirect
 
 app = Flask(__name__)
@@ -14,6 +15,7 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 #The player objects will be appended to this list. 
 player_list = []
 GAME_STATE = {"current_card" : None, "current_player" : None}
+last_player_joined = ""
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -24,6 +26,7 @@ def home():
         name = request.form.get("player_name")
         session['name'] = name
         player_list.append(Player(name))
+        last_player_joined = name
         return redirect(url_for('lobby'))
 
 @app.route("/lobby", methods=['GET', 'POST'])
@@ -36,12 +39,25 @@ def lobby():
 def game():
     return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
 
-@app.route("/stream")
-def stream():
-    def event_stream():
+@app.route("/player-list-stream")
+def player_stream():
+    name = session['name']
+    
+    def player_list_stream():
+        last_player = last_player_joined
+
+        with app.app_context():
+            html = render_template('player_list_partial.html', name=name, player_list=player_list)
+        yield f"data: {html}\n\n"
+
         while True:
-            yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
-    return Response(event_stream(), mimetype="text/event-stream")
+            if last_player != last_player_joined:
+                last_player = last_player_joined
+                with app.app_context():
+                    html = render_template('player_list_partial.html', name=name, player_list=player_list)
+                yield f"data: {html}\n\n"
+            time.sleep(0.1)
+    return Response(player_list_stream(), mimetype="text/event-stream")
 
 @app.route("/play_card", methods=["GET", "POST"])
 def play_card():

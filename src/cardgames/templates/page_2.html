@@ -19,13 +19,11 @@
         <p>
             <strong>Players:</strong>
         </p>
-
-        <ul id="playerList">
-            {%for player in player_list%}                  <!--Jinja2 for loop-->
-                <li>{{player.name}}</li>
-            {%endfor%}
-        </ul>
-
+        
+        <div id="list">
+            {% block body %}
+            {% endblock body %}
+        </div>
         <p>
   
             <Strong>How to Play:</Strong>
@@ -55,6 +53,11 @@
 
 
     <script>
+        const source = new EventSource("/player-list-stream");
+
+        source.onmessage = (event) => {
+            document.getElementById("list").innerHTML = event.data;
+        };
     </script>
 
 </html> 
