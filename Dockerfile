@@ -22,4 +22,5 @@ COPY test/ /app/test/
 COPY .bashrc /root/.bashrc
 
 # Default command
-CMD ["python", "src/Games.py"]
+WORKDIR /app/src
+CMD ["python", "-m", "cardgames.Games"]
