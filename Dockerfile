@@ -23,4 +23,4 @@ COPY .bashrc /root/.bashrc
 
 # Default command
 WORKDIR /app/src
-CMD ["python", "-m", "cardgames.Games"]
+CMD ["python", "-u", "-m", "cardgames.Games"]

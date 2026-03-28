@@ -26,6 +26,7 @@ def home():
         name = request.form.get("player_name")
         session['name'] = name
         player_list.append(Player(name))
+        global last_player_joined
         last_player_joined = name
         return redirect(url_for('lobby'))
 
@@ -44,20 +45,21 @@ def player_stream():
     name = session['name']
     
     def player_list_stream():
+        global last_player_joined
         last_player = last_player_joined
 
         with app.app_context():
             html = render_template('player_list_partial.html', name=name, player_list=player_list)
-        yield f"data: {html}\n\n"
+        yield f"data: {html}\n\n".encode("utf-8")
 
         while True:
             if last_player != last_player_joined:
                 last_player = last_player_joined
                 with app.app_context():
                     html = render_template('player_list_partial.html', name=name, player_list=player_list)
-                yield f"data: {html}\n\n"
+                yield f"data: {html}\n\n".encode("utf-8")
             time.sleep(0.1)
-    return Response(player_list_stream(), mimetype="text/event-stream")
+    return Response(player_list_stream(), mimetype="text/event-stream", direct_passthrough=True)
 
 @app.route("/play_card", methods=["GET", "POST"])
 def play_card():
