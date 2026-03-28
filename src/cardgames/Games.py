@@ -43,15 +43,12 @@ def game():
 @app.route("/player-list-stream")
 def player_stream():
     name = session['name']
-    
     def player_list_stream():
         global last_player_joined
         last_player = last_player_joined
-
         with app.app_context():
             html = render_template('player_list_partial.html', name=name, player_list=player_list)
         yield f"data: {html}\n\n".encode("utf-8")
-
         while True:
             if last_player != last_player_joined:
                 last_player = last_player_joined
