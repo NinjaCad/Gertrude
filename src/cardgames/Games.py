@@ -2,12 +2,19 @@ from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 import random
+from pathlib import Path
 
 class Games:
+    COCONUT_MALL_TRACK = "CoconutMall20min.mp3"
+    FINAL_COUNTDOWN_TRACK = "TheFinalCountdown20min.mp3"
+    TEN_SECOND_TEST = "ten_second_test"
+    FULL_TEST = "full_test"
+    REPEAT_FOREVER = "repeat_forever"
 
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(Deck())
+        self.assets_dir = Path(__file__).resolve().parent.parent / "assets"
 
     def create_players(self):
         players = []
@@ -58,6 +65,10 @@ class Games:
     def main(self):
         print('Welcome to the Games application!')
         print('This games application is under development.')
+        playback_mode = self.choose_music_playback_mode()
+        selected_track = self.play_background_music(playback_mode)
+        if selected_track is not None:
+            print(f"Now playing: {selected_track.name}")
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
@@ -73,6 +84,51 @@ class Games:
         for card in self.deck.cards[:5]:
             print(card)
         print('Press [Enter] to exit.')
+
+    def choose_music_track(self):
+        random_value = random.random()
+        if random_value < 0.95:
+            return self.assets_dir / self.COCONUT_MALL_TRACK
+        return self.assets_dir / self.FINAL_COUNTDOWN_TRACK
+
+    def choose_music_playback_mode(self, input_func=input):
+        print("Music playback mode:")
+        print("1. 10-second test")
+        print("2. Full track once")
+        print("3. Repeat forever")
+        while True:
+            choice = input_func("Choose playback mode (1-3, default 3): ").strip()
+            if choice == "1":
+                return self.TEN_SECOND_TEST
+            if choice == "2":
+                return self.FULL_TEST
+            if choice in ("", "3"):
+                return self.REPEAT_FOREVER
+            print("Please choose 1, 2, or 3.")
+
+    def play_background_music(self, playback_mode=REPEAT_FOREVER):
+        try:
+            import pygame
+        except ImportError:
+            return None
+
+        selected_track = self.choose_music_track()
+        if not selected_track.exists():
+            return None
+
+        if pygame.mixer.get_init() is None:
+            pygame.mixer.init()
+        pygame.mixer.music.load(str(selected_track))
+
+        if playback_mode == self.TEN_SECOND_TEST:
+            pygame.mixer.music.play(0)
+            pygame.time.wait(10000)
+            pygame.mixer.music.stop()
+        elif playback_mode == self.FULL_TEST:
+            pygame.mixer.music.play(0)
+        else:
+            pygame.mixer.music.play(-1)
+        return selected_track
 
 if __name__ == "__main__":
     game = Games()
