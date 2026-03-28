@@ -51,19 +51,17 @@ class Games:
 
     def showOpponentsHands(self, players):
         for player in players:
-            # Skips the player whose turn it is, and players with empty hands
-            if player.isTurn or player.hand == []:
+            if player.isTurn or player.hand == []:  # Skips current player and empty hands
                 continue
 
             print(f"{player.name}'s hand:")
             knownCardsStore = player.knownCards
-            # Changes cards in opponents' hands to not be visible
             player.knownCards = [False] * len(player.knownCards)
 
             player.showHand()
             print()
 
-            player.knownCards = knownCardsStore  # Reverses cards to be visible
+            player.knownCards = knownCardsStore
 
     def start_game(self, players):
         playerlist = players[:]
@@ -85,7 +83,6 @@ class Games:
         player_dict = {}
         for players in turn_list:
             if players != host_player and len(players.hand) != 0:
-                # Prints players and amount of cards
                 print("player " + str(stepper) + ": " + str(players.name) + " cards: " + str(len(players.hand)))
                 player_number.append(str(stepper))
                 player_dict[(str(players.name)).lower()] = stepper
@@ -125,7 +122,7 @@ class Games:
                 stolen_cards += 1
 
         if stolen_cards == 0:
-            print("Go Fish!")  # Place Go Fish Here
+            print("Go Fish!")
 
         return target_player
 
@@ -137,14 +134,13 @@ class Games:
         if selected_track is not None:
             print(f"Now playing: {selected_track.name}")
 
-        self.deck = Deck()  # deck is created here; deck knows how, games decides when
-        self.deck.shuffle()  # object.method() - games gets the shuffle ability from deck.py
+        self.deck = Deck()
+        self.deck.shuffle()
 
-        # Access each player by "for player in players" loop OR by indexing
         players = self.create_players()
         turn_list = self.start_game(players)
 
-        game_running = True  # logic is needed to state when the game ends
+        game_running = True
         while game_running:
             for player in turn_list:
                 player.isTurn = True
@@ -153,16 +149,14 @@ class Games:
 
                 player.isTurn = True
                 print(f"\n{player.name}'s turn")
-                # for each player in the turn list:
-                # that player takes a turn
-                if (self.dealer.deck.size) == 0:
+                if self.dealer.deck.size == 0:
                     print("Draw pile is empty. Cannot pick up new cards.")
                 else:
                     while True:
                         choice = input("Do you want to draw a card? (y/n)").lower()
                         if choice == "y":
                             card = self.dealer.deck.getCard()
-                            player.hand.append(card)  # we're assuming the player has a hand
+                            player.hand.append(card)
                             print(f"You drew: {card}")
                             break
                         elif choice == "n":
@@ -170,7 +164,6 @@ class Games:
                         else:
                             print("Invalid input. Please enter 'y' or 'n'.")
 
-                # end of player's turn
                 player.isTurn = False
 
         input("Press [Enter] to exit.")

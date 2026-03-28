@@ -26,6 +26,14 @@ class Dealer:
                 player.addCard(self.deck.getCard())
         return True
 
+    def checkFor13Books(self, players):
+        totalBooks = 0
+        for player in players:
+            totalBooks += player.numBooks
+        if totalBooks == 13:
+            return True
+        return False
+
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
