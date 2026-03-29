@@ -43,19 +43,21 @@ class Player:
         self.hand = [card for card, _ in paired]
         self.knownCards = [known for _, known in paired]
 
-    def sortHandIntoValues(self):
+    def sortHandIntoValues(self, returnDictionary = False):
         value_map = {
             1: "As", 2: "2s", 3: "3s", 4: "4s", 5: "5s", 6: "6s", 7: "7s",
             8: "8s", 9: "9s", 10: "10s", 11: "Js", 12: "Qs", 13: "Ks"
         }
         sorted_hand = sorted(self.hand, key=lambda card: card.value)
         grouped_values = {}
+        if not returnDictionary:
+            return sorted_hand
         for card in sorted_hand:
             key = value_map.get(card.value, f"{card.value}s")
             if key not in grouped_values:
                 grouped_values[key] = []
             grouped_values[key].append(card)
-        return grouped_values
+        return sorted_hand, grouped_values
 
     def checkForFourOfAKind(self):      
         if len(self.hand) >= 4:
@@ -113,11 +115,54 @@ class Player:
                 else:
                     image = card.image[idx]
                     print(image, end=" ")
-            print()
-                
-
-            
+            print()   
 
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+
+    def takeTurn(self, players, game):
+        self.isTurn = True
+
+        input(f"\n{self.name}'s turn, when ready hit the ENTER key... ")
+
+        if (game.dealer.deck.size) == 0: #MAYBE GET RID OF
+            print("Draw pile is empty. Cannot pick up new cards.")
+        else:
+
+            ### Show hand
+            self.hand = self.sortHandIntoValues()
+            print("\nYour hand is:")
+            self.showHand()
+
+            ### Pickup Card
+            pickedCard = False
+            while True:
+                choice = input("\nDo you want to draw a card? (y/n): ").lower()
+                if choice == 'y':
+                    pickedCard = True
+                    card = game.dealer.deck.getCard()
+                    self.hand.append(card) #we're assuming the self has a hand
+                    self.knownCards.append(True)
+                    print(f"You drew: \n{card}")
+                    input("\nTo continue, hit the ENTER key...")
+                    break
+                elif choice == 'n':
+                    break
+                else:
+                    print("Invalid input. Please enter 'y' or 'n'.")
+
+        ### Shows new hand if card was picked up
+        if pickedCard:
+            self.hand = self.sortHandIntoValues()
+            print("\nYour new hand is:")
+            self.showHand()
+            print("\n" * 2)
+
+        ### Stealing cards
+        print("Your opponents' hands:")
+        game.card_thievery(players, self)
+
+        ### End of turn
+        self.isTurn = False
+        input("\nEnd of your turn! Hit enter to continue...")

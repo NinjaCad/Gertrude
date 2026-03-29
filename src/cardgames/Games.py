@@ -42,11 +42,12 @@ class Games:
         return players
     
     def showOpponentsHands(self, players):
-        for player in players:
+        print()
+        for playerNum, player in enumerate(players):
             if player.isTurn or player.hand == []: # Skips the player whos turn it is, as well as players with empty hands
                 continue
             
-            print(f'{player.name}\'s hand:')
+            print(f'{player.name}\'s ({playerNum}) hand:')
             knownCardsStore = player.knownCards
             player.knownCards = [False] * len(player.knownCards) # Changes cards in opponents' hands to not be visible
 
@@ -70,16 +71,14 @@ class Games:
         return turn_list
 
     def card_thievery(self, turn_list, host_player):
-        stepper = 1
         player_number = []
         player_dict = {}
-        for players in turn_list:
+        for playerNum, players in enumerate(turn_list):
             if players != host_player and len(players.hand) != 0:
-                print("player "+str(stepper)+": "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
-                player_number.append(str(stepper))
-                player_dict[(str(players.name)).lower()] = stepper      
-                
-            stepper += 1
+                player_number.append(str(playerNum))
+                player_dict[(str(players.name)).lower()] = playerNum
+
+        self.showOpponentsHands(turn_list)
 
         target_choice = ""
         while target_choice not in player_number:
@@ -102,7 +101,7 @@ class Games:
         while thief_choice not in value_dict:
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
             if thief_choice not in value_dict:
-                print("Invalid Choice! Choose Card Type, eg: aces.")
+                print("Invalid Choice! Choose Card Type, eg: aces.\n")
 
         stolen_cards = 0
         card_counter = 0
@@ -135,32 +134,8 @@ class Games:
         game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
             for player in turn_list:
-                player.isTurn = True
-                print(f"\n{player.name}'s turn")
-                print(player.name)
-
-                player.isTurn = True
-                print(f"\n{player.name}'s turn")
-        #for each player in the turn list:
-            #that player takes a turn
-                if (self.dealer.deck.size) == 0:
-                    print("Draw pile is empty. Cannot pick up new cards.")
-                else:
-                    while True:
-                        choice = input("Do you want to draw a card? (y/n)").lower()
-                        if choice == 'y':
-                            card = self.dealer.deck.getCard()
-                            player.hand.append(card) #we're assuming the player has a hand
-                            print(f"You drew: {card}")
-                            break
-                        elif choice == 'n':
-                            break
-                        else:
-                            print("Invalid input. Please enter 'y' or 'n'.")
-                
-                #print("Next, choose a player to ask and a card value") would come next                    
-                #end of player's turn
-                player.isTurn = False
+                player.takeTurn(turn_list, self)
+                print('\n' * 50)
     
         input('Press [Enter] to exit.')
 
