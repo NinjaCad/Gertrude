@@ -28,28 +28,41 @@ class Games:
             for player in self.playerList[1:]:
                 player.bet()
 
+            # GERT-40 ask each player if they want to place a perfectPairs bet
+
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
+            
+            # GERT-24 check dealers hand to see if their revealed card is an ACE
+            # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
             
             # Each player takes turn
             self.round()
 
             # Gertrude takes turn
             self.playerList[0].gertTurn(self.dealer)
+            self.playerList[0].showHand()
 
             # Calculate results
             results = self.calculateWinner(self.playerList)
 
             # Give money to winner
             for player, condition in results.items():
-                player.resolve_bet(condition, self.playerList[0])
+                player.resolve_bet({"standard": condition})
 
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
             while quit not in ["y", "yes", "n", "no"]:
                 quit = input("Not a valid input. Do you want to play another round? (y/n): ").strip().lower()
+            
             if quit in ["n", "no"]:
                 break
+            else:
+                # resetting player active status, hands, and the deck after each round
+                for player in self.playerList:
+                    player.active = True
+                    player.clearHand()
+                self.deck.reset()
         
         # End game
         print("\nThanks for playing!")
@@ -81,6 +94,10 @@ class Games:
     # Loop through all the players and there actions
     def round(self):
         # Repeat length of players minus gertrude
+        
+        print(f"--- Gertrude's hand ---")
+        self.playerList[0].showHand()
+        
         for player in self.playerList[1:]:
             print(f"\n--- {player.name}'s turn ---")
             print(f"--- {player.name}'s hand ---")
@@ -126,10 +143,17 @@ class Games:
                         continue
 
                     print(f"\n--- {player.name}'s hand ---")
+                    player.check_cards()
                     player.showHand()
                 else:
                     print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
-
+                    
+    # GERT-31 calculateWinner()
+    # inputs: none
+    # outputs: none
+    # goals: a) using self.playerList, compare every human player score to Gertrude player's score using player.check_cards()
+    #        b) reapportion player money based on player bets earlier (see resolve_bet() in Player.py for more information on format)
+    #        c) GERT-30 call trashtalk() on the players who lose
     def calculateWinner(self, playerList):
         dealer = playerList[0] # exclude Gurtrude.dealer  
         dealerScore = dealer.check_cards()
@@ -140,19 +164,19 @@ class Games:
 
             if playerScore > 21:
                 results[player] = False 
-                print(player.name , "You bust!")
+                print(player.name, ", you bust!")
             elif dealerScore > 21:
                 results[player] = True 
-                print(player.name , "You win! Dealer busts!")
+                print(player.name, ", you win! Dealer busts!")
             elif playerScore > dealerScore:
                 results[player] = True 
-                print(player.name , "You win! you take all for having a higher score than the dealer!")
+                print(player.name, ", you win! you take all for having a higher score than the dealer!")
             elif playerScore < dealerScore:
                 results[player] = False 
-                print(player.name , "You lose! Dealer takes all for a higher score!")
+                print(player.name, ", you lose! Dealer takes all for a higher score!")
             else:
                 results[player] = False
-                print(player.name , "Push! You Tied with the dealer.")
+                print(player.name, ", push! You Tied with the dealer.")
         return results 
 
 if __name__ == "__main__":

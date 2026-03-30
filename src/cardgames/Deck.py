@@ -38,7 +38,7 @@ class Deck:
         index = 0
         for suit in suits:
             for value in values:
-                deck.append(Card(suit, value))
+                deck.append(Card(suit, value, cardImages[index], cardBack))
                 index += 1
         
         self.cards = deck
