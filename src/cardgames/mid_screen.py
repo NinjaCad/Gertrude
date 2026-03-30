@@ -1,7 +1,7 @@
 import os
 import time
 
-def player2_transition_screen():
+def start_transition_screen():
     # Ask Player 1 to confirm end of turn
     input("\nPlayer 1: Press ENTER to end your turn...")
 
@@ -20,4 +20,4 @@ def player2_transition_screen():
     # Clear again before Player 2 sees anything
     os.system('cls' if os.name == 'nt' else 'clear')
 
-player2_transition_screen()
+start_transition_screen()
