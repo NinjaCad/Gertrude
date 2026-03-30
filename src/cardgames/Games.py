@@ -47,9 +47,19 @@ def stream():
 def play_card():
     card = ""
     if request.method == "POST":
-        card = global_card_change()
+        card = global_card_change(GAME_STATE)
 
     return render_template("page_3.html", card=card)              #return rank and person who turn it is
+
+@app.route("/start_game", methods=["GET", "POST"])
+def start_game():
+    global player_list
+    if request.method == 'GET':
+        Dealer(Deck()).deal_cards(player_list)        #some players might get extra cards
+        for player in player_list:
+            player.set_angle(360//len(player_list) + player_list.index(player))       #sets the angle of the player around the deck
+    return render_template("page_3.html", players=player_list)        
+
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
