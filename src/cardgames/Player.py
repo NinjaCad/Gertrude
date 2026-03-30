@@ -282,12 +282,19 @@ TIPS:
     def tipDealer(self):
         while True:
             print(f"{self.name}, you have ${self.money}.")
-            self.tipChoice = input("Do you want to tip the dealer? (y/n)")
+            self.tipChoice = input("Do you want to tip the dealer? (y/n) ")
             if self.tipChoice == "y":
-                self.tipAmt = int(input())
+                while True:
+                    try:
+                        self.tipAmt = int(input("How much do you want to tip? (integer value only) "))
+                        break
+                    except ValueError:
+                        print("That is not an integer value! Try again")
+                    
                 self.money -= self.tipAmt
-                print("Gertrude smiles warmly: Thanks for the tip sweetie!")
+                print("Gertrude smiles warmly: Thanks for the tip sweetie! ")
                 self.niceGert = True    
+                break
 
             elif self.tipChoice == "n":
                 print("Gertrude looks at you blankly...")
