@@ -13,7 +13,8 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 
 #The player objects will be appended to this list. 
 player_list = []
-GAME_STATE = {"current_card" : None, "current_player" : None}
+GAME_STATE = {"current_card" : None, "current_player" : None, "counter" : 0}
+slap_list = []          #This list appends the players in the order they slapped the deck (not yet implemented).
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -46,10 +47,14 @@ def stream():
 @app.route("/play_card", methods=["GET", "POST"])
 def play_card():
     card = ""
+    global GAME_STATE
+    global player_list
+    player_list = [Player('Prof Lee')]          #this line to make testing the play_card() route more straightfoward; can be deleted when we merge
     if request.method == "POST":
-        card = global_card_change()
-
-    return render_template("page_3.html", card=card)              #return rank and person who turn it is
+        card = global_card_change(GAME_STATE)
+    counter = increase_counter(GAME_STATE, player_list)
+    
+    return render_template("page_3.html", card=card, counter=counter)              #return rank and person who turn it is
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)

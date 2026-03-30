@@ -1,14 +1,14 @@
-from cardgames.Games import GAME_STATE
+#from cardgames.Games import GAME_STATE
 from cardgames.Player import Player
 
-def global_card_change():
-    current_player = GAME_STATE["current_player"]
+def global_card_change(game_state):
+    current_player = game_state["current_player"]
     if current_player is None or not current_player.hand:
         return "No card to play"
     
-    GAME_STATE["current_card"] = current_player.hand.pop() # delete this line, uncomment the line below, after merge.
+    game_state["current_card"] = current_player.hand.pop() # delete this line, uncomment the line below, after merge.
     # GAME_STATE["current_card"] = current_player.pop_card()
-    current_card = GAME_STATE["current_card"]
+    current_card = game_state["current_card"]
 
     # Also to be replaced after merge
     return str(current_card)
@@ -22,8 +22,9 @@ def win_check(players: "list[Player]"):
     else:
         return False
 
-def blank(game_state, player_list):                                              #counter function
-    """Increments counter and returns (rank, player_index)"""
+def increase_counter(game_state, player_list):                                              #counter function
+    #"""Increments counter and returns (rank, player_index)"""
+    #game_state['counter'] = 0
     game_state['counter'] += 1
     current_count = game_state['counter']
     return current_count % 13, current_count % len(player_list)
