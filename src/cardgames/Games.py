@@ -68,6 +68,29 @@ class Games:
 
         return turn_list
 
+    #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
+    def endGameState(self, players):
+        nameScorePairs = {p.name: p.numBooks for p in players}
+        mostBooks = max(nameScorePairs.values())
+        mostBooksHolders = [name for name, score in nameScorePairs.items() if score == mostBooks]
+        #in case of tie:
+        if len(mostBooksHolders) > 1:
+            print(f"It's a tie between {' and '.join(mostBooksHolders)} with {mostBooks} books each!")
+        #sigle winner:
+        else:
+            winner = mostBooksHolders[0]
+            print(f"{winner} wins with {mostBooks} books!")
+        #scoreboard/lists all player's scores
+        print("\nFinal scores:")
+        for player in players:
+            if player.numBooks == 0:
+                print(f"{player.name} has 0 books.")
+            elif player.numBooks == 1:
+                print(f"{player.name}: {player.numBooks} book.\nThey have the following book: {player.books}")
+            else:
+                print(f"{player.name}: {player.numBooks} books.\nThey have the following books: {player.books}")
+        print()
+
             
     def main(self):
         print('Welcome to the Games application!')
