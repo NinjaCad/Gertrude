@@ -26,9 +26,8 @@ class Games:
         while True:
             # Each player places bets
             for player in self.playerList[1:]:
-                player.bet()
-
-            # GERT-40 ask each player if they want to place a perfectPairs bet
+                player.bet("standard")
+                player.bet("pairs")
 
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
@@ -50,6 +49,16 @@ class Games:
             for player, condition in results.items():
                 player.resolve_bet({"standard": condition})
 
+            for player in self.playerList:
+                resultPair = player.perfectPairs()
+                if resultPair:
+                    if resultPair == "Colored Pair":
+                        player.bets["pairs"] *= 10
+                    elif resultPair == "Mixed Pair":
+                        player.bets["pairs"] *= 5
+                    resultPair = True
+                player.resolve_bet({"pairs": resultPair})
+            
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
             while quit not in ["y", "yes", "n", "no"]:
@@ -105,7 +114,7 @@ class Games:
 
             while True:
                 # Check if the player's turn has ended, and if so, end their turn and print their hand value
-                if (player.active == False):
+                if player.active == False:
                     print(f"{player.name} ends with a hand value of {player.check_cards()}.")
                     break
 
@@ -126,7 +135,7 @@ class Games:
 
                 choice = input("> ").strip().lower()
 
-                if (choice in enabled_moves or choice in aliases):
+                if choice in enabled_moves or choice in aliases:
                     if choice in ["hit", "h"]:
                         player.hit(self.dealer)
                     elif choice in ["stand", "s"]:

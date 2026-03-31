@@ -223,11 +223,14 @@ TIPS:
     # ouputs: none
     # goal: a) create new self.money and self.bet_money attributes
     #       b) set self.bet_money based on user input
-    def bet(self):
+    def bet(self, type):
         # GERT-30 call trashtalk when player makes a bet
         
         while True: # while loop guarantees valid input
-            bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
+            if (type == "pairs"):
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+            else:
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
             
             try: # guarantee that bet is an integer
                 bet = int(bet)
@@ -235,7 +238,7 @@ TIPS:
                 print("Please enter a valid integer amount.")
                 continue
             
-            if bet < 5: # guarantee bet is 5 or more
+            if bet < 5 and type == "standard": # guarantee bet is 5 or more
                 print("Bet amount must be at least $5. Please enter a valid amount.")
                 continue
             
@@ -244,7 +247,10 @@ TIPS:
                 continue
             
             else: # if all checks are passed, set bet and break loop
-                self.bets["standard"] = bet
+                if (type == "pairs"):
+                    self.bets["pairs"] = bet
+                else:
+                    self.bets["standard"] = bet
                 break
             
         return
@@ -280,6 +286,14 @@ TIPS:
     # inputs: none
     # outputs: pairType (string) based on whether or not there is a mixed pair, colored pair, or no pair
     # goals: check self.hand for mixed or colored pair
+    def perfectPairs(self):
+        if len(self.hand) == 2:
+            if self.hand[0].value == self.hand[1].value:
+                if self.hand[0].suit == self.hand[1].suit:
+                    return "Colored Pair"
+                else:
+                    return "Mixed Pair"
+        return False
 
 
     # GERT-15 split()
