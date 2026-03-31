@@ -40,7 +40,7 @@ class Games:
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
             
             if self.playerList[0].hand[0].value == 1 :  #Checking for Ace! 
-                for player in self.playerList
+                for player in self.playerList:
                     player.bet("insurance")
 
             # Each player takes turn
