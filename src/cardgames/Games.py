@@ -38,54 +38,10 @@ class Games:
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
-            dealer = self.playerList[0]
-            dealer_shows_ace = False
-            for card in dealer.hand:
-                if card.isKnown and card.value == "A":  #Checking for Ace! 
-                    dealer_shows_ace = True
-                    break
-
-            if dealer_shows_ace:
-                for player in self.playerList[1:]:
-                    std_bet = player.bets.get("standard", 0)
-                    if std_bet <= 0:
-                        # can't take insurance without a standard bet
-                        print(f"{player.name}, you have not placed a standard bet so insurance is not available.")
-                        player.bets["insurance"] = 0
-                        continue
-                    
-
-                    max_allowed = min(player.money, std_bet // 2)
-                    if max_allowed <= 0:
-                        print(f"{player.name}, your bet is too small to take insurance.")
-                        player.bets["insurance"] = 0
-                        continue
-
-                    # ask Y/N, require valid reply
-                    while True:
-                        choice = input(f"{player.name}, dealer shows an Ace. Do you want insurance? (y/n): ").strip().lower()
-                        if choice in ("n", "no"):
-                            player.bets["insurance"] = 0
-                            break
-                        if choice in ("y", "yes"):
-                            # prompt for amount with validation
-                            while True:
-                                amt = input(f"Enter insurance amount (max {max_allowed}): ").strip()
-                                try:
-                                    amt = int(amt)
-                                except ValueError:
-                                    print("Please enter a valid integer amount.")
-                                    continue
-                                if amt < 0:
-                                    print("Insurance cannot be negative.")
-                                    continue
-                                if amt > max_allowed:
-                                    print(f"Insurance cannot exceed {max_allowed}.")
-                                    continue
-                                player.bets["insurance"] = amt
-                                break
-                            break
-                        print("Please answer 'y' or 'n'.")
+            
+            if self.playerList[0].hand[0].value == 1 :  #Checking for Ace! 
+                for player in self.playerList
+                    player.bet("insurance")
 
             # Each player takes turn
             self.round()
@@ -101,15 +57,9 @@ class Games:
             for player, condition in results.items():
                 player.resolve_bet({"standard": condition})
 
-            for player in self.playerList:
-                resultPair = player.perfectPairs()
-                if resultPair:
-                    if resultPair == "Colored Pair":
-                        player.bets["pairs"] *= 10
-                    elif resultPair == "Mixed Pair":
-                        player.bets["pairs"] *= 5
-                    resultPair = True
-                player.resolve_bet({"pairs": resultPair})
+            for player in self.playerList[1:]:
+                player.resolve_bet({"pairs": player.perfectPairs()})
+                player.resolve_bet({"insurance": player.insurance()})
             
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()

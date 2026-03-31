@@ -227,19 +227,26 @@ TIPS:
         # GERT-30 call trashtalk when player makes a bet
         
         while True: # while loop guarantees valid input
+            # Getting players money
             if (type == "pairs"):
                 bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+            elif (type == "insurance"):
+                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
             else:
                 bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
             
-            try: # guarantee that bet is an integer
+            # guarantee that bet is an integer
+            try:
                 bet = int(bet)
             except ValueError:
                 print("Please enter a valid integer amount.")
                 continue
             
-            if bet < 5 and type == "standard": # guarantee bet is 5 or more
+            # constraints
+            if type == "standard" and bet < 5: # guarantee bet is 5 or more
                 print("Bet amount must be at least $5. Please enter a valid amount.")
+                continue
+            if type == "insurance" and bet > self.bets["standard"] // 2:
                 continue
             
             elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
@@ -280,7 +287,11 @@ TIPS:
     # inputs: none
     # outputs: none
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
-    
+    def insurance(self, playerList):
+        if playerList[0].hand[1].value >= 10:
+            return True  
+        else:
+            return False  
     
     # GERT-40 perfectPairs()
     # inputs: none
