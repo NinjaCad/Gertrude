@@ -78,6 +78,9 @@ def testTipDealer():
     #4. Respond "one-hundred" to the previous question
     #5. ASSERT "That is not an integer value! Try again" is printed and
         #"How much do you want to tip..." is printed (from step 3)
+    #6. Respond "150" to the previous question
+    #7. ASSERT "You don't have that much money! Try again." is printed and
+        #"How much do you want to tip..." is printed from step 3
     #6. Respond "100" to the previous question
     #7. ASSERT "Gertrude smiles warmly: Thanks for the tip sweetie!" is printed
     #8. ASSERT "John has $0" is printed

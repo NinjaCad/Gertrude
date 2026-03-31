@@ -287,7 +287,10 @@ TIPS:
                 while True:
                     try:
                         self.tipAmt = int(input("How much do you want to tip? (integer value only) "))
-                        break
+                        if self.tipAmt > self.money:
+                            print("You don't have that much money! Try again.")
+                        else:
+                            break
                     except ValueError:
                         print("That is not an integer value! Try again")
                     
