@@ -11,3 +11,7 @@ def client():
 def test_play_card(client):
     response = client.get("/play_card")
     assert response.status_code == 200
+
+def test_play_card_route_data(client):
+    response = client.get("/play_card")
+    assert b'<form method="POST">' in response.data
