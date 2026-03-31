@@ -12,8 +12,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1"
 
 #The player objects will be appended to this list. 
+# "counter":
+# - increments each turn in play_card() (Games.py) and drives game flow
+# - uses counter logic defined in page_3.py
 player_list = []
-GAME_STATE = {"current_card" : None, "current_player" : None}
+GAME_STATE = {"current_card" : None, "current_player" : None, "counter" : 0}
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
