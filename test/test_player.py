@@ -73,17 +73,17 @@ def testTipDealer():
     #instructions for test case #3
     #1. ASSERT "John, you have $100" is printed
     #2. ASSERT "Do you want to tip the dealer? (y/n)" is printed
-    #2. Respond "y" to the previous question
-    #3. ASSERT "How much do you want to tip? (integer value only)" is printed
-    #4. Respond "one-hundred" to the previous question
-    #5. ASSERT "That is not an integer value! Try again" is printed and
+    #3. Respond "y" to the previous question
+    #4. ASSERT "How much do you want to tip? (integer value only)" is printed
+    #5. Respond "one-hundred" to the previous question
+    #6. ASSERT "That is not an integer value! Try again" is printed and
         #"How much do you want to tip..." is printed (from step 3)
-    #6. Respond "150" to the previous question
-    #7. ASSERT "You don't have that much money! Try again." is printed and
+    #7. Respond "150" to the previous question
+    #8. ASSERT "You don't have that much money! Try again." is printed and
         #"How much do you want to tip..." is printed from step 3
-    #6. Respond "100" to the previous question
-    #7. ASSERT "Gertrude smiles warmly: Thanks for the tip sweetie!" is printed
-    #8. ASSERT "John has $0" is printed
+    #9. Respond "100" to the previous question
+    #10. ASSERT "Gertrude smiles warmly: Thanks for the tip sweetie!" is printed
+    #11. ASSERT "John has $0" is printed
 
     
   
