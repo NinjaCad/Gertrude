@@ -25,3 +25,33 @@ def test_play_card_get(client):
     assert "Current Sequence: " in html
     assert "Current Player: " in html
     assert "No player" in html
+
+def test_play_card_post_noplayers(client):
+    response = client.post("/play_card")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert GAME_STATE["current_player"] is None
+    assert GAME_STATE['counter'] == 0
+    assert "Current Sequence: None" in html
+    assert "Current Player: No player" in html
+
+def test_play_card_post_withplayer(client):
+    player_list.append(Player("Alice"))
+    
+    response = client.post("/play_card")
+    html = response.get_data(as_text=True)
+
+    assert response.status_code == 200
+    assert GAME_STATE["current_player"] is not None
+    assert GAME_STATE['current_player'].name == "Alice"
+    assert GAME_STATE['counter'] == 1
+    assert "Current Player: Alice" in html
+
+def test_play_card_counter_increments(client):
+    player_list.append(Player("Alice"))
+    
+    client.post("/play_card")  # Alice's turn
+    client.post("/play_card")  # Alice's turn again (since she's the only player for testing purposes)
+
+    assert GAME_STATE['counter'] == 2
