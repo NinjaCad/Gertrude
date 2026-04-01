@@ -112,9 +112,9 @@ class Games:
                 # refresh availability each loop because the commands change
                 enabled_moves = ["hit", "stand"]
                 aliases = ["h", "s"]
-                # if (player.can_split()):
-                #     enabled_moves.append("split")
-                #     aliases.append("sp")
+                if (player.can_split()):
+                    enabled_moves.append("split")
+                    aliases.append("sp")
                 # if (player.can_double()):
                 #     enabled_moves.append("double down")
                 #     aliases.append("dd")
@@ -131,8 +131,8 @@ class Games:
                         player.hit(self.dealer)
                     elif choice in ["stand", "s"]:
                         player.stand()
-                    # elif choice in ["split", "sp"]:
-                    #     player.split(self.dealer)
+                    elif choice in ["split", "sp"]:
+                        player.split(self.dealer)
                     # elif choice in ["double down", "dd"]:
                     #    player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
@@ -160,9 +160,12 @@ class Games:
         results = {}
 
         for player in playerList[1:]: 
+             
             playerScore = player.check_cards()
 
-            if playerScore > 21:
+            if player.split_hands_score: # special functionality for players who ran split
+                player.resolve_bet_split(dealerScore)
+            elif playerScore > 21:
                 results[player] = False 
                 print(player.name, ", you bust!")
             elif dealerScore > 21:
