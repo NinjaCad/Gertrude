@@ -1,4 +1,5 @@
 from cardgames.Deck import Deck
+from cardgames.Card import Card
 import copy
 
 # ==========================================================
@@ -148,6 +149,7 @@ class Games:
                 game_stats[player] = {}
                 game_stats[player]["Wins"] = 0
                 game_stats[player]["Win-Rate"] = ""
+                game_stats[player]["Win Streak"] = 0
             game_stats["Ties"] = 0
         
         #Error handling
@@ -162,8 +164,19 @@ class Games:
         #Increment the number of wins or ties
         if winner == "It's a tie!":
             game_stats["Ties"] += 1
+
+            #Every player loses their win streak if it's a tie
+            for player in players:
+                game_stats[player]["Win Streak"] = 0
         else:
             game_stats[winner]["Wins"] += 1
+
+            #Update win streak
+            game_stats[winner]["Win Streak"] += 1
+            for player in players:
+                if player == winner:
+                    continue
+                game_stats[player]["Win Streak"] = 0
 
         #Total games is the sum of Player1 wins, Player2 wins, and ties
         total_games = 0
@@ -181,11 +194,5 @@ class Games:
 
 if __name__ == "__main__":
     game = Games()
-<<<<<<< HEAD
-    game.main(test_mode=False)
-=======
     game.main(test_mode=False)
 
-
-
->>>>>>> 501a6b107e9a5caccd8d6db7c20a3e0966998f18
