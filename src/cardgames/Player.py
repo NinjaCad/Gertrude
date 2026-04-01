@@ -256,6 +256,8 @@ TIPS:
             else: # if all checks are passed, set bet and break loop
                 if (type == "pairs"):
                     self.bets["pairs"] = bet
+                elif (type == "insurance"):
+                    self.bets["insurance"] = bet
                 else:
                     self.bets["standard"] = bet
                 break
