@@ -1,4 +1,5 @@
 from cardgames.Card_Compare import *
+import os
 
 
 class Player:
@@ -43,9 +44,16 @@ class Player:
                     print(card.cardBack[idx], end="")
                 print()
             
-            print(f"{self.name}'s hand is now hidden.")
+            print(f"\n{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
+
+    def clear_screen(self):
+        # If the OS is Windows, run 'cls', otherwise run 'clear'
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
 
     def clearHand(self):
         self.hand = []
