@@ -39,9 +39,8 @@ class Games:
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
             
-            if self.playerList[0].hand[0].value == 1 :  #Checking for Ace! 
-                for player in self.playerList:
-                    player.bet("insurance")
+            for player in self.playerList:
+                player.bet("insurance")
 
             # Each player takes turn
             self.round()
