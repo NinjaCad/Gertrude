@@ -1,36 +1,8 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
+from cardgames.Dealer import Dealer
+import random
 import copy
-
-def select_card(self, player): # Function by Tyson
-        # Denotes the change of turn 
-        print(f"\n--- {player.name}'s Turn ---")
-        
-        if len(player.hand) == 0: # Added by Sam's suggestion
-            print(f"{player.name} has no cards left to play!")
-            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
-            return 
-
-        player.showHand(printShort=True)
-        
-        while True:
-            try:
-                max_choice = len(player.hand)
-                # Prompting player to pick a card
-                choice = int(input(f"Select a card to play (1-{max_choice}): "))
-                
-                # Check if choice is valid
-                if 1 <= choice <= max_choice:
-                    # Assign the chosen card using player.hand
-                    player.chosen_card = player.hand[choice - 1]
-                    print("Great! You selected {player.chosen_card}.")
-                    break 
-                else:
-                    # error handling in case they pick a number outside the options
-                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
-                    
-            except ValueError:
-                print("Invalid input. Please enter a valid number.")
 
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
@@ -111,22 +83,90 @@ def show_cards(card: Card):
 
 class Games:
 
+    betting_templates = [
+        "Local man confidently bets his last $12 on {player}... again.",
+        "Frat leader squanderes his rent money on {player}.",
+        "Unknown bettor claims {player} 'has aura' and puts down everything.",
+        "Grandma in Ohio places emotional 5 cent wager on {player}.",
+        "Wall Street intern uses company credit card on {player}.",
+        "Two raccoons reportedly pool resources and bet on {player}.",
+        "Man says 'trust me bro' and stakes his entire account on {player}.",
+        "{player} fan base is just one guy... but he's VERY confident.",
+        "Breaking: gambler ignores 7 losses in a row and doubles down on {player} again.",
+        "Local legend bets purely based on which name sounds cooler: {player}.",
+        "AI predicts {player} win. Human immediately bets against it out of spite.",
+        """Someone just bet $3.72 on {player} claiming "history will remember this moment""",
+        "Group chat unanimously makes the worst possible bet on {player}.",
+        "Man flips coin, disagrees with result, bets {player} anyway.",
+        "{player} receives emotional support betting surge.",
+        "Small North Dakota town rallies behind {player} for no explainable reason.",
+        "Gambler claims he 'studied the patterns' and picks {player} (he did not).",
+        "One bettor screams 'THIS IS THE ONE' for the 14th time today about {player}.",
+        "Suspiciously confident bettor refuses to elaborate, places max bet on {player}.",
+    ]
+
     def __init__(self):
         self.deck = Deck()
+
+    def build_betting_notification(self, chosen_player_name, bettor_name=None, amount=None):
+        if bettor_name is not None or amount is not None:
+            bettor = bettor_name or "Unknown bettor"
+            wager = amount or "$100"
+            return f"{bettor} bet {wager} on {chosen_player_name}."
+
+        template = random.choice(self.betting_templates)
+        return template.format(player=chosen_player_name)
+
+    def show_betting_popup(self, chosen_player_name, bettor_name=None, amount=None):
+        """Print a popup-style betting message and return it for testability."""
+        message = self.build_betting_notification(chosen_player_name, bettor_name, amount)
+        popup = f"\n[BETTING POP-UP] {message}"
+        print(popup)
+        return message
+
+    def select_card(self, player):  # Function by Tyson
+        """Denotes the change of turn"""
+        print(f"\n--- {player.name}'s Turn ---")
+        
+        if len(player.hand) == 0:  # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
+
+        player.showHand(printShort=True)
+        
+        while True:
+            try:
+                max_choice = len(player.hand)
+                # Prompting player to pick a card
+                choice = int(input(f"Select a card to play (1-{max_choice}): "))
+                
+                # Check if choice is valid
+                if 1 <= choice <= max_choice:
+                    # Assign the chosen card using player.hand
+                    player.chosen_card = player.hand[choice - 1]
+                    print(f"Great! You selected {player.chosen_card}.")
+                    break 
+                else:
+                    # error handling in case they pick a number outside the options
+                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
+                    
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
     def main(self, test_mode= False):
         print('Welcome to High Card Draw!')
         
-        print('First 3 cards in standard 52-card deck:')
-        for card in self.deck.cards[:3]:
-            print(card)
-        input('Press [Enter] to exit.')
-
-        # Example usage of New Feature: instructions display.
-        # This is the demo only - the rules system itself is tested through pytest.
-        print("\nHigh Card Draw Instructions (overview):")
-        print(HighCardDrawInstructions.get("overview"))
         if not test_mode:
+            print('First 3 cards in standard 52-card deck:')
+            for card in self.deck.cards[:3]:
+                print(card)
+            input('Press [Enter] to exit.')
+
+            # Example usage of New Feature: instructions display.
+            # This is the demo only - the rules system itself is tested through pytest.
+            print("\nHigh Card Draw Instructions (overview):")
+            print(HighCardDrawInstructions.get("overview"))
             input('Press [Enter] to start.')
 
         #  print instructions
@@ -141,6 +181,9 @@ class Games:
 
         # deal cards to players
         dealer.dealCards(3, [player1, player2])
+
+        self.show_betting_popup(player1.name)
+        self.show_betting_popup(player2.name)
 
         # display player 1's cards
         for card in player1.hand:

@@ -1,6 +1,6 @@
 import os
 import random
-from Card_Compare import Card
+from .Card_Compare import Card
 
 cardImages = []
 values = list(range(1,14))
