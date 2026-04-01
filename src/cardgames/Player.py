@@ -6,15 +6,9 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
-<<<<<<< HEAD
         self.redraw_tokens = 0
-=======
-<<<<<<< HEAD
         self.chosen_card = None
-=======
         self.chosen_card = Card("", 0, [], [])
->>>>>>> 95d0b76397cbdb9b22e26269bbe7bd6e0ff3ae08
->>>>>>> remotes/origin/dev_backrow_buggers
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
