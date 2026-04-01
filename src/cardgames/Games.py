@@ -4,7 +4,7 @@ from cardgames.Dealer import Dealer
 from cardgames.Player import Player
 from cardgames.page_1 import *
 from cardgames.page_2 import *
-from cardgames.page_3 import *
+
 import random
 from flask import Flask, render_template, url_for, Response, request, session, redirect
 
@@ -17,6 +17,11 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 # - uses counter logic defined in page_3.py
 player_list = []
 GAME_STATE = {"current_card" : None, "current_player" : None, "counter" : 0}
+
+
+# Temporary workaourd due to circular imports.
+from cardgames.page_3 import *
+
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
