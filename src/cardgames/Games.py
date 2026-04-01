@@ -4,6 +4,7 @@ from cardgames.Dealer import Dealer
 from cardgames.Player import Player
 from cardgames.page_1 import *
 from cardgames.page_2 import *
+from cardgames.page_3 import *
 
 import random
 from flask import Flask, render_template, url_for, Response, request, session, redirect
@@ -12,16 +13,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1"
 
 #The player objects will be appended to this list. 
+player_list = []
+
 # "counter":
 # - increments each turn in play_card() (Games.py) and drives game flow
 # - uses counter logic defined in page_3.py
-player_list = []
 GAME_STATE = {"current_card" : None, "current_player" : None, "counter" : 0}
-
-
-# Temporary workaourd due to circular imports.
-from cardgames.page_3 import *
-
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -51,15 +48,13 @@ def stream():
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
 
-
-
 @app.route("/play_card", methods=["GET", "POST"])
 def play_card():
     card = ""
     rank = None
 
     if request.method == "POST" and player_list:
-        rank, player_index = blank(GAME_STATE, player_list)
+        rank, player_index = advance_turn(GAME_STATE, player_list)
         GAME_STATE["current_player"] = player_list[player_index]
         card = global_card_change()
 

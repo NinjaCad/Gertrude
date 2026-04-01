@@ -22,7 +22,8 @@ def win_check(players: "list[Player]"):
     else:
         return False
 
-def blank(game_state, player_list):                                              #counter function
+# Renamed function for better readability.
+def advance_turn(game_state, player_list):                                              #counter function
     """Increments counter and returns (rank, player_index)"""
     game_state['counter'] += 1
     current_count = game_state['counter']
