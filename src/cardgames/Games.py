@@ -48,16 +48,12 @@ class Games:
             # Give money to winner
             for player, condition in results.items():
                 player.resolve_bet({"standard": condition})
-
-            for player in self.playerList:
-                resultPair = player.perfectPairs()
-                if resultPair:
-                    if resultPair == "Colored Pair":
-                        player.bets["pairs"] *= 10
-                    elif resultPair == "Mixed Pair":
-                        player.bets["pairs"] *= 5
-                    resultPair = True
-                player.resolve_bet({"pairs": resultPair})
+            
+            # Calculate results and give money for perfect pairs
+            for player in self.playerList[1:]:
+                player.resolve_bet({"pairs": player.perfectPairs()})
+                #player.resolve_bet({"insurance": player.insurance()})
+                #player.resolve_bet({"21+3": player.twentyone()})
             
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
@@ -186,7 +182,7 @@ class Games:
             else:
                 results[player] = False
                 print(player.name, ", push! You Tied with the dealer.")
-        return results 
+        return results
 
 if __name__ == "__main__":
     game = Games()
