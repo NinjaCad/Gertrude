@@ -262,15 +262,6 @@ TIPS:
     # outputs: none
     # goal: a) add or subtract bet attribute from money attribute based on whether or not player one
     def resolve_bet(self, bet_results):
-        
-        if "standard" in bet_results.keys() and self.split_hands_score:
-            self.resolve_bet_split()
-            del bet_results["standard"]
-            self.split_hands_score = None
-            
-        # to avoid errors if standard was only arg passed in
-        if len(bet_results.keys()) <= 0:
-            return
             
         for bet in bet_results.keys():
             if bet_results[bet]:
