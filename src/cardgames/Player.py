@@ -7,10 +7,14 @@ class Player:
         self.hand = []
         self.knownCards = []
 <<<<<<< HEAD
+        self.redraw_tokens = 0
+=======
+<<<<<<< HEAD
         self.chosen_card = None
 =======
         self.chosen_card = Card("", 0, [], [])
 >>>>>>> 95d0b76397cbdb9b22e26269bbe7bd6e0ff3ae08
+>>>>>>> remotes/origin/dev_backrow_buggers
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -54,3 +58,20 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+
+    def add_redraw_token(self, tokens: int = 1):
+        if tokens < 0:
+            raise ValueError("Cannot add a negative number of redraw tokens.")
+        self.redraw_tokens += tokens
+
+    def record_round_win(self):
+        self.add_redraw_token()
+
+    def can_redraw(self) -> bool:
+        return self.redraw_tokens > 0
+
+    def consume_redraw_token(self) -> bool:
+        if not self.can_redraw():
+            return False
+        self.redraw_tokens -= 1
+        return True
