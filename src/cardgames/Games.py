@@ -46,13 +46,22 @@ def stream():
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
 
+
+
 @app.route("/play_card", methods=["GET", "POST"])
 def play_card():
     card = ""
-    if request.method == "POST":
+    rank = None
+
+    if request.method == "POST" and player_list:
+        rank, player_index = blank(GAME_STATE, player_list)
+        GAME_STATE["current_player"] = player_list[player_index]
         card = global_card_change()
 
-    return render_template("page_3.html", card=card)              #return rank and person who turn it is
+    current_player_name = GAME_STATE["current_player"].name if GAME_STATE["current_player"] else "No player"
+
+    # return rank (of the global card), current player turn, and last card played
+    return render_template("page_3.html", rank=rank, card=card, current_player=current_player_name)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
