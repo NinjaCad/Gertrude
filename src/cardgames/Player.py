@@ -287,8 +287,8 @@ TIPS:
     # inputs: none
     # outputs: none
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
-    def insurance(self, playerList):
-        if playerList[0].hand[0].value == 1 and playerList[0].hand[1].value >= 10: #Checking for Ace! 
+    def insurance(self, gert):
+        if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
             return True  
         else:
             return False  

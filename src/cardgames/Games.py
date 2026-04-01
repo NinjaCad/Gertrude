@@ -39,8 +39,9 @@ class Games:
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
             
-            for player in self.playerList:
-                player.bet("insurance")
+            for player in self.playerList[1:]:
+                if self.playerList[0].hand[0].value == 1:
+                    player.bet("insurance")
 
             # Each player takes turn
             self.round()
@@ -58,7 +59,7 @@ class Games:
 
             for player in self.playerList[1:]:
                 player.resolve_bet({"pairs": player.perfectPairs()})
-                player.resolve_bet({"insurance": player.insurance()})
+                player.resolve_bet({"insurance": player.insurance(self.playerList[0])})
             
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
