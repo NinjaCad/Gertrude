@@ -8,7 +8,7 @@ class Games:
 
     def __init__(self):
         self.deck = Deck()
-        self.dealer = Dealer(Deck())
+        self.dealer = Dealer(self.deck)
         self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
         "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
 
@@ -58,6 +58,7 @@ class Games:
             player.knownCards = knownCardsStore # Reverses cards to be visible
     
     def start_game(self, players):
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         playerlist = players[:]
         random.shuffle(playerlist)
         turn_list = playerlist
@@ -144,9 +145,6 @@ class Games:
         print('Welcome to the Games application!')
         print('This games application is under development.')
 
-        self.deck = Deck() #deck is created here; deck knows how, games decides when
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
-        
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
         turn_list = self.start_game(players)
