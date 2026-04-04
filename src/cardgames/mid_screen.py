@@ -1,21 +1,27 @@
 import os
 import time
 
-def start_transition_screen():
-    # Ask Player 1 to confirm end of turn
-    input("\nPlayer 1: Press ENTER to end your turn...")
-
-    # Clear Player 1's info
+def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
 
+def start_transition_screen(num1, num2):
+    # End current player's turn
+    input(f"\nPlayer {num1}: Press ENTER to end your turn...")
+
+    clear_screen()
+
+    # Show transition screen
     print("===================================")
-    print("          PLAYER 2 TURN")
+    print(f"          PLAYER {num2} TURN")
     print("===================================")
-    print("\nPass the device to Player 2.")
+    print(f"\nPass the device to Player {num2}.")
     
     time.sleep(2)
 
-    input("\nPlayer 2: Press ENTER when you're ready...")
+    # Wait for next player
+    input(f"\nPlayer {num2}: Press ENTER when you're ready...")
 
-    # Clear again before Player 2 sees anything
-    os.system('cls' if os.name == 'nt' else 'clear')
+    # Clear before next player sees anything
+    clear_screen()
+
+start_transition_screen(4,5)
