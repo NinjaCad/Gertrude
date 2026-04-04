@@ -1,4 +1,4 @@
-from cardgames.Card_Compare import Card
+from cardgames.Card import Card
 import os
 
 

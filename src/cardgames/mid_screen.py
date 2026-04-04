@@ -19,5 +19,3 @@ def start_transition_screen():
 
     # Clear again before Player 2 sees anything
     os.system('cls' if os.name == 'nt' else 'clear')
-
-start_transition_screen()

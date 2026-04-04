@@ -1,9 +1,9 @@
-from Player import *
-from Deck import *
-from Card_Compare import *
-from Deck import *
-from Player import *
-from Dealer import *
+from .Player import *
+from .Deck import *
+from .Card_Compare import *
+from .Deck import *
+from .Player import *
+from .Dealer import *
 
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
