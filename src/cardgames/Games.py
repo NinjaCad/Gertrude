@@ -2,9 +2,93 @@ from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 import random
+import time
+import sys
+import os
 
 class Games:
+    def clear():
+        os.system('cls' if os.name == 'nt' else 'clear')
 
+    def slow_Print(text, delay=0.03):
+        for char in text:
+            print(char, end="")
+            sys.stdout.flush()
+            time.sleep(delay)
+        print()
+
+    def show_Title():
+        print(r"""
+    ========================================
+    ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄ 
+    ▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌
+    ▐░▌          ▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀      ▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░▌
+    ▐░▌          ▐░▌               ▐░▌     ▐░▌               ▐░▌               ▐░▌     ▐░▌          ▐░▌       ▐░▌▐░▌
+    ▐░▌          ▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄      ▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌
+    ▐░▌          ▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌
+    ▐░▌          ▐░█▀▀▀▀▀▀▀▀▀      ▐░▌      ▀▀▀▀▀▀▀▀▀█░▌     ▐░█▀▀▀▀▀▀▀▀▀      ▐░▌      ▀▀▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌
+    ▐░▌          ▐░▌               ▐░▌               ▐░▌     ▐░▌               ▐░▌               ▐░▌▐░▌       ▐░▌ ▀ 
+    ▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄      ▐░▌      ▄▄▄▄▄▄▄▄▄█░▌     ▐░▌           ▄▄▄▄█░█▄▄▄▄  ▄▄▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌ ▄ 
+    ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌     ▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌
+    ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀▀▀▀▀▀▀▀▀▀▀       ▀            ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀ 
+                                                                                                                    
+    ========================================
+        A Card Game of Chance, Choice, & Everything Inbetween
+    ========================================
+    """)
+
+    def opening_Sequence():
+        show_Title()
+
+        lines = [
+            "The cards are shuffled...",
+            "Your opponents are ready...",
+            "Time to test your luck..."
+        ]
+
+        for line in lines:
+            slow_Print(line, 0.04)
+            time.sleep(0.3)
+
+        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+
+    def show_Rules():
+        print("\n========== HOW TO PLAY ==========")
+        print("- Taking turns, ask a player for a card rank (e.g., 'Aces')")
+        print("- If they have it they must give ALL of them")
+        print("- If not... [go fish]! Draw a single card from the deck")
+        #refer to our rules
+        print("- The player who has the most matching sets at the end of the game wins!")
+        print("(The game draws to a close as the deck empties and every card set finds their pairs)")
+        print("================================\n")
+
+    def main_Menu():
+        while True:
+            print("\n1. Start Game")
+            print("2. How to Play")
+            print("3. Quit")
+
+            choice = input("\nChoose an option: ")
+
+            if choice == "1":
+                return "Starting game..."
+            elif choice == "2":
+                show_Rules()
+            elif choice == "3":
+                print("Bye bye!")
+                exit()
+            else:
+                print("Please enter '1', '2', or '3'.\n")
+
+    def run_Game():
+        clear()
+        opening_Sequence()
+        choice = main_Menu()
+        
+        if choice == "Starting game...":
+            print("\nStarting game...\n")
+
+    
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(Deck())
