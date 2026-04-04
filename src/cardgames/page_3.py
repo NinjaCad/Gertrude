@@ -1,4 +1,3 @@
-#from cardgames.Games import GAME_STATE
 from cardgames.Player import Player
 
 def global_card_change(game_state):
@@ -27,7 +26,7 @@ def increase_counter(game_state, player_list):                                  
     #game_state['counter'] = 0
     game_state['counter'] += 1
     current_count = game_state['counter']
-    return current_count % 13, current_count % len(player_list)
+    return (current_count % 13)+1, current_count % len(player_list)
 
 def card_art(rank, suit):
     rank_str = str(rank)
