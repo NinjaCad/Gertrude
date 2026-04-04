@@ -54,12 +54,13 @@ def play_card():
 @app.route("/start_game", methods=["GET", "POST"])
 def start_game():
     global player_list
-    if request.method == 'GET':
-        player_list = [Player('Prof Lee')]          #this line to make testing start_game() route more straightforward; can be deleted when we merge
-        Dealer(Deck()).deal_cards(player_list)        #some players might get extra cards
-        for player in player_list:
-            player.set_angle(360//len(player_list) + player_list.index(player))       #sets the angle of the player around the deck
-    return render_template("page_3.html", players=player_list)
+    #if request.method == 'GET':
+    player_list = [Player('Prof Lee')]          #this line to make testing start_game() route more straightforward; can be deleted when we merge
+    Dealer(Deck()).deal_cards(player_list)        #some players might get extra cards
+    for player in player_list:
+        player.set_angle(360//len(player_list) + player_list.index(player))       #sets the angle of the player around the deck
+    card = ""
+    return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
 
 if __name__ == "__main__":
