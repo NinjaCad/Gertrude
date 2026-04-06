@@ -9,6 +9,18 @@ class Card:
             for line in self.image:
                 self.short_image.append(line[:4])
 
+    def get_suit(self):
+        return self.suit
+
+    def set_suit(self, value):
+        self.suit = value
+
+    def get_value(self):
+        return self.value
+
+    def set_value(self, value):
+        self.value = value
+
     def __str__(self, short: bool = False):
         return '\n'.join(self.short_image if short else self.image)
 

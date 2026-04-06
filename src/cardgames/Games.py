@@ -6,6 +6,7 @@ from cardgames.page_1 import *
 from cardgames.page_2 import *
 from cardgames.page_3 import *
 import random
+import time
 from flask import Flask, render_template, url_for, Response, request, session, redirect
 
 app = Flask(__name__)
@@ -13,7 +14,15 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 
 #The player objects will be appended to this list. 
 player_list = []
-GAME_STATE = {"current_card" : None, "current_player" : None}
+GAME_STATE: Dict[str, Any] = {
+    "current_card": None,
+    "current_player": None,
+    "played_cards": [],
+    "slap_dict": {},
+    "slap_in_progress": False,
+    "slap_start_time": None,
+    "counter": 0
+}
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -32,9 +41,18 @@ def lobby():
         return redirect(url_for('home'))
     return render_template("page_2.html", name=session['name'], player_list=player_list)
 
-@app.route("/game")
+@app.route("/game", methods=["GET", "POST"])
 def game():
-    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
+    global GAME_STATE
+    card = ""
+    if request.method == "POST":
+        # Don't let them play a card when a slap has happened
+        if GAME_STATE["slap_in_progress"]:
+            return
+        card, new_state = global_card_change(GAME_STATE)
+        GAME_STATE = new_state
+
+    return render_template("page_3.html", card=card)
 
 @app.route("/stream")
 def stream():
@@ -43,13 +61,40 @@ def stream():
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
 
-@app.route("/play_card", methods=["GET", "POST"])
-def play_card():
-    card = ""
-    if request.method == "POST":
-        card = global_card_change()
+# COLLECT SLAPS
+@app.route("/slap", methods=["POST"])
+def slap():
+    global GAME_STATE
+    player_name = session.get("name")
+    timestamp = float(request.form.get("timestamp", 0))
 
-    return render_template("page_3.html", card=card)              #return rank and person who turn it is
+    # Start slap phase if first slap
+    if not GAME_STATE["slap_in_progress"]:
+        GAME_STATE["slap_in_progress"] = True
+        GAME_STATE["slap_start_time"] = time.time()
+
+    # Record slap
+    GAME_STATE["slap_dict"][player_name] = {"time": timestamp}
+
+    # Don't redirect yet
+    return ("", 204)  
+
+# CHECK IF ENOUGH TIME HAS PASSED TO RESOLVE SLAPS (2 seconds)
+@app.route("/check_slap")
+def check_slap():
+    global GAME_STATE
+    if GAME_STATE["slap_in_progress"]:
+        elapsed = time.time() - GAME_STATE["slap_start_time"]
+
+        if elapsed >= 2:
+            new_state, _, _ = resolve_slap(GAME_STATE, player_list)
+            GAME_STATE = new_state
+            return {"status": "resolved"}
+
+        return {"status": "waiting"}
+
+    return {"status": "idle"}
+
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
