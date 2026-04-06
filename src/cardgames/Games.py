@@ -7,7 +7,7 @@ class Games:
 
     def __init__(self):
         self.deck = Deck()
-        self.dealer = Dealer(Deck())
+        self.dealer = Dealer(self.deck)
 
     def create_players(self):
         players = []
@@ -76,7 +76,7 @@ class Games:
         #in case of tie:
         if len(mostBooksHolders) > 1:
             print(f"It's a tie between {' and '.join(mostBooksHolders)} with {mostBooks} books each!")
-        #sigle winner:
+        #single winner:
         else:
             winner = mostBooksHolders[0]
             print(f"{winner} wins with {mostBooks} books!")
@@ -87,8 +87,10 @@ class Games:
                 print(f"{player.name} has 0 books.")
             elif player.numBooks == 1:
                 print(f"{player.name}: {player.numBooks} book.\nThey have the following book: {player.books}")
+                player.showBooks()
             else:
                 print(f"{player.name}: {player.numBooks} books.\nThey have the following books: {player.books}")
+                player.showBooks()
         print()
 
             
