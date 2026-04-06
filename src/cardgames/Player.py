@@ -189,5 +189,10 @@ class Player:
             input("\nYou get to go again, press ENTER to continue...")
             self.takeTurn(players, game)
         else:
-            input("\nEnd of your turn! Hit enter to continue...")
-            print('\n' * 50)
+            if self.bookHandling():
+                print("Lucky draw, you've made a book!")
+                input("\nYou get to go again, press ENTER to continue...")
+                self.takeTurn(players, game)
+            else:
+                input("\nEnd of your turn! Hit enter to continue...")
+                print('\n' * 50)

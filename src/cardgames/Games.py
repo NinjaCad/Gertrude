@@ -101,7 +101,7 @@ class Games:
         while thief_choice not in value_dict:
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
             if thief_choice not in value_dict:
-                print("Invalid Choice! Choose Card Type, eg: aces.\n")
+                print("Invalid Choice! Choose Card Type, eg: aces, twos, ones, etc.\n")
 
         stolen_cards = 0
         card_counter = 0
