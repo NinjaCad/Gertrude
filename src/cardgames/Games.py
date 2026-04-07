@@ -223,6 +223,8 @@ class Games:
             switch = input("Enter 's' to switch turns: ")
             if switch == "s":
                 print("Switched turns. Player 2's turn to choose a card.")
+                # Hide Player 1 hand before Player 2 selects.
+                player1.hideHand()
 
             # player2 chooses a card
             for card in player2.hand:
