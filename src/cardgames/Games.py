@@ -80,12 +80,38 @@ class Games:
         print(str(card))
         player.addCard(card)
         
-        #bookCheck = player.checkForFourOfAKind()
         if player.checkForFourOfAKind() != []: #Recursive call when player gets book from drawing.
             player.bookHandling()
             self.goFishing(player)
         return(card)
 
+    
+    #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
+    def endGameState(self, players):
+        nameScorePairs = {p.name: p.numBooks for p in players}
+        mostBooks = max(nameScorePairs.values())
+        mostBooksHolders = [name for name, score in nameScorePairs.items() if score == mostBooks]
+        #in case of tie:
+        if len(mostBooksHolders) > 1:
+            print(f"It's a tie between {' and '.join(mostBooksHolders)} with {mostBooks} books each!")
+        #single winner:
+        else:
+            winner = mostBooksHolders[0]
+            print(f"{winner} wins with {mostBooks} books!")
+        #scoreboard/lists all player's scores
+        print("\nFinal scores:")
+        for player in players:
+            if player.numBooks == 0:
+                print(f"{player.name} has 0 books.")
+            elif player.numBooks == 1:
+                print(f"{player.name}: {player.numBooks} book.\nThey have the following book: {player.books}")
+                player.showBooks()
+            else:
+                print(f"{player.name}: {player.numBooks} books.\nThey have the following books: {player.books}")
+                player.showBooks()
+        print()
+
+            
     def current_players(self, host_player, player_list): #Lists players that still have cards
         stepper = 1
         player_number = []
@@ -132,7 +158,6 @@ class Games:
                 host_player.addCard(card)
                 target_player.removeCard(card)
                 stolen_cards += 1
-            card_counter += 1
         
         if stolen_cards == 0:
             self.goFishing(host_player)
