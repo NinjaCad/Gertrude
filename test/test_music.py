@@ -158,3 +158,63 @@ def test_real_music_playback_smoke():
     pygame.time.wait(10000)
     pygame.mixer.music.stop()
     assert True
+
+
+def test_goldfish_music_playback_smoke():
+    pygame = pytest.importorskip("pygame")
+    game = Games()
+    track_path = game.assets_dir / game.GOLDFISH_TRACK
+    if not track_path.exists():
+        pytest.skip(f"Missing audio file: {track_path}")
+
+    try:
+        if pygame.mixer.get_init() is None:
+            pygame.mixer.init()
+    except Exception as exc:
+        pytest.skip(f"Unable to initialize audio mixer: {exc}")
+
+    pygame.mixer.music.load(str(track_path))
+    pygame.mixer.music.play(0)
+    pygame.time.wait(2000)
+    pygame.mixer.music.stop()
+    assert True
+
+
+def test_final_countdown_music_playback_smoke():
+    pygame = pytest.importorskip("pygame")
+    game = Games()
+    track_path = game.assets_dir / game.FINAL_COUNTDOWN_TRACK
+    if not track_path.exists():
+        pytest.skip(f"Missing audio file: {track_path}")
+
+    try:
+        if pygame.mixer.get_init() is None:
+            pygame.mixer.init()
+    except Exception as exc:
+        pytest.skip(f"Unable to initialize audio mixer: {exc}")
+
+    pygame.mixer.music.load(str(track_path))
+    pygame.mixer.music.play(0)
+    pygame.time.wait(2000)
+    pygame.mixer.music.stop()
+    assert True
+
+
+def test_smooth_jazz_infinite_loop_smoke():
+    pygame = pytest.importorskip("pygame")
+    game = Games()
+    track_path = game.assets_dir / game.SMOOTH_JAZZ_TRACK
+    if not track_path.exists():
+        pytest.skip(f"Missing audio file: {track_path}")
+
+    try:
+        if pygame.mixer.get_init() is None:
+            pygame.mixer.init()
+    except Exception as exc:
+        pytest.skip(f"Unable to initialize audio mixer: {exc}")
+
+    pygame.mixer.music.load(str(track_path))
+    pygame.mixer.music.play(-1)
+    pygame.time.wait(2000)
+    pygame.mixer.music.stop()
+    assert True
