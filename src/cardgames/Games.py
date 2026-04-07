@@ -1,40 +1,12 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
+from cardgames.Dealer import Dealer
+from cardgames.Card_Compare import Card
 import copy
 
-def select_card(self, player): # Function by Tyson
-        # Denotes the change of turn 
-        print(f"\n--- {player.name}'s Turn ---")
-        
-        if len(player.hand) == 0: # Added by Sam's suggestion
-            print(f"{player.name} has no cards left to play!")
-            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
-            return 
-
-        player.showHand(printShort=True)
-        
-        while True:
-            try:
-                max_choice = len(player.hand)
-                # Prompting player to pick a card
-                choice = int(input(f"Select a card to play (1-{max_choice}): "))
-                
-                # Check if choice is valid
-                if 1 <= choice <= max_choice:
-                    # Assign the chosen card using player.hand
-                    player.chosen_card = player.hand[choice - 1]
-                    print("Great! You selected {player.chosen_card}.")
-                    break 
-                else:
-                    # error handling in case they pick a number outside the options
-                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
-                    
-            except ValueError:
-                print("Invalid input. Please enter a valid number.")
-
-# ==========================================================
-# New Feature (Sprint 1): High Card Draw instructions display
-# ==========================================================
+# ===================
+# High Card Draw Game
+# ===================
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game.
@@ -84,53 +56,70 @@ class HighCardDrawInstructions:
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
-    
-def declare_winner(player1, player2):
-    card1 = player1.chosen_card
-    card2 = player2.chosen_card
-    try:
-        if card1.compare(card2)==1: # player1 wins
-            return player1.name
-        elif card1.compare(card2)==-1: # player2 wins
-            return player2.name
-        elif card1.compare(card2)==0:
-            return "It's a tie!"
-    except TypeError: # tie
-        print("Error: Both players must have chosen a card to declare a winner.")
 
 def show_cards(card: Card):
-            face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
-            card_name = face_names.get(card.value, card.value)
-    
-            display_text = f"--- {card_name} of {card.suit} ---\n"
-    
-            for line in card.image:
-                display_text += line + "\n"
+        face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+        card_name = face_names.get(card.value, card.value)
         
-            return display_text
+        display_text = f"--- {card_name} of {card.suit} ---\n"
+        
+        for line in card.image:
+            display_text += line + "\n"
+            
+        return display_text
+        
+def declare_winner(player1, player2):
+        card1 = player1.chosen_card
+        card2 = player2.chosen_card
+        try:
+            if card1.compare(card2)==1: # player1 wins
+                return player1.name
+            elif card1.compare(card2)==-1: # player2 wins
+                return player2.name
+            elif card1.compare(card2)==0:
+                return "It's a tie!"
+        except TypeError: # tie
+            print("Error: Both players must have chosen a card to declare a winner.")
 
 class Games:
 
     def __init__(self):
         self.deck = Deck()
 
-    def main(self, test_mode= False):
-        print('Welcome to High Card Draw!')
+    def select_card(self, player):
+        # Denotes the change of turn 
+        print(f"\n--- {player.name}'s Card Options ---")
+        if len(player.hand) == 0: # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
+
+        for i, card in enumerate(player.hand):
+            print("\n" + show_cards(card))
         
-        print('First 3 cards in standard 52-card deck:')
-        for card in self.deck.cards[:3]:
-            print(card)
-        input('Press [Enter] to exit.')
+        while True:
+            try:
+                max_choice = len(player.hand)
+                # Prompting player to pick a card
+                choice = int(input(f"Select one of the cards to play (1-{max_choice}): "))
+                
+                # Check if choice is valid
+                if 1 <= choice <= max_choice:
+                    # Assign the chosen card using player.hand
+                    player.chosen_card = player.hand[choice - 1]
+                    print(f"\nGreat! You selected \n\n{show_cards(player.chosen_card)}.")
+                    break 
+                else:
+                    # error handling in case they pick a number outside the options
+                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
+                    
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
-        # Example usage of New Feature: instructions display.
-        # This is the demo only - the rules system itself is tested through pytest.
-        print("\nHigh Card Draw Instructions (overview):")
+    def main(self, test_mode= False):
+        print('\nWelcome to High Card Draw!')
         print(HighCardDrawInstructions.get("overview"))
-        if not test_mode:
-            input('Press [Enter] to start.')
-
-        #  print instructions
-        print(HighCardDrawInstructions.get("overview"))
+        input('\nPress [Enter] to start...')
 
         # initiate variables
         player1 = Player("Player 1")
@@ -139,43 +128,42 @@ class Games:
         deck.shuffle()
         dealer = Dealer(deck)
 
-        # deal cards to players
-        dealer.dealCards(3, [player1, player2])
-
-        # display player 1's cards
-        for card in player1.hand:
-            print(show_cards(card))
-        # player1 chooses a card
-        # I am waiting for the function that allows player to choose a card
-        # stand in code
-        self.select_card(player1)
-
+        begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+        # Player 1 chooses a card
+        if begin == "":
+            dealer.dealCards(3, [player1])
+            self.select_card(player1)
+            
         # swap turn function
-        # I am also waiting on the code to switch turns
-        if not test_mode:
-            switch = input("Enter 's' to switch turns: ")
-            if switch == "s":
-                print("Switched turns. Player 2's turn to choose a card.")
-        # player2 chooses a card
-        # stand in code
-            for card in player2.hand:
-                print(show_cards(card))
+        end_turn = input("\nPress [Enter] to end your turn: ")
+        if end_turn == "":
+            player1.clear_screen()
+        
+        begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+        # Player 2 chooses a card
+        if begin == "":
+            dealer.dealCards(3, [player2])
             self.select_card(player2)
+    
+        end_turn = input("\nPress [Enter] to end your turn: ")
+        if end_turn == "":
+            player2.clear_screen()
 
-        # display winner
-        winner = declare_winner(player1, player2)
-        print("The winner is: ", winner)
-        print(player1.name+" chose: ")
-        print(player1.chosen_card)
-        print(player2.name+" chose: ")
-        print(player2.chosen_card)
+        display_winner = input("\nPress [Enter] to display the winner: ")
+        if display_winner == "":
+            # display winner
+            winner = declare_winner(player1, player2)
+            print("\nThe winner is: ", winner)
+            print("\n" + player1.name + " chose: ")
+            print(player1.chosen_card)
+            print("\n" + player2.name + " chose: ")
+            print(player2.chosen_card, "\n")
 
         return player1, player2, deck
 
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
         #Below is for every time a game has been ran
-
         #Set up game_stats dict if it is empty
         if game_stats == None:
             game_stats = {}
@@ -217,4 +205,3 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
-
