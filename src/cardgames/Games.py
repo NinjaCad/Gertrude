@@ -4,8 +4,6 @@ from cardgames.Dealer import Dealer
 from cardgames.Card_Compare import Card
 import copy
 
-
-
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
 # ==========================================================
@@ -58,30 +56,30 @@ class HighCardDrawInstructions:
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
-    
-def declare_winner(player1, player2):
-    card1 = player1.chosen_card
-    card2 = player2.chosen_card
-    try:
-        if card1.compare(card2)==1: # player1 wins
-            return player1.name
-        elif card1.compare(card2)==-1: # player2 wins
-            return player2.name
-        elif card1.compare(card2)==0:
-            return "It's a tie!"
-    except TypeError: # tie
-        print("Error: Both players must have chosen a card to declare a winner.")
 
 def show_cards(card: Card):
-            face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
-            card_name = face_names.get(card.value, card.value)
-    
-            display_text = f"--- {card_name} of {card.suit} ---\n"
-    
-            for line in card.image:
-                display_text += line + "\n"
+        face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+        card_name = face_names.get(card.value, card.value)
         
-            return display_text
+        display_text = f"--- {card_name} of {card.suit} ---\n"
+        
+        for line in card.image:
+            display_text += line + "\n"
+            
+        return display_text
+        
+def declare_winner(player1, player2):
+        card1 = player1.chosen_card
+        card2 = player2.chosen_card
+        try:
+            if card1.compare(card2)==1: # player1 wins
+                return player1.name
+            elif card1.compare(card2)==-1: # player2 wins
+                return player2.name
+            elif card1.compare(card2)==0:
+                return "It's a tie!"
+        except TypeError: # tie
+            print("Error: Both players must have chosen a card to declare a winner.")
 
 class Games:
 
