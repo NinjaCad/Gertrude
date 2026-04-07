@@ -16,6 +16,10 @@ class Player:
             self.knownCards.append(True)
         else:
             self.knownCards.append(False)
+    
+    def removeCard(self, card: Card):
+        self.hand.remove(card)
+        #Not sure if we are using known cards at the moment, can add later.
 
     def setHand(self, cards: "list[Card]", isKnown: bool = False):
         self.hand = cards
