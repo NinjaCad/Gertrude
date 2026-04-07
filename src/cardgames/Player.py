@@ -18,7 +18,7 @@ class Player:
         self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
         
         # GERT-15 for recording split() functionality
-        self.split_hands_score = None
+        self.split_hands_score = { }
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -408,7 +408,7 @@ TIPS:
                 print(f"{hand} hand ties with dealer.")
             
         self.bets["standard"] = 0
-        self.split_hands_score = None
+        self.split_hands_score = { }
         
         return
         
