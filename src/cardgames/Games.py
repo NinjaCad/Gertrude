@@ -15,7 +15,7 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 #The player objects will be appended to this list. 
 player_list = []
 GAME_STATE = {"current_card" : None, "current_player" : None}
-last_player_joined = ""
+last_player_joined = None
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -42,21 +42,21 @@ def game():
 
 @app.route("/player-list-stream")
 def player_stream():
-    name = session['name']
-    def player_list_stream():
+    name = session['name'] # ASSIGNS EACH SESSION A STREAM
+    def player_list_stream(): #GENERATOR TO YIELD NEW HTML PAGES
         global last_player_joined
-        last_player = last_player_joined
+        last_player = last_player_joined # RESETTING LAST PLAYER JOINED TO UPDATE ON NEED BASE
         with app.app_context():
-            html = render_template('player_list_partial.html', name=name, player_list=player_list)
-        yield f"data: {html}\n\n".encode("utf-8")
+            html = render_template('player_list_partial.html', name=name, player_list=player_list) # RENDERS LIST AFTER INITIAL JOIN
+        yield f"data: {html}\n\n".encode("utf-8") # YIELDS INITIAL LIST
         while True:
             if last_player != last_player_joined:
-                last_player = last_player_joined
+                last_player = last_player_joined # CHECKING FOR PLAYER JOIN
                 with app.app_context():
-                    html = render_template('player_list_partial.html', name=name, player_list=player_list)
-                yield f"data: {html}\n\n".encode("utf-8")
-            time.sleep(0.1)
-    return Response(player_list_stream(), mimetype="text/event-stream", direct_passthrough=True)
+                    html = render_template('player_list_partial.html', name=name, player_list=player_list) # RENDERS NEW LIST
+                yield f"data: {html}\n\n".encode("utf-8") # YIELDS NEW LIST
+            time.sleep(0.1) # BUFFER
+    return Response(player_list_stream(), mimetype="text/event-stream", direct_passthrough=True) # RETURNING THE GENERATOR
 
 @app.route("/play_card", methods=["GET", "POST"])
 def play_card():
