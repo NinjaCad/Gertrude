@@ -7,7 +7,7 @@ class Games:
 
     def __init__(self):
         self.deck = Deck()
-        self.dealer = Dealer(Deck()) #Josiah is fixing this in his commit.
+        self.dealer = Dealer(Deck())
 
     def create_players(self):
         players = []
