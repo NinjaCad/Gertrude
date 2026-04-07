@@ -44,16 +44,15 @@ class Games:
 
             # Calculate results
             results = self.calculateWinner(self.playerList)
-
-            # Give money to winner
-            for player, condition in results.items():
-                player.resolve_bet({"standard": condition})
             
             # Calculate results and give money for perfect pairs
             for player in self.playerList[1:]:
-                player.resolve_bet({"pairs": player.perfectPairs()})
-                #player.resolve_bet({"insurance": player.insurance()})
-                #player.resolve_bet({"21+3": player.twentyone()})
+                player.resolve_bet({
+                    "standard": results[player],
+                    "pairs": player.perfectPairs(),
+                    # "insurance": player.insurance(),
+                    # "21+3": player.twentyone(),
+                })
             
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
