@@ -282,13 +282,15 @@ TIPS:
     def tipDealer(self):
         while True:
             print(f"{self.name}, you have ${self.money}.")
-            self.tipChoice = input("Do you want to tip the dealer? (y/n) ")
+            self.tipChoice = input("Do you want to tip the dealer? (y/n) ").lower()
             if self.tipChoice == "y":
                 while True:
                     try:
                         self.tipAmt = int(input("How much do you want to tip? (integer value only) "))
                         if self.tipAmt > self.money:
                             print("You don't have that much money! Try again.")
+                        elif self.tipAmt <= 0:
+                            print("That's not a real tip amount! Try again. ")
                         else:
                             break
                     except ValueError:
