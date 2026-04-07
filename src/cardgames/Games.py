@@ -1,6 +1,7 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
+from cardgames.betting_templates import gambling_templates
 import random
 import copy
 
@@ -83,35 +84,11 @@ def show_cards(card: Card):
 
 class Games:
 
-    betting_templates = [
-        "Someone places a calm, standard bet on {player}.",
-        "A gambler puts a routine wager on {player}.",
-        "Local man confidently bets his last $12 on {player}... again.",
-        "Frat leader squanderes his rent money on {player}.",
-        "Unknown gambler claims {player} 'has aura' and puts down everything.",
-        "Grandma in Ohio places emotional 5 cent wager on {player}.",
-        "Wall Street intern uses company credit card on {player}.",
-        "Two raccoons reportedly pool resources and bet on {player}.",
-        "Man says 'trust me bro' and stakes his entire account on {player}.",
-        "{player} fan base is just one guy... but he's VERY confident.",
-        "Breaking: gambler ignores 7 losses in a row and doubles down on {player} again.",
-        "Local legend bets purely based on which name sounds cooler: {player}.",
-        "AI predicts {player} win. Human immediately bets against it out of spite.",
-        """Someone just bet $3.72 on {player} claiming "history will remember this moment""",
-        "Group chat unanimously makes the worst possible bet on {player}.",
-        "Man flips coin, disagrees with result, bets {player} anyway.",
-        "{player} receives emotional support betting surge.",
-        "Small North Dakota town rallies behind {player} for no explainable reason.",
-        "Gambler claims he 'studied the patterns' and picks {player} (he did not).",
-        "One gambler screams 'THIS IS THE ONE' for the 14th time today about {player}.",
-        "Suspiciously confident gambler refuses to elaborate, places max bet on {player}.",
-    ]
-
     def __init__(self):
         self.deck = Deck()
 
     def build_betting_notification(self, chosen_player_name):
-        template = random.choice(self.betting_templates)
+        template = random.choice(gambling_templates)
         return template.format(player=chosen_player_name)
 
     def show_betting_popup(self, chosen_player_name):
