@@ -43,19 +43,21 @@ class Player:
         self.hand = [card for card, _ in paired]
         self.knownCards = [known for _, known in paired]
 
-    def sortHandIntoValues(self):
+    def sortHandIntoValues(self, returnDictionary = False):
         value_map = {
             1: "As", 2: "2s", 3: "3s", 4: "4s", 5: "5s", 6: "6s", 7: "7s",
             8: "8s", 9: "9s", 10: "10s", 11: "Js", 12: "Qs", 13: "Ks"
         }
         sorted_hand = sorted(self.hand, key=lambda card: card.value)
         grouped_values = {}
+        if not returnDictionary:
+            return sorted_hand
         for card in sorted_hand:
             key = value_map.get(card.value, f"{card.value}s")
             if key not in grouped_values:
                 grouped_values[key] = []
             grouped_values[key].append(card)
-        return grouped_values
+        return sorted_hand, grouped_values
 
     def checkForFourOfAKind(self):      
         if len(self.hand) >= 4:
@@ -78,6 +80,7 @@ class Player:
     def bookHandling(self): #adds player books count (score increase) and removes the four of a kind cards from play
             valueMap = {'Aces': 1, 'Twos': 2, 'Threes': 3, 'Fours': 4, 'Fives': 5, 'Sixes': 6, 'Sevens': 7, 'Eights': 8, 'Nines': 9, 'Tens': 10, 'Jacks': 11, 'Queens': 12, 'Kings': 13}
             listOfBooks = self.checkForFourOfAKind()
+            self.books += listOfBooks
             self.numBooks += len(listOfBooks)
             for book in listOfBooks:
                 bookValue = valueMap.get(book, 0)
@@ -88,7 +91,11 @@ class Player:
                         remainingHand.append(card)
                         remainingKnown.append(self.knownCards[i])
                 self.hand = remainingHand
-                self.knownCards = remainingKnown    
+                self.knownCards = remainingKnown
+            if listOfBooks == []:
+                return False
+            else:
+                return True
 
     def showBooks(self):
         valueMap = {"Aces": 1, "Twos": 2, "Threes": 3, "Fours": 4, "Fives": 5, "Sixes": 6, "Sevens": 7, "Eights": 8, "Nines": 9, "Tens": 10, "Jacks": 11, "Queens": 12, "Kings": 13}
@@ -113,11 +120,79 @@ class Player:
                 else:
                     image = card.image[idx]
                     print(image, end=" ")
-            print()
-                
-
-            
+            print()   
 
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+
+    def takeTurn(self, players, game):
+        ### If the player's hand and the deck are empty, their turn is skipped
+        if len(self.hand) == 0 and len(game.deck.cards) == 0:
+            print(f"\n{self.name}'s hand and the deck are empty, next player...")
+            return
+
+        ### Show books
+        if self.numBooks != 0:
+            print("\nYour books: ")
+            self.showBooks()
+        
+        ### If opponents' hands are empty, draw
+        noCardsPlayers = []
+        for player in players:
+            if not player.isTurn and player.hand == []: # Skips the player whos turn it is, and takes players with empty hands
+                noCardsPlayers.append(player)
+        
+        ### If opponents' hands are empty and Deck is empty, skip
+        if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) == 0:
+            print("\nThe deck and everyone elses' hands are empty! Nothing to do but skip...")
+            return
+
+        ### If opponents' hands are empty, draw
+        if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) != 0:
+            print("\nEveryone elses' hands are empty! Nothing to do but draw...", '')
+            self.hand.append(game.deck.getCard())
+            self.knownCards.append(True)
+            print("You picked up:")
+            self.showHand()
+            if self.bookHandling():
+                print("\nAnd you've made a book!")
+                self.showBooks()
+                input("\nYou get to go again! Hit ENTER to continue...")
+                self.takeTurn(players, game)
+            return
+
+        ### If hand is empty draw a card
+        if len(self.hand) == 0: 
+            print("\nYour hand is empty! ", '')
+            self.hand.append(game.deck.getCard())
+            self.knownCards.append(True)
+            print("You picked up:")
+            self.showHand()
+            if self.bookHandling():
+                print("\nAnd you've made a book!")
+                self.showBooks()
+                input("\nYou get to go again! Hit ENTER to continue...")
+                self.takeTurn(players, game)
+                return 
+
+        ### Show hand
+        self.hand = self.sortHandIntoValues()
+        print("\nYour hand:")
+        self.showHand()
+
+        ### Stealing cards
+        if game.card_thievery(players, self):
+            print("\nYou stole some cards!", "")
+            if self.bookHandling():
+                print("And you've made a book!")
+            input("\nYou get to go again, press ENTER to continue...")
+            self.takeTurn(players, game)
+        else:
+            if self.bookHandling():
+                print("Lucky draw, you've made a book!")
+                input("\nYou get to go again, press ENTER to continue...")
+                self.takeTurn(players, game)
+            else:
+                input("\nEnd of your turn! Hit enter to continue...")
+                print('\n' * 50)

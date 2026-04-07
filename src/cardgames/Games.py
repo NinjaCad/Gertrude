@@ -44,11 +44,12 @@ class Games:
         return players
     
     def showOpponentsHands(self, players):
-        for player in players:
+        print()
+        for playerNum, player in enumerate(players):
             if player.isTurn or player.hand == []: # Skips the player whos turn it is, as well as players with empty hands
                 continue
             
-            print(f'{player.name}\'s hand:')
+            print(f'({playerNum}) {player.name}\'s hand:')
             knownCardsStore = player.knownCards
             player.knownCards = [False] * len(player.knownCards) # Changes cards in opponents' hands to not be visible
 
@@ -79,13 +80,9 @@ class Games:
         card = self.deck.getCard()
         print(str(card))
         player.addCard(card)
-        
-        if player.checkForFourOfAKind() != []: #Recursive call when player gets book from drawing.
-            player.bookHandling()
-            self.goFishing(player)
+
         return(card)
 
-    
     #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
     def endGameState(self, players):
         nameScorePairs = {p.name: p.numBooks for p in players}
@@ -111,23 +108,15 @@ class Games:
                 player.showBooks()
         print()
 
-            
-    def current_players(self, host_player, player_list): #Lists players that still have cards
-        stepper = 1
+    def card_thievery(self, turn_list, host_player):
         player_number = []
         player_dict = {}
-        for players in player_list:
-            if players != host_player and len(players.hand) != 0:
-                print("player "+str(stepper)+": "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
-                player_number.append(str(stepper))
-                player_dict[(str(players.name)).lower()] = stepper      
-                
-            stepper += 1
-        return(player_number, player_dict) #Returns player number in turnlist and list of names
+        for playerNum, player in enumerate(turn_list):
+            if player != host_player and len(player.hand) != 0:
+                player_number.append(str(playerNum))
+                player_dict[(str(player.name)).lower()] = playerNum
 
-
-    def cardThievery(self, host_player, player_list):
-        player_number, player_dict = self.current_players(host_player, player_list)
+        self.showOpponentsHands(turn_list)
 
         target_choice = ""
         while target_choice not in player_number:
@@ -137,7 +126,8 @@ class Games:
             elif target_choice not in player_number and target_choice not in player_dict:
                 print("Invalid Input! Enter player name or number.")
                 target_choice = ""
-        target_player = player_list[int(target_choice) - 1]
+
+        target_player = turn_list[int(target_choice)]
         print("")
 
         #print("Put Card Names Here /n") #Place types of cards here
@@ -148,7 +138,8 @@ class Games:
         while thief_choice not in self.valueDict:
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
             if thief_choice not in self.valueDict:
-                print("Invalid Choice! Choose Card Type, eg: aces.")
+                print("Invalid Choice! Choose Card Type, eg: aces, twos, ones, etc.\n")
+
 
         stolen_cards = 0
         card_counter = 0
@@ -161,52 +152,34 @@ class Games:
         
         if stolen_cards == 0:
             self.goFishing(host_player)
-
-        return target_player
-
+            return False
+        else:
+            return True
         
 
     def main(self):
         print('Welcome to the Games application!')
         print('This games application is under development.')
 
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
+        
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
         turn_list = self.start_game(players)
+        print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
         
         game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
             for player in turn_list:
-                player.isTurn = True
-                print(f"\n{player.name}'s turn")
-                print(player.name)
 
+                # Else
+                input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                 player.isTurn = True
-                print(f"\n{player.name}'s turn")
-        #for each player in the turn list:
-            #that player takes a turn
-                if (self.dealer.deck.size) == 0:
-                    print("Draw pile is empty. Cannot pick up new cards.")
-                else:
-                    while True:
-                        choice = input("Do you want to draw a card? (y/n)").lower()
-                        if choice == 'y':
-                            card = self.dealer.deck.getCard()
-                            player.hand.append(card) #we're assuming the player has a hand
-                            print(f"You drew: {card}")
-                            break
-                        elif choice == 'n':
-                            break
-                        else:
-                            print("Invalid input. Please enter 'y' or 'n'.")
-                
-                #print("Next, choose a player to ask and a card value") would come next                    
-                #end of player's turn
+                player.takeTurn(turn_list, self)
+
                 player.isTurn = False
     
         input('Press [Enter] to exit.')
-
-
         
 
 if __name__ == "__main__":
