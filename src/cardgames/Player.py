@@ -6,6 +6,7 @@ class Player:
         self.angle = angle
         self.hand = []
         self.known_cards = []
+        self.can_play = True  # flag to track if player can play cards
 
     #method to return the name of the player to keep the original object protected
     def get_name(self):
