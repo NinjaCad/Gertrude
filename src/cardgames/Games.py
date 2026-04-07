@@ -52,9 +52,9 @@ def play_card():
     #player_list = [Player('Prof Lee')]          #this line to make testing the play_card() route more straightfoward; can be deleted when we merge
     if request.method == "POST":
         card = global_card_change(GAME_STATE)
-    counter = increase_counter(GAME_STATE, player_list)
+    rank, player_turn = increase_counter(GAME_STATE, player_list)
     
-    return render_template("page_3.html", card=card, counter=counter)              #return rank and person who turn it is
+    return render_template("page_3.html", card=card, counter=(rank, player_turn))              #return rank and person who turn it is
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
