@@ -38,6 +38,8 @@ class Games:
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
+            print(f"--- Gertrude's hand ---")
+            self.playerList[0].showHand()
             
             for player in self.playerList[1:]:
                 if self.playerList[0].hand[0].value == 1:

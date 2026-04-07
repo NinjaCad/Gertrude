@@ -247,6 +247,7 @@ TIPS:
                 print("Bet amount must be at least $5. Please enter a valid amount.")
                 continue
             if type == "insurance" and bet > self.bets["standard"] // 2:
+                print(f"Insurance bet cannot be more than half of your original bet (${self.bets['standard']}). Please enter a valid amount")
                 continue
             
             elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
