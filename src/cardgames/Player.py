@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from cardgames.Card import Card
+=======
+from cardgames.Card_Compare import *
+>>>>>>> db21b8c5a013bc397b4233adf9963264716c5db1
 import os
 
 
@@ -7,6 +11,8 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+        self.redraw_tokens = 0
+        self.chosen_card = None
         self.chosen_card = Card("", 0, [], [])
 
     def addCard(self, card: Card, isKnown: bool = True):
@@ -44,10 +50,34 @@ class Player:
                     print(card.cardBack[idx], end="")
                 print()
             
-            print(f"{self.name}'s hand is now hidden.")
+            print(f"\n{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
+
+    def clear_screen(self):
+        # If the OS is Windows, run 'cls', otherwise run 'clear'
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
 
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+
+    def add_redraw_token(self, tokens: int = 1):
+        if tokens < 0:
+            raise ValueError("Cannot add a negative number of redraw tokens.")
+        self.redraw_tokens += tokens
+
+    def record_round_win(self):
+        self.add_redraw_token()
+
+    def can_redraw(self) -> bool:
+        return self.redraw_tokens > 0
+
+    def consume_redraw_token(self) -> bool:
+        if not self.can_redraw():
+            return False
+        self.redraw_tokens -= 1
+        return True

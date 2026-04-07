@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from cardgames.Card import Card
+=======
+from cardgames.Card_Compare import Card
+>>>>>>> db21b8c5a013bc397b4233adf9963264716c5db1
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 
@@ -30,3 +34,16 @@ class Dealer:
     def resetDeck(self):
         self.deck.reset()
         self.deck.shuffle()
+
+    def redraw_three_card_options(self, player: Player):
+        # Allows a playeret to spend a token to draw 3 more cards.
+        if self.deck.size < 3:
+            self.resetDeck()
+            if self.deck.size < 3:
+                return False
+        if not player.consume_redraw_token():
+            return False
+        player.clearHand()
+        for _ in range(3):
+            player.addCard(self.deck.getCard())
+        return True
