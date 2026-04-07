@@ -7,6 +7,10 @@ import sys
 import os
 
 class Games:
+    def __init__(self):
+        self.deck = Deck()
+        self.dealer = Dealer(Deck())
+
     def clear():
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -54,12 +58,11 @@ class Games:
 
     def show_Rules():
         print("\n========== HOW TO PLAY ==========")
-        print("- Taking turns, ask a player for a card rank (e.g., 'Aces')")
-        print("- If they have it they must give ALL of them")
-        print("- If not... [go fish]! Draw a single card from the deck")
-        #refer to our rules
+        print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
+        print("- If the chosen player has the requested card, they must give ALL of them.")
+        print("- If not... fishing time! Draw a single card from the deck.")
         print("- The player who has the most matching sets at the end of the game wins!")
-        print("(The game draws to a close as the deck empties and every card set finds their pairs)")
+        print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
 
     def main_Menu():
@@ -87,11 +90,6 @@ class Games:
         
         if choice == "Starting game...":
             print("\nStarting game...\n")
-
-    
-    def __init__(self):
-        self.deck = Deck()
-        self.dealer = Dealer(Deck())
 
     def create_players(self):
         players = []

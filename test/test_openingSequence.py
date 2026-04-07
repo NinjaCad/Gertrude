@@ -1,5 +1,7 @@
 from testing_base import *
 
+#made this whole test
+#------------------------------
 #this is so that there is no player input and just choices
 def handle_menu_choice(choice):
     if choice == "1":
@@ -33,3 +35,4 @@ def test_opening_lines():
     
     assert len(lines) == 3
     assert "cards are shuffled" in lines[0].lower()
+#------------------------------
