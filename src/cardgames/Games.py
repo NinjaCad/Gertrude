@@ -84,9 +84,11 @@ def show_cards(card: Card):
 class Games:
 
     betting_templates = [
+        "Someone places a calm, standard bet on {player}.",
+        "A gambler puts a routine wager on {player}.",
         "Local man confidently bets his last $12 on {player}... again.",
         "Frat leader squanderes his rent money on {player}.",
-        "Unknown bettor claims {player} 'has aura' and puts down everything.",
+        "Unknown gambler claims {player} 'has aura' and puts down everything.",
         "Grandma in Ohio places emotional 5 cent wager on {player}.",
         "Wall Street intern uses company credit card on {player}.",
         "Two raccoons reportedly pool resources and bet on {player}.",
@@ -101,25 +103,20 @@ class Games:
         "{player} receives emotional support betting surge.",
         "Small North Dakota town rallies behind {player} for no explainable reason.",
         "Gambler claims he 'studied the patterns' and picks {player} (he did not).",
-        "One bettor screams 'THIS IS THE ONE' for the 14th time today about {player}.",
-        "Suspiciously confident bettor refuses to elaborate, places max bet on {player}.",
+        "One gambler screams 'THIS IS THE ONE' for the 14th time today about {player}.",
+        "Suspiciously confident gambler refuses to elaborate, places max bet on {player}.",
     ]
 
     def __init__(self):
         self.deck = Deck()
 
-    def build_betting_notification(self, chosen_player_name, bettor_name=None, amount=None):
-        if bettor_name is not None or amount is not None:
-            bettor = bettor_name or "Unknown bettor"
-            wager = amount or "$100"
-            return f"{bettor} bet {wager} on {chosen_player_name}."
-
+    def build_betting_notification(self, chosen_player_name):
         template = random.choice(self.betting_templates)
         return template.format(player=chosen_player_name)
 
-    def show_betting_popup(self, chosen_player_name, bettor_name=None, amount=None):
+    def show_betting_popup(self, chosen_player_name):
         """Print a popup-style betting message and return it for testability."""
-        message = self.build_betting_notification(chosen_player_name, bettor_name, amount)
+        message = self.build_betting_notification(chosen_player_name)
         popup = f"\n[BETTING POP-UP] {message}"
         print(popup)
         return message

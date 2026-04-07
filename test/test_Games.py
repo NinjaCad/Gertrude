@@ -21,16 +21,21 @@ def test_chosen_card_in_hand():
     assert player2.chosen_card in player2.hand
 
 
-def test_build_betting_notification_custom_values():
+def test_build_betting_notification_uses_templates(monkeypatch):
     game = Games()
-    message = game.build_betting_notification("Player_2", bettor_name="John Doe", amount="$10k")
-    assert message == "John Doe bet $10k on Player_2."
+    monkeypatch.setattr("cardgames.Games.random.choice", lambda templates: templates[0])
+
+    message = game.build_betting_notification("Player_2")
+
+    assert message == "Someone places a calm, standard bet on Player_2."
 
 
-def test_show_betting_popup_prints_message(capsys):
+def test_show_betting_popup_prints_message(monkeypatch, capsys):
     game = Games()
-    message = game.show_betting_popup("Player_1", bettor_name="Sam", amount="$20 million")
+    monkeypatch.setattr("cardgames.Games.random.choice", lambda templates: templates[1])
+
+    message = game.show_betting_popup("Player_1")
     output = capsys.readouterr().out
 
-    assert message == "Sam bet $20 million on Player_1."
-    assert "[BETTING POP-UP] Sam bet $20 million on Player_1." in output
+    assert message == "A gambler puts a routine wager on Player_1."
+    assert "[BETTING POP-UP] A gambler puts a routine wager on Player_1." in output
