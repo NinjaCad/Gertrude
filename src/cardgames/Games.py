@@ -3,14 +3,96 @@ from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 import random
+import time
+import sys
+import os
 
 class Games:
-
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
         self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
         "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
+
+    def clear():
+        os.system('cls' if os.name == 'nt' else 'clear')
+
+    def slow_Print(text, delay=0.03):
+        for char in text:
+            print(char, end="")
+            sys.stdout.flush()
+            time.sleep(delay)
+        print()
+
+    def show_Title():
+        print(r"""
+    ========================================
+    ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄ 
+    ▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌
+    ▐░▌          ▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀      ▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀ ▐░▌       ▐░▌▐░▌
+    ▐░▌          ▐░▌               ▐░▌     ▐░▌               ▐░▌               ▐░▌     ▐░▌          ▐░▌       ▐░▌▐░▌
+    ▐░▌          ▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄      ▐░█▄▄▄▄▄▄▄▄▄      ▐░▌     ▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄█░▌▐░▌
+    ▐░▌          ▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌
+    ▐░▌          ▐░█▀▀▀▀▀▀▀▀▀      ▐░▌      ▀▀▀▀▀▀▀▀▀█░▌     ▐░█▀▀▀▀▀▀▀▀▀      ▐░▌      ▀▀▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌
+    ▐░▌          ▐░▌               ▐░▌               ▐░▌     ▐░▌               ▐░▌               ▐░▌▐░▌       ▐░▌ ▀ 
+    ▐░█▄▄▄▄▄▄▄▄▄ ▐░█▄▄▄▄▄▄▄▄▄      ▐░▌      ▄▄▄▄▄▄▄▄▄█░▌     ▐░▌           ▄▄▄▄█░█▄▄▄▄  ▄▄▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌ ▄ 
+    ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌     ▐░▌     ▐░░░░░░░░░░░▌     ▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌
+    ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀       ▀       ▀▀▀▀▀▀▀▀▀▀▀       ▀            ▀▀▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀ 
+                                                                                                                    
+    ========================================
+        A Card Game of Chance, Choice, & Everything Inbetween
+    ========================================
+    """)
+
+    def opening_Sequence():
+        show_Title()
+
+        lines = [
+            "The cards are shuffled...",
+            "Your opponents are ready...",
+            "Time to test your luck..."
+        ]
+
+        for line in lines:
+            slow_Print(line, 0.04)
+            time.sleep(0.3)
+
+        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+
+    def show_Rules():
+        print("\n========== HOW TO PLAY ==========")
+        print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
+        print("- If the chosen player has the requested card, they must give ALL of them.")
+        print("- If not... fishing time! Draw a single card from the deck.")
+        print("- The player who has the most matching sets at the end of the game wins!")
+        print("(The game draws to a close as the deck empties and every card set finds their pairs).")
+        print("================================\n")
+
+    def main_Menu():
+        while True:
+            print("\n1. Start Game")
+            print("2. How to Play")
+            print("3. Quit")
+
+            choice = input("\nChoose an option: ")
+
+            if choice == "1":
+                return "Starting game..."
+            elif choice == "2":
+                show_Rules()
+            elif choice == "3":
+                print("Bye bye!")
+                exit()
+            else:
+                print("Please enter '1', '2', or '3'.\n")
+
+    def run_Game():
+        clear()
+        opening_Sequence()
+        choice = main_Menu()
+        
+        if choice == "Starting game...":
+            print("\nStarting game...\n")
 
     def create_players(self):
         players = []
