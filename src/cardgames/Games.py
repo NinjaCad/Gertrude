@@ -4,9 +4,9 @@ from cardgames.Dealer import Dealer
 from cardgames.Card_Compare import Card
 import copy
 
-# ==========================================================
-# New Feature (Sprint 1): High Card Draw instructions display
-# ==========================================================
+# ===================
+# High Card Draw Game
+# ===================
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game.
