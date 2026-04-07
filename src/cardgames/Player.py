@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-from cardgames.Card import Card
-=======
 from cardgames.Card_Compare import *
->>>>>>> db21b8c5a013bc397b4233adf9963264716c5db1
-import os
 
 
 class Player:
@@ -50,16 +45,15 @@ class Player:
                     print(card.cardBack[idx], end="")
                 print()
             
-            print(f"\n{self.name}'s hand is now hidden.")
+            print(f"{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
 
-    def clear_screen(self):
-        # If the OS is Windows, run 'cls', otherwise run 'clear'
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
+    def hide_card(self, index: int):
+        if not (0 <= index < len(self.hand)):
+            raise IndexError(f"Card index out of range: {index}")
+        self.knownCards[index] = False
+        return self.hand[index]
 
     def clearHand(self):
         self.hand = []

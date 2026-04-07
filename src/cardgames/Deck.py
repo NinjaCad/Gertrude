@@ -1,7 +1,6 @@
 import os
 import random
-from cardgames.Card import Card
-from cardgames..Card_Compare import Card
+from cardgames.Card_Compare import Card
 
 cardImages = []
 values = list(range(1,14))
