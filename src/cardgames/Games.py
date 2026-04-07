@@ -49,7 +49,7 @@ def play_card():
     card = ""
     global GAME_STATE
     global player_list
-    player_list = [Player('Prof Lee')]          #this line to make testing the play_card() route more straightfoward; can be deleted when we merge
+    #player_list = [Player('Prof Lee')]          #this line to make testing the play_card() route more straightfoward; can be deleted when we merge
     if request.method == "POST":
         card = global_card_change(GAME_STATE)
     counter = increase_counter(GAME_STATE, player_list)
