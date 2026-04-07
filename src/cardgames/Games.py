@@ -89,7 +89,6 @@ class Games:
     def select_card(self, player):
         # Denotes the change of turn 
         print(f"\n--- {player.name}'s Card Options ---")
-        
         if len(player.hand) == 0: # Added by Sam's suggestion
             print(f"{player.name} has no cards left to play!")
             player.chosen_card = None  # Intentionally set to None since player cannot pick a card
@@ -129,7 +128,6 @@ class Games:
         deck.shuffle()
         dealer = Dealer(deck)
 
-
         begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
         # Player 1 chooses a card
         if begin == "":
@@ -166,7 +164,6 @@ class Games:
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
         #Below is for every time a game has been ran
-
         #Set up game_stats dict if it is empty
         if game_stats == None:
             game_stats = {}
