@@ -1,41 +1,14 @@
-from cardgames.Card import Card
+from cardgames.Card_Compare import *
+
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
-
-    def hide_card(self, index: int | None = None):
-        """Hide a card in the player's hand by marking it as unknown.
-
-        This uses the existing `knownCards` list where `False` means the card
-        should be displayed with the card back.
-
-        Args:
-            index: Which card to hide (0-based). If None, hides the last card.
-
-        Raises:
-            IndexError: if the index is out of range or the hand is empty.
-        """
-        if not self.hand:
-            raise IndexError("Cannot hide a card: hand is empty")
-
-        if index is None:
-            index = len(self.hand) - 1
-
-        if index < 0 or index >= len(self.hand):
-            raise IndexError(f"Card index out of range: {index}")
-
-        # Ensure knownCards stays aligned with hand.
-        if len(self.knownCards) != len(self.hand):
-            self.knownCards = [True for _ in self.hand]
-
-        self.knownCards[index] = False
-
-    # Backwards-compatible alias (some sprints used camelCase naming).
-    def hideCard(self, index: int | None = None):
-        return self.hide_card(index)
+        self.redraw_tokens = 0
+        self.chosen_card = None
+        self.chosen_card = Card("", 0, [], [])
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -52,13 +25,53 @@ class Player:
         for idx in range(6):
             for i, card in enumerate(self.hand):
                 if printShort and i < len(self.hand)-1:
-                    image = card.shortImage[idx]    if self.knownCards[i] else card.cardBack[idx]
+                    image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
-                    image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
+                    image = card.image if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
+
+    def hideHand(self):
+        if self.hand:
+            hidden = self.name
+
+            #Clears the terminal
+            print("\x1b[2J\033[H")
+
+            #Print the card backs of all cards in the player's hand
+            for idx in range(6):
+                for card in self.hand:
+                    print(card.cardBack[idx], end="")
+                print()
+            
+            print(f"{self.name}'s hand is now hidden.")
+        else:
+            print(f"{self.name} has no cards to hide.")
+
+    def hide_card(self, index: int):
+        if not (0 <= index < len(self.hand)):
+            raise IndexError(f"Card index out of range: {index}")
+        self.knownCards[index] = False
+        return self.hand[index]
 
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+
+    def add_redraw_token(self, tokens: int = 1):
+        if tokens < 0:
+            raise ValueError("Cannot add a negative number of redraw tokens.")
+        self.redraw_tokens += tokens
+
+    def record_round_win(self):
+        self.add_redraw_token()
+
+    def can_redraw(self) -> bool:
+        return self.redraw_tokens > 0
+
+    def consume_redraw_token(self) -> bool:
+        if not self.can_redraw():
+            return False
+        self.redraw_tokens -= 1
+        return True
