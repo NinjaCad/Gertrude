@@ -9,6 +9,8 @@ class Games:
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
+        self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
+        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
 
     def create_players(self):
         players = []
@@ -56,6 +58,7 @@ class Games:
             player.knownCards = knownCardsStore # Reverses cards to be visible
     
     def start_game(self, players):
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         playerlist = players[:]
         random.shuffle(playerlist)
         turn_list = playerlist
@@ -67,8 +70,22 @@ class Games:
         self.dealer.dealCards(cardsdealt, turn_list)
         list.reverse(turn_list) #last dealt goes first
 
+        self.turn_list = turn_list
         return turn_list
 
+    def goFishing(self, player):
+
+        print("\n"+"Go Fishing!") #Maybe replace with Prettier Font?
+        card = self.deck.getCard()
+        print(str(card))
+        player.addCard(card)
+        
+        if player.checkForFourOfAKind() != []: #Recursive call when player gets book from drawing.
+            player.bookHandling()
+            self.goFishing(player)
+        return(card)
+
+    
     #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
     def endGameState(self, players):
         nameScorePairs = {p.name: p.numBooks for p in players}
@@ -95,17 +112,22 @@ class Games:
         print()
 
             
-    def card_thievery(self, turn_list, host_player):
+    def current_players(self, host_player, player_list): #Lists players that still have cards
         stepper = 1
         player_number = []
         player_dict = {}
-        for players in turn_list:
+        for players in player_list:
             if players != host_player and len(players.hand) != 0:
                 print("player "+str(stepper)+": "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
                 player_number.append(str(stepper))
                 player_dict[(str(players.name)).lower()] = stepper      
                 
             stepper += 1
+        return(player_number, player_dict) #Returns player number in turnlist and list of names
+
+
+    def cardThievery(self, host_player, player_list):
+        player_number, player_dict = self.current_players(host_player, player_list)
 
         target_choice = ""
         while target_choice not in player_number:
@@ -115,33 +137,30 @@ class Games:
             elif target_choice not in player_number and target_choice not in player_dict:
                 print("Invalid Input! Enter player name or number.")
                 target_choice = ""
-        target_player = turn_list[int(target_choice) - 1]
+        target_player = player_list[int(target_choice) - 1]
         print("")
 
         #print("Put Card Names Here /n") #Place types of cards here
         #print(host_player.hand) #Put Function for showing cards in hand here
 
         thief_choice = 0
-        value_dict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
-        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
 
-        while thief_choice not in value_dict:
+        while thief_choice not in self.valueDict:
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
-            if thief_choice not in value_dict:
+            if thief_choice not in self.valueDict:
                 print("Invalid Choice! Choose Card Type, eg: aces.")
 
         stolen_cards = 0
         card_counter = 0
         target_list = target_player.hand[:]
         for card in target_list:
-            if card.value == value_dict[thief_choice]:
+            if card.value == self.valueDict[thief_choice]:
                 host_player.addCard(card)
                 target_player.removeCard(card)
                 stolen_cards += 1
-            card_counter += 1
         
         if stolen_cards == 0:
-            print("Go Fish!") #Place Go Fish Here
+            self.goFishing(host_player)
 
         return target_player
 
@@ -151,9 +170,6 @@ class Games:
         print('Welcome to the Games application!')
         print('This games application is under development.')
 
-        self.deck = Deck() #deck is created here; deck knows how, games decides when
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
-        
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
         turn_list = self.start_game(players)
