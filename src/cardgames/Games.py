@@ -55,7 +55,7 @@ def play_card():
 def start_game():
     global player_list
     #if request.method == 'GET':
-    player_list = [Player('Prof Lee')]          #this line to make testing start_game() route more straightforward; can be deleted when we merge
+    #player_list = [Player('Prof Lee')]          #this line to make testing start_game() route more straightforward; can be deleted when we merge
     Dealer(Deck()).deal_cards(player_list)        #some players might get extra cards
     for i, player in enumerate(player_list):
         player.set_angle(360//len(player_list) * i)       #sets the angle of the player around the deck
