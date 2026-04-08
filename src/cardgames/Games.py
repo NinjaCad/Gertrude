@@ -150,6 +150,7 @@ class Games:
                 game_stats[player]["Wins"] = 0
                 game_stats[player]["Win-Rate"] = ""
                 game_stats[player]["Win Streak"] = 0
+                game_stats[player]["Highest Win Streak"] = 0
             game_stats["Ties"] = 0
         
         #Error handling
@@ -171,12 +172,15 @@ class Games:
         else:
             game_stats[winner]["Wins"] += 1
 
-            #Update win streak
+            #Update winner's win streak and highest win streak
             game_stats[winner]["Win Streak"] += 1
+            if game_stats[winner]["Win Streak"] > game_stats[winner]["Highest Win Streak"]:
+                game_stats[winner]["Highest Win Streak"] = game_stats[winner]["Win Streak"]
+
+            #Reset everyone else's win streak
             for player in players:
-                if player == winner:
-                    continue
-                game_stats[player]["Win Streak"] = 0
+                if player != winner:
+                    game_stats[player]["Win Streak"] = 0
 
         #Total games is the sum of Player1 wins, Player2 wins, and ties
         total_games = 0
