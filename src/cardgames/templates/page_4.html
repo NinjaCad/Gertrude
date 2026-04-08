@@ -1,0 +1,66 @@
+
+
+<!-- 
+@app.route("/results_page") 
+ def results():
+    winner = None
+    if player_list and win_check(player_list):
+            winner = player_list[0]
+    return render_template("page_4.html", winner=winner)
+ -->
+
+ <!-- 
+@app.route("/play_card", methods=["GET", "POST"])
+def play_card():
+    card = ""
+    if request.method == "POST":
+        card = global_card_change()
+
+    if player_list and win_check(player_list):
+        winner = player_list[0]
+        return render_template("page_4.html", winner=winner)
+        
+    return render_template("page_3.html", card=card)                            #return rank and person whose turn it is
+ -->
+
+ 
+<!DOCTYPE html>
+<html lang="en">                                            
+    <head>                                                                    <!-- Styling to make the home page button invisible -->
+        <style>                                                                         
+
+            #invisible_button{
+                opacity: 0;
+            }
+
+            #invisible_button:hover{
+                opacity: 1;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+        </style>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Winner</title>
+        
+    </head>
+
+    <body>
+
+        <h1>Congratulations {{winner.name}}</h1>
+        <p>{{winner.name}} has won</p>
+        <button><a href="https://youtu.be/dQw4w9WgXcQ" target="_blank">Home Page</a></button>                   <!--Fun Button-->
+
+        <br><br><br><br><br>
+
+        <button id="invisible_button"><a href="{{url_for('home')}}">Real Home Page</a></button>                 <!--Real Button-->
+
+    </body>
+</html>
+
+
