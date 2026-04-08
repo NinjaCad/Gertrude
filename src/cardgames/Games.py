@@ -16,6 +16,10 @@ class Games:
         self.deck = Deck()
 
     def main(self):
+        """
+        Main game loop
+        """
+
         self.dealer = Dealer(self.deck)
 
         print('\nWelcome to the Gertrude\'s BlackJack!')
@@ -26,16 +30,21 @@ class Games:
         while True:
             # Each player places bets
             for player in self.playerList[1:]:
-                player.bet()
-
-            # GERT-40 ask each player if they want to place a perfectPairs bet
+                player.bet("standard")
+                player.bet("pairs")
 
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
+            print(f"--- Gertrude's hand ---")
+            self.playerList[0].showHand()
             
+            for player in self.playerList[1:]:
+                if self.playerList[0].hand[0].value == 1:
+                    player.bet("insurance")
+
             # Each player takes turn
             self.round()
 
@@ -46,6 +55,10 @@ class Games:
             # Calculate results and resolve bets
             self.calculateWinner(self.playerList)
 
+            for player in self.playerList[1:]:
+                player.resolve_bet({"pairs": player.perfectPairs()})
+                player.resolve_bet({"insurance": player.insurance(self.playerList[0])})
+            
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
             while quit not in ["y", "yes", "n", "no"]:
@@ -119,7 +132,7 @@ class Games:
 
             while True:
                 # Check if the player's turn has ended, and if so, end their turn and print their hand value
-                if (player.active == False):
+                if player.active == False:
                     print(f"{player.name} ends with a hand value of {player.check_cards()}.")
                     break
 
@@ -140,7 +153,7 @@ class Games:
 
                 choice = input("> ").strip().lower()
 
-                if (choice in enabled_moves or choice in aliases):
+                if choice in enabled_moves or choice in aliases:
                     if choice in ["hit", "h"]:
                         player.hit(self.dealer)
                     elif choice in ["stand", "s"]:

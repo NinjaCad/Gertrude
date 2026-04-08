@@ -226,20 +226,31 @@ TIPS:
     # ouputs: none
     # goal: a) create new self.money and self.bet_money attributes
     #       b) set self.bet_money based on user input
-    def bet(self):
+    def bet(self, type):
         # GERT-30 call trashtalk when player makes a bet
         
         while True: # while loop guarantees valid input
-            bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
+            # Getting players money
+            if (type == "pairs"):
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+            elif (type == "insurance"):
+                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
+            else:
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
             
-            try: # guarantee that bet is an integer
+            # guarantee that bet is an integer
+            try:
                 bet = int(bet)
             except ValueError:
                 print("Please enter a valid integer amount.")
                 continue
             
-            if bet < 5: # guarantee bet is 5 or more
+            # constraints
+            if type == "standard" and bet < 5: # guarantee bet is 5 or more
                 print("Bet amount must be at least $5. Please enter a valid amount.")
+                continue
+            if type == "insurance" and bet > self.bets["standard"] // 2:
+                print(f"Insurance bet cannot be more than half of your original bet (${self.bets['standard']}). Please enter a valid amount")
                 continue
             
             elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
@@ -247,7 +258,12 @@ TIPS:
                 continue
             
             else: # if all checks are passed, set bet and break loop
-                self.bets["standard"] = bet
+                if (type == "pairs"):
+                    self.bets["pairs"] = bet
+                elif (type == "insurance"):
+                    self.bets["insurance"] = bet
+                else:
+                    self.bets["standard"] = bet
                 break
             
         return
@@ -277,12 +293,24 @@ TIPS:
     # inputs: none
     # outputs: none
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
-    
+    def insurance(self, gert):
+        if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+            return True  
+        else:
+            return False  
     
     # GERT-40 perfectPairs()
     # inputs: none
     # outputs: pairType (string) based on whether or not there is a mixed pair, colored pair, or no pair
     # goals: check self.hand for mixed or colored pair
+    def perfectPairs(self):
+        if len(self.hand) == 2:
+            if self.hand[0].value == self.hand[1].value:
+                if self.hand[0].suit == self.hand[1].suit:
+                    return "Colored Pair"
+                else:
+                    return "Mixed Pair"
+        return False
 
 
     # GERT-15 split()
