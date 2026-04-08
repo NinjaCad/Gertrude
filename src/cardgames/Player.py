@@ -16,7 +16,8 @@ class Player:
         # GERT-18 initialize money and bet attributes for player
         self.money = 100
         self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
-        
+        self.niceGert = False
+
         # GERT-15 for recording split() functionality
         self.split_hands_score = { }
 
@@ -205,20 +206,27 @@ TIPS:
     # outputs: none
     # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )
     def trashTalk(self):
-        lines = [
-            "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
-            "Gertrude nods at your cards: 'Ah yes, the classic strategy: ignore the number 21.'",
-            "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
-            "Gertrude leans in: 'You were so close… to making a smarter decision.'",
-            "Gertrude grins: 'You hit like 21 is just a suggestion.'",
-            "Gertrude laughs: 'Don’t worry—lots of people panic-hit. Not *winners*, but people.'",
-            "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
-            "Gertrude shrugs: 'I’ve seen better decisions at a roulette table.'",
-            "Gertrude politely: 'Next time, try stopping before your hand catches fire.'",
-            "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
-            "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
-            "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'"
-        ]
+        if self.niceGert == False:
+            lines = [
+                "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
+                "Gertrude nods at your cards: 'Ah yes, the classic strategy: ignore the number 21.'",
+                "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
+                "Gertrude leans in: 'You were so close… to making a smarter decision.'",
+                "Gertrude grins: 'You hit like 21 is just a suggestion.'",
+                "Gertrude laughs: 'Don’t worry—lots of people panic-hit. Not *winners*, but people.'",
+                "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
+                "Gertrude shrugs: 'I’ve seen better decisions at a roulette table.'",
+                "Gertrude politely: 'Next time, try stopping before your hand catches fire.'",
+                "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
+                "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
+                "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'"
+            ]
+        else:
+            lines = [
+                "Gertrude sees your cards: 'Oh that happens sometimes honey, you'll get 'em next time.'",
+                "Gertrude laughs: 'You've got some bravery hitting on that hand. I like it!'",
+                "Gertrude sees your cards: 'Well that is pretty lucky... If only I had that type of luck...'"
+            ] #add more nice dialogue lines in a future sprint
     
         return "\n" + random.choice(lines) + "\n"
     # GERT-18 bet()
@@ -282,6 +290,7 @@ TIPS:
         for bet in bet_results.keys():
             if bet_results[bet]:
                 self.money += self.bets[bet]
+                self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
                 
@@ -289,6 +298,37 @@ TIPS:
             
         return
     
+    def tipDealer(self):
+        while True:
+            print(f"{self.name}, you have ${self.money}.")
+            self.tipChoice = input("Do you want to tip the dealer? (y/n) ").lower()
+            if self.tipChoice == "y":
+                while True:
+                    try:
+                        self.tipAmt = int(input("How much do you want to tip? (integer value only) "))
+                        if self.tipAmt > self.money:
+                            print("You don't have that much money! Try again.")
+                        elif self.tipAmt <= 0:
+                            print("That's not a real tip amount! Try again. ")
+                        else:
+                            break
+                    except ValueError:
+                        print("That is not an integer value! Try again")
+                    
+                self.money -= self.tipAmt
+                print("Gertrude smiles warmly: Thanks for the tip sweetie! ")
+                self.niceGert = True    
+                break
+
+            elif self.tipChoice == "n":
+                print("Gertrude looks at you blankly...")
+                break
+
+            else:
+                print("Not a valid answer, try again.")
+        return 
+
+
     # GERT-32 insurance()
     # inputs: none
     # outputs: none
