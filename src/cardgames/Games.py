@@ -1,10 +1,14 @@
 from cardgames.Deck import Deck
+<<<<<<< HEAD
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 from cardgames.Card_Compare import Card
 from cardgames.Dealer import Dealer
 from cardgames.betting_templates import gambling_templates
 import random
+=======
+from cardgames.Card import Card
+>>>>>>> feature/BB-25-game-stats-update
 import copy
 
 # ===================
@@ -245,6 +249,8 @@ class Games:
                 game_stats[player] = {}
                 game_stats[player]["Wins"] = 0
                 game_stats[player]["Win-Rate"] = ""
+                game_stats[player]["Win Streak"] = 0
+                game_stats[player]["Highest Win Streak"] = 0
             game_stats["Ties"] = 0
         
         #Error handling
@@ -259,8 +265,22 @@ class Games:
         #Increment the number of wins or ties
         if winner == "It's a tie!":
             game_stats["Ties"] += 1
+
+            #Every player loses their win streak if it's a tie
+            for player in players:
+                game_stats[player]["Win Streak"] = 0
         else:
             game_stats[winner]["Wins"] += 1
+
+            #Update winner's win streak and highest win streak
+            game_stats[winner]["Win Streak"] += 1
+            if game_stats[winner]["Win Streak"] > game_stats[winner]["Highest Win Streak"]:
+                game_stats[winner]["Highest Win Streak"] = game_stats[winner]["Win Streak"]
+
+            #Reset everyone else's win streak
+            for player in players:
+                if player != winner:
+                    game_stats[player]["Win Streak"] = 0
 
         #Total games is the sum of Player1 wins, Player2 wins, and ties
         total_games = 0
@@ -279,3 +299,4 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
+
