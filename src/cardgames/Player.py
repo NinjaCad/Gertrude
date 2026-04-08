@@ -15,7 +15,7 @@ class Player:
         
         # GERT-18 initialize money and bet attributes for player
         self.money = 100
-        self.bet_money = 0
+        self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -98,7 +98,7 @@ class Player:
             num_aces -= 1
         if total_score > 21:
             self.bust()  # Player busts if score exceeds 21 even after adjusting Aces
-            return -1  # -1 represents a player who busted
+            return total_score
         else:
             return total_score
         
@@ -197,6 +197,10 @@ TIPS:
         return output
     
     # Just some fun trash talk lines that gertrude when the player busts
+    # GERT-30 trashtalk()
+    # inputs: player (player object)
+    # outputs: none
+    # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )
     def trashTalk(self):
         lines = [
             "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
@@ -223,7 +227,7 @@ TIPS:
         # GERT-30 call trashtalk when player makes a bet
         
         while True: # while loop guarantees valid input
-            bet = input(f"{self.name}, how much do you want to bet? ")
+            bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
             
             try: # guarantee that bet is an integer
                 bet = int(bet)
@@ -231,8 +235,8 @@ TIPS:
                 print("Please enter a valid integer amount.")
                 continue
             
-            if bet < 0: # guarantee bet is positive
-                print("Bet amount cannot be negative. Please enter a valid amount.")
+            if bet < 5: # guarantee bet is 5 or more
+                print("Bet amount must be at least $5. Please enter a valid amount.")
                 continue
             
             elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
@@ -240,32 +244,58 @@ TIPS:
                 continue
             
             else: # if all checks are passed, set bet and break loop
-                self.bet_money = bet
+                self.bets["standard"] = bet
                 break
             
         return
 
     
     # GERT-18 resolve_bet()
-    # inputs: win (boolean), Gertrude (Player object)
+    # inputs: win (dictionary where keys are the type of bet ("standard", "insurance", etc., and values are True or False based on whether or not bet was won)
+    # example inputs: {"standard": True}
+    #                 {"srandard": True, "insurance": False, "pairs": True}
+    #                 {"insurance": True}
+    # AKA, you can pass in all bets at once or one at a time depending on when and how we resolve the different bets. Order does not matter. Not every bet needs to be resolved at once.
     # outputs: none
     # goal: a) add or subtract bet attribute from money attribute based on whether or not player one
-    #       b) add or subtract bet attribute from Gertrude's money attribute based on whether or not player one won
-    def resolve_bet(self, win, dealer):
+    def resolve_bet(self, bet_results):
         
-        if win: # player gets money from dealer if they win
-            self.money += self.bet_money
-            dealer.money -= self.bet_money
-        else: # player gives money to dealer if they lose
-            self.money -= self.bet_money
-            dealer.money += self.bet_money
+        for bet in bet_results.keys():
+            if bet_results[bet]:
+                self.money += self.bets[bet]
+            else:
+                self.money -= self.bets[bet]
+                
+            self.bets[bet] = 0
             
-        self.bet_money = 0 # reset bet after resolving
+        return
     
-    # GERT-30 trashtalk()
-    # inputs: player (player object)
+    # GERT-32 insurance()
+    # inputs: none
     # outputs: none
-    # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )
+    # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
+    
+    
+    # GERT-40 perfectPairs()
+    # inputs: none
+    # outputs: pairType (string) based on whether or not there is a mixed pair, colored pair, or no pair
+    # goals: check self.hand for mixed or colored pair
+
+
+    # GERT-15 split()
+    # inputs: none
+    # outputs: none (may change)
+    # goals: create two subhands that can each play in any order, by splitting the current hand
+    #        play each hand until completion (aka stand or bust)
+    #        set self.active to false
+    #        to avoid messing with round() or main() structure in Games.py, all split functionality
+    #        will be completely handled here
+    
+    # can_split()
+    # inputs: none
+    # outputs: can_split (boolean)
+    # goals: return True if both cards in self.hand are same value
+    
 class Gertrude(Player):
     def gertTurn(self, dealer):
         while True:
@@ -274,5 +304,3 @@ class Gertrude(Player):
                 return curr_score
             else: #the dealer needs to hit if their score is less than 17
                 super().hit(dealer, True)
-
-    
