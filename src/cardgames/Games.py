@@ -6,13 +6,67 @@ import random
 import time
 import sys
 import os
+from pathlib import Path
 
 class Games:
+    TEN_SECOND_TEST = "tenSecondTest"
+    FULL_TEST = "fullTest"
+    REPEAT_FOREVER = "repeatForever"
+
+    COCONUT_MALL_TRACK = "coconutMall-20min.mp3"
+    FINAL_COUNTDOWN_TRACK = "finalCountdown-20min.mp3"
+    GOLDFISH_TRACK = "snackThatSmilesBack-2sec.mp3"
+    SMOOTH_JAZZ_TRACK = "smoothJazz-17min.mp3"
+
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
+        self.assets_dir = Path(__file__).resolve().parents[2] / "assets"
         self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
         "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
+
+    def choose_music_track(self):
+        if random.random() < 0.8:
+            return self.assets_dir / self.COCONUT_MALL_TRACK
+        return self.assets_dir / self.FINAL_COUNTDOWN_TRACK
+
+    def choose_music_playback_mode(self, input_func=input):
+        prompt = (
+            "Choose music mode: "
+            "1) 10-second test "
+            "2) full song once "
+            "3) repeat forever [default]: "
+        )
+        choice = input_func(prompt).strip()
+        while choice not in ("", "1", "2", "3"):
+            choice = input_func("Invalid choice. Enter 1, 2, 3, or press Enter: ").strip()
+
+        if choice == "1":
+            return self.TEN_SECOND_TEST
+        if choice == "2":
+            return self.FULL_TEST
+        return self.REPEAT_FOREVER
+
+    def play_background_music(self, playback_mode=None):
+        import pygame
+
+        if pygame.mixer.get_init() is None:
+            pygame.mixer.init()
+
+        selected_track = self.choose_music_track()
+        pygame.mixer.music.load(str(selected_track))
+
+        if playback_mode is None:
+            playback_mode = self.REPEAT_FOREVER
+
+        loops = -1 if playback_mode == self.REPEAT_FOREVER else 0
+        pygame.mixer.music.play(loops)
+
+        if playback_mode == self.TEN_SECOND_TEST:
+            pygame.time.wait(10000)
+            pygame.mixer.music.stop()
+
+        return selected_track
 
     def clear():
         os.system('cls' if os.name == 'nt' else 'clear')

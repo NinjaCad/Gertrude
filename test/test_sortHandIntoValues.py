@@ -14,6 +14,8 @@ def test_sort_hand_into_values_groups_cards():
     player.setHand(cards)
 
     grouped = player.sortHandIntoValues()
+    grouped_values_only = {key: [card.value for card in value] for key, value in grouped.items()}
+    print("Grouped cards:", grouped_values_only)
 
     assert list(grouped.keys()) == ["2s", "3s", "Qs", "Ks"]
     assert len(grouped["2s"]) == 2
