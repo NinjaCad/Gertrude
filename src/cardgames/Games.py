@@ -61,6 +61,13 @@ def stream():
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
 
+
+# @app.route("/play_card", methods=["GET", "POST"])
+# def play_card():
+#     card = ""
+#     if request.method == "POST":
+#         card = global_card_change(GAME_STATE)
+
 # COLLECT SLAPS
 @app.route("/slap", methods=["POST"])
 def slap():
@@ -94,6 +101,17 @@ def check_slap():
         return {"status": "waiting"}
 
     return {"status": "idle"}
+
+@app.route("/start_game", methods=["GET", "POST"])
+def start_game():
+    global player_list
+    #if request.method == 'GET':
+    #player_list = [Player('Prof Lee')]          #this line to make testing start_game() route more straightforward; can be deleted when we merge
+    Dealer(Deck()).deal_cards(player_list)        #some players might get extra cards
+    for i, player in enumerate(player_list):
+        player.set_angle(360//len(player_list) * i)       #sets the angle of the player around the deck
+    card = ""
+    return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
 
 if __name__ == "__main__":

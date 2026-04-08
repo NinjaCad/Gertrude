@@ -9,7 +9,7 @@ if str(ROOT) not in sys.path:
 
 from cardgames.Card import Card
 from cardgames.Deck import Deck
-from cardgames.Games import blank
+from cardgames.Games import *
 from cardgames.Dealer import Dealer
 from cardgames.Player import Player
 
