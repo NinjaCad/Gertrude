@@ -10,6 +10,8 @@ def test_perfectPairsC():
     assert test1.perfectPairs() == True
     # Test if the amount of money gets multplied with the correct pair
     assert test1.bets["pairs"] == 100
+    test1.resolve_bet({"pairs": True})
+    assert test1.money == 200
 
 # Mixed Pairs
 def test_perfectPairsM():
@@ -21,6 +23,8 @@ def test_perfectPairsM():
     assert test2.perfectPairs() == True
     # Test if the amount of money gets multplied with the correct pair
     assert test2.bets["pairs"] == 50
+    test2.resolve_bet({"pairs": True})
+    assert test2.money == 150
 
 # Failed Pair
 def test_perfectPairsF():
@@ -32,3 +36,5 @@ def test_perfectPairsF():
     assert test3.perfectPairs() == False
     # Test if the bet doesn't get multiplied
     assert test3.bets["pairs"] == 10
+    test3.resolve_bet({"pairs": False})
+    assert test3.money == 90

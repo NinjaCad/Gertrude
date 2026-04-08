@@ -43,16 +43,7 @@ class Games:
             self.playerList[0].showHand()
 
             # Calculate results
-            results = self.calculateWinner(self.playerList)
-            
-            # Calculate results and give money for perfect pairs
-            for player in self.playerList[1:]:
-                player.resolve_bet({
-                    "standard": results[player],
-                    "pairs": player.perfectPairs(),
-                    # "insurance": player.insurance(),
-                    # "21+3": player.twentyone(),
-                })
+            self.calculateWinner(self.playerList)
             
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
@@ -181,6 +172,14 @@ class Games:
             else:
                 results[player] = False
                 print(player.name, ", push! You Tied with the dealer.")
+            
+            # Calculate results and give money for perfect pairs
+            player.resolve_bet({
+                "standard": results[player],
+                "pairs": player.perfectPairs(),
+                # "insurance": player.insurance(),
+                # "21+3": player.twentyone(),
+            })
         return results
 
 if __name__ == "__main__":
