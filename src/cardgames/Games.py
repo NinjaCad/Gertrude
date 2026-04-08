@@ -126,9 +126,9 @@ class Games:
                 # refresh availability each loop because the commands change
                 enabled_moves = ["hit", "stand"]
                 aliases = ["h", "s"]
-                # if (player.can_split()):
-                #     enabled_moves.append("split")
-                #     aliases.append("sp")
+                if (player.can_split()):
+                    enabled_moves.append("split")
+                    aliases.append("sp")
                 # if (player.can_double()):
                 #     enabled_moves.append("double down")
                 #     aliases.append("dd")
@@ -145,8 +145,8 @@ class Games:
                         player.hit(self.dealer)
                     elif choice in ["stand", "s"]:
                         player.stand()
-                    # elif choice in ["split", "sp"]:
-                    #     player.split(self.dealer)
+                    elif choice in ["split", "sp"]:
+                        player.split(self.dealer)
                     # elif choice in ["double down", "dd"]:
                     #    player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
