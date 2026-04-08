@@ -34,21 +34,30 @@ class Player:
 
     def set_hand(self, cards: "list[Card]", is_known: bool = False) -> None:
         self.hand = cards
-        # remove the following line to leave all cards in hand at their default of "isKnown = False" 
-        #self.knownCards = [isKnown for _ in self.hand]
-
-    # Removed the showHand function because there's no need for it in our game.
-    # def showHand(self, printShort: bool = False):
-    #     for idx in range(6):
-    #         for i, card in enumerate(self.hand):
-    #             if printShort and i < len(self.hand)-1:
-    #                 image = card.shortImage[idx]    if self.knownCards[i] else card.cardBack[idx]
-    #                 print(image, end="")
-    #             else:
-    #                 image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
-    #                 print(image, end="")
-    #         print()
 
     def clear_hand(self) -> None:
         self.hand = []
         self.known_cards = []
+
+    def pop_card(self):
+        """
+        Removes the last card from the player hand and 
+        returns the card object.
+        """
+        if not self.hand:
+            return None
+        played_card = self.hand.pop()
+        if self.known_cards:
+            self.known_cards.pop()
+        return played_card
+
+def card_counter():
+    ranks = [
+        "Ace", "2", "3", "4", "5", "6", "7", 
+        "8", "9", "10", "Jack", "Queen", "King"
+    ]
+    print("--- Global Card Counter ---")
+    print("Press [ENTER] to see the next card value.")
+    print("Press [Ctrl+C] to exit.\n")
+    for rank in ranks:
+        input(f"Next value: {rank}")

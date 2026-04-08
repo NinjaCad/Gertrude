@@ -2,21 +2,35 @@ from cardgames.Deck import Deck
 from cardgames.Card import Card
 from cardgames.Dealer import Dealer
 from cardgames.Player import Player
+from cardgames.page_1 import *
+from cardgames.page_2 import *
+from cardgames.page_3 import *
 import random
-from flask import Flask, render_template, url_for, Response
+from flask import Flask, render_template, url_for, Response, request, session, redirect
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1"
 
+#The player objects will be appended to this list. 
+player_list = []
 GAME_STATE = {"current_card" : None, "current_player" : None}
 
-@app.route("/")
-@app.route("/home")
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    return "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
+    if request.method == 'GET':
+        return render_template("page_1.html")
+    elif request.method == 'POST':
+        name = request.form.get("player_name")
+        session['name'] = name
+        player_list.append(Player(name))
+        return redirect(url_for('lobby'))
 
-@app.route("/lobby")
+@app.route("/lobby", methods=['GET', 'POST'])
 def lobby():
-    return render_template("page_2.html", playerList=player_list)
+    if 'name' not in session:
+        return redirect(url_for('home'))
+    return render_template("page_2.html", name=session['name'], player_list=player_list)
 
 @app.route("/game")
 def game():
@@ -29,22 +43,13 @@ def stream():
             yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
     return Response(event_stream(), mimetype="text/event-stream")
 
-#The player objects will be appended to this list. 
-players_list = []
+@app.route("/play_card", methods=["GET", "POST"])
+def play_card():
+    card = ""
+    if request.method == "POST":
+        card = global_card_change()
 
-def win_check(players: "list[Player]"):
-    first_player_to_slap = players[0]
-    if len(first_player_to_slap.hand) == 0:
-        print(f"{first_player_to_slap.name} won!")
-        return True
-    else:
-        return False
-
-def blank(game_state, player_list):                                              #counter function
-    """Increments counter and returns (rank, player_index)"""
-    game_state['counter'] += 1
-    current_count = game_state['counter']
-    return current_count % 13, current_count % len(player_list)                  #return rank and person who turn it is
+    return render_template("page_3.html", card=card)              #return rank and person who turn it is
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
