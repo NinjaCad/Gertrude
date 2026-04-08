@@ -306,10 +306,11 @@ TIPS:
     def perfectPairs(self):
         if len(self.hand) == 2:
             if self.hand[0].value == self.hand[1].value:
-                if self.hand[0].suit == self.hand[1].suit:
-                    return "Colored Pair"
+                if (self.hand[0].suit in ["S", "C"] and self.hand[1].suit in ["S", "C"]) or (self.hand[0].suit in ["H", "D"] and self.hand[1].suit in ["H", "D"]):
+                    self.bets["pairs"] *= 10
                 else:
-                    return "Mixed Pair"
+                    self.bets["pairs"] *= 5
+                return True
         return False
 
 

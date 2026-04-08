@@ -38,11 +38,10 @@ class Games:
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
-            print(f"--- Gertrude's hand ---")
-            self.playerList[0].showHand()
-            
-            for player in self.playerList[1:]:
-                if self.playerList[0].hand[0].value == 1:
+            if self.playerList[0].hand[0].value == 1:
+                print(f"--- Gertrude's hand ---")
+                self.playerList[0].showHand()
+                for player in self.playerList[1:]:
                     player.bet("insurance")
 
             # Each player takes turn
@@ -52,12 +51,8 @@ class Games:
             self.playerList[0].gertTurn(self.dealer)
             self.playerList[0].showHand()
 
-            # Calculate results and resolve bets
+            # Calculate results
             self.calculateWinner(self.playerList)
-
-            for player in self.playerList[1:]:
-                player.resolve_bet({"pairs": player.perfectPairs()})
-                player.resolve_bet({"insurance": player.insurance(self.playerList[0])})
             
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
@@ -201,11 +196,18 @@ class Games:
                 standard_result = False
                 print(f"{player.name}, you lose! Dealer has a higher score!")
             else:
-                print(f"{player.name}, push! You tied with the dealer.")
+                print(player.name, ", push! You Tied with the dealer.")
                 player.bets["standard"] = 0
                 continue
+            
+            # Calculate results and give money for perfect pairs
+            player.resolve_bet({
+                "standard": standard_result,
+                "pairs": player.perfectPairs(),
+                "insurance": player.insurance(self.playerList[0])
+                # "21+3": player.twentyone(),
+            })
 
-            player.resolve_bet({"standard": standard_result})
 
 if __name__ == "__main__":
     game = Games()
