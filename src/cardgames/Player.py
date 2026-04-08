@@ -16,7 +16,7 @@ class Player:
         # GERT-18 initialize money and bet attributes for player
         self.money = 100
         self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
-                self.niceGert = False
+        self.niceGert = False
 
         # GERT-15 for recording split() functionality
         self.split_hands_score = { }
