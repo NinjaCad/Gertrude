@@ -15,7 +15,7 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 
 #The player objects will be appended to this list. 
 player_list = []
-GAME_STATE: Dict[str, Any] = {
+GAME_STATE = {
     "current_card": None,
     "current_player": None,
     "played_cards": [],
@@ -49,19 +49,14 @@ def lobby():
 def game():
     global GAME_STATE
     card = ""
-<<<<<<< HEAD
-    rank = None
-
-    if request.method == "POST" and player_list:
-        rank, player_index = advance_turn(GAME_STATE, player_list)
-        GAME_STATE["current_player"] = player_list[player_index]
-        card = global_card_change()
-
-    current_player_name = GAME_STATE["current_player"].name if GAME_STATE["current_player"] else "No player"
-
-    # return rank (of the global card), current player turn, and last card played
-    return render_template("page_3.html", rank=rank, card=card, current_player=current_player_name)
-=======
+    #global GAME_STATE
+    global player_list
+    #player_list = [Player('Prof Lee')]          #this line to make testing the play_card() route more straightfoward; can be deleted when we merge
+    # if request.method == "POST":
+    #     card = global_card_change(GAME_STATE)
+    # rank, player_turn = increase_counter(GAME_STATE, player_list)
+    
+    #return render_template("page_3.html", card=card, counter=(rank, player_turn))              #return rank and person who turn it is
     if request.method == "POST":
         # Don't let them play a card when a slap has happened
         if GAME_STATE["slap_in_progress"]:
@@ -141,7 +136,6 @@ def start_game():
     card = ""
     return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
->>>>>>> origin/dev_scrumptious_bytes
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
