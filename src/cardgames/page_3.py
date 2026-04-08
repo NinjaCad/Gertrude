@@ -63,16 +63,6 @@ def resolve_slap(game_state, player_list: "list[Player]"):
     # Shuffle the played cards to add to the player hand
     random.shuffle(game_state["played_cards"])
 
-    # Check if they were supposed to slap
-    # Potentially to be uncommented or deleted depending on how we structure cards
-    #valid_slap = (
-    #    (current_card_value == "A" and current_count == 1) or
-    #    (current_card_value == "J" and current_count == 11) or
-    #    (current_card_value == "Q" and current_count == 12) or
-    #    (current_card_value == "K" and current_count == 13) or
-    #    (current_card_value == current_count)
-    #)
-
     valid_slap = (current_card_value == current_count)
 
     if valid_slap:
