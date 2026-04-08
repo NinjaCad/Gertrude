@@ -16,7 +16,10 @@ class Player:
         # GERT-18 initialize money and bet attributes for player
         self.money = 100
         self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
-        self.niceGert = False
+                self.niceGert = False
+
+        # GERT-15 for recording split() functionality
+        self.split_hands_score = { }
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -231,20 +234,31 @@ TIPS:
     # ouputs: none
     # goal: a) create new self.money and self.bet_money attributes
     #       b) set self.bet_money based on user input
-    def bet(self):
+    def bet(self, type):
         # GERT-30 call trashtalk when player makes a bet
         
         while True: # while loop guarantees valid input
-            bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
+            # Getting players money
+            if (type == "pairs"):
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+            elif (type == "insurance"):
+                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
+            else:
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
             
-            try: # guarantee that bet is an integer
+            # guarantee that bet is an integer
+            try:
                 bet = int(bet)
             except ValueError:
                 print("Please enter a valid integer amount.")
                 continue
             
-            if bet < 5: # guarantee bet is 5 or more
+            # constraints
+            if type == "standard" and bet < 5: # guarantee bet is 5 or more
                 print("Bet amount must be at least $5. Please enter a valid amount.")
+                continue
+            if type == "insurance" and bet > self.bets["standard"] // 2:
+                print(f"Insurance bet cannot be more than half of your original bet (${self.bets['standard']}). Please enter a valid amount")
                 continue
             
             elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
@@ -252,7 +266,12 @@ TIPS:
                 continue
             
             else: # if all checks are passed, set bet and break loop
-                self.bets["standard"] = bet
+                if (type == "pairs"):
+                    self.bets["pairs"] = bet
+                elif (type == "insurance"):
+                    self.bets["insurance"] = bet
+                else:
+                    self.bets["standard"] = bet
                 break
             
         return
@@ -314,12 +333,25 @@ TIPS:
     # inputs: none
     # outputs: none
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
-    
+    def insurance(self, gert):
+        if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+            return True  
+        else:
+            return False  
     
     # GERT-40 perfectPairs()
     # inputs: none
     # outputs: pairType (string) based on whether or not there is a mixed pair, colored pair, or no pair
     # goals: check self.hand for mixed or colored pair
+    def perfectPairs(self):
+        if len(self.hand) == 2:
+            if self.hand[0].value == self.hand[1].value:
+                if (self.hand[0].suit in ["S", "C"] and self.hand[1].suit in ["S", "C"]) or (self.hand[0].suit in ["H", "D"] and self.hand[1].suit in ["H", "D"]):
+                    self.bets["pairs"] *= 10
+                else:
+                    self.bets["pairs"] *= 5
+                return True
+        return False
 
 
     # GERT-15 split()
@@ -330,11 +362,125 @@ TIPS:
     #        set self.active to false
     #        to avoid messing with round() or main() structure in Games.py, all split functionality
     #        will be completely handled here
+    def split(self, dealer):
+        
+        hands = {"L": Player("L"), "R": Player("R")}
+        hands["L"].addCard(self.hand[0], True)
+        hands["R"].addCard(self.hand[1], True)
+        
+        hand = None
+        while hands["L"].active or hands["R"].active: # mini game loop to complete split
+            
+            if hand:
+                if hand == "L":
+                    print(f"\n--- R's hand ---")
+                    hands["R"].showHand()
+                elif hand == "R":
+                    print(f"\n--- L's hand ---")
+                    hands["L"].showHand()
+            else:
+                print(f"\n--- L's hand ---")
+                hands["L"].showHand()
+                print(f"\n--- R's hand ---")
+                hands["R"].showHand()
+            
+            # get which hand we are playing
+            hand = input("Which hand do you want to take an action? Please input Left or Right: ")
+            if hand.lower().strip() not in ["left", "right", "l", "r"]:
+                print("Invalid entry.")
+                continue
+            
+            # verify it is still active
+            hand = hand[0].upper()
+            player = hands[hand]
+            if not player.active:
+                print("That hand is no longer active.")
+                continue
+            
+            
+            while True:
+                # NOTE: for now, we will not allow players to split if they are already split
+                # refresh availability each loop because the commands change
+                enabled_moves = ["hit", "stand", "help"]
+                aliases = ["h", "s", "?"]
+                # if (player.can_split()):
+                #     enabled_moves.append("split")
+                #     aliases.append("sp")
+                # if (player.can_double()):
+                #     enabled_moves.append("double down")
+                #     aliases.insert("dd", -2)
+
+                # Print what moves are available based on enabled key in moves dictionary
+                print("Choose:", ", ".join(enabled_moves))
+                choice = input("> ").strip().lower()
+
+                if (choice in enabled_moves or choice in aliases):
+                    if choice in ["hit", "h"]:
+                        player.hit(dealer)
+                    elif choice in ["stand", "s"]:
+                        player.stand()
+                    # elif choice in ["split", "sp"]: SEE ABOVE NOTE on Line 312
+                    #     player.split(self.dealer)
+                    #     break
+                    # elif choice in ["double down", "dd"]:
+                    #    player.double_down(self.dealer)
+                    #    break
+                    elif choice in ["help", "?"]:
+                        print(player.help(enabled_moves + aliases))
+                        continue
+                    else:
+                        print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
+                        continue
+
+                    print(f"\n--- {player.name}'s hand ---")
+                    player.check_cards()
+                    player.showHand()
+                    break
+                else:
+                    print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
+        
+        # split turns have all been played out
+        self.active = False
+        self.split_hands_score = {"L": hands["L"].check_cards(), "R": hands["R"].check_cards()}
+                      
     
     # can_split()
     # inputs: none
     # outputs: can_split (boolean)
     # goals: return True if both cards in self.hand are same value
+    def can_split(self):
+        return len(self.hand) == 2 and self.hand[0].value == self.hand[1].value and self.money - (2 * self.bets["standard"]) > -100 
+        #      ^^^only have two cards  ^^^two cards of equal value                  ^^^can't split to go below -$100
+    
+    # resolve_bets_split()
+    # inputs: none
+    # outputs: none
+    # goals: special bet resolve functionality for split()
+    def resolve_bet_split(self, dealerScore):
+        
+        for hand in ["Left", "Right"]:
+            score = self.split_hands_score[hand[0]]
+            
+            if score > 21:
+                print(f"{hand} hand busts!")
+                self.money -= self.bets["standard"]
+            elif dealerScore > 21:
+                print(f"Dealer busts. {hand} wins!")
+                self.money += self.bets["standard"]
+            elif score > dealerScore:
+                print(f"{hand} hand beat dealer.")
+                self.money += self.bets["standard"]
+            elif dealerScore > score:
+                print(f"Dealer beats {hand} hand.")
+                self.money -= self.bets["standard"]
+            else:
+                print(f"{hand} hand ties with dealer.")
+            
+        self.bets["standard"] = 0
+        self.split_hands_score = { }
+        
+        return
+        
     
 class Gertrude(Player):
     def gertTurn(self, dealer):
