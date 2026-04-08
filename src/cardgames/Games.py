@@ -23,6 +23,7 @@ GAME_STATE: Dict[str, Any] = {
     "slap_start_time": None,
     "counter": 0
 }
+last_player_joined = None
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -33,6 +34,8 @@ def home():
         name = request.form.get("player_name")
         session['name'] = name
         player_list.append(Player(name))
+        global last_player_joined
+        last_player_joined = name
         return redirect(url_for('lobby'))
 
 @app.route("/lobby", methods=['GET', 'POST'])
@@ -54,12 +57,23 @@ def game():
 
     return render_template("page_3.html", card=card)
 
-@app.route("/stream")
-def stream():
-    def event_stream():
+@app.route("/player-list-stream")
+def player_stream():
+    name = session['name'] # ASSIGNS EACH SESSION A STREAM
+    def player_list_stream(): #GENERATOR TO YIELD NEW HTML PAGES
+        global last_player_joined
+        last_player = last_player_joined # RESETTING LAST PLAYER JOINED TO UPDATE ON NEED BASE
+        with app.app_context():
+            html = render_template('player_list_partial.html', name=name, player_list=player_list) # RENDERS LIST AFTER INITIAL JOIN
+        yield f"data: {html}\n\n".encode("utf-8") # YIELDS INITIAL LIST
         while True:
-            yield "<h1>PLACEHOLDER</h1>" #REPLACE PLACEHOLDER WITH HTML PAGE
-    return Response(event_stream(), mimetype="text/event-stream")
+            if last_player != last_player_joined:
+                last_player = last_player_joined # CHECKING FOR PLAYER JOIN
+                with app.app_context():
+                    html = render_template('player_list_partial.html', name=name, player_list=player_list) # RENDERS NEW LIST
+                yield f"data: {html}\n\n".encode("utf-8") # YIELDS NEW LIST
+            time.sleep(0.1) # BUFFER
+    return Response(player_list_stream(), mimetype="text/event-stream", direct_passthrough=True) # RETURNING THE GENERATOR
 
 
 # @app.route("/play_card", methods=["GET", "POST"])
