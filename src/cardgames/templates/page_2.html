@@ -19,13 +19,11 @@
         <p>
             <strong>Players:</strong>
         </p>
-
-        <ul id="playerList">
-            {%for player in player_list%}                  <!--Jinja2 for loop-->
-                <li>{{player.name}}</li>
-            {%endfor%}
-        </ul>
-
+        
+        <div id="list">
+            {% block body %}
+            {% endblock body %}
+        </div> <!-- Dynamic section of List to be replaced on player joining -->
         <p>
   
             <Strong>How to Play:</Strong>
@@ -47,14 +45,20 @@
             <br><br><br>
 
             <h1>
-                <button type="button" title="Start game once all players are in">
+                <a href="{{ url_for('game') }}"><button>Start Game</button></a>
+                <!--<button type="button" title="Start game once all players are in">
                     <strong>Start Game</strong>
-                </button>
+                </button> -->
             </h1>
     </body>
 
 
     <script>
+        const source = new EventSource("/player-list-stream");
+
+        source.onmessage = (event) => {
+            document.getElementById("list").innerHTML = event.data;
+        };
     </script>
 
 </html> 
