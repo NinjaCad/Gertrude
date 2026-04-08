@@ -23,11 +23,12 @@ def win_check(players: "list[Player]"):
     else:
         return False
 
-def blank(game_state, player_list):                                              #counter function
+# Renamed function for better readability.
+def advance_turn(game_state, player_list):                                              #counter function
     """Increments counter and returns (rank, player_index)"""
     game_state['counter'] += 1
     current_count = game_state['counter']
-    return current_count % 13, current_count % len(player_list)
+    return (current_count % 13) + 1, current_count % len(player_list) # plus one to fix "off-by-one", so rank is 1-13 instead of 0-12.
 
 def card_art(rank, suit):
     rank_str = str(rank)

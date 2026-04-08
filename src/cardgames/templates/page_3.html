@@ -37,8 +37,15 @@
 </head>
 <body>
 
+    <!-- display the current rank of the global card counter -->
+    <p>Card to Match: {{ rank }}</p>
+
+    <!-- display current player's name -->
+    <p>Current Player: {{ current_player }}</p>
+
     <div class="card-container">
         <pre>{{ card }}</pre>
+
 
         <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
             <input type="hidden" name="timestamp" id="ts">
