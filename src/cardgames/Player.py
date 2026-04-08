@@ -1,21 +1,22 @@
 from cardgames.Card import Card
 
 class Player:
-    def __init__(self, name, angle=0):      #player angle defaults to 0 if not passed in
+    def __init__(self, name, angle=0):      # player angle defaults to 0 if not passed in
         self.name = name
         self.angle = angle
         self.hand = []
         self.known_cards = []
+        self.can_play = True  # flag to track if player can play cards
 
-    #method to return the name of the player to keep the original object protected
+    # method to return the name of the player to keep the original object protected
     def get_name(self):
         return self.name
 
-    #method to change the name of the player 
+    # method to change the name of the player 
     def set_name(self, name: str):
         self.name = name
 
-    #method to return the hand of the player to keep the original object protected
+    # method to return the hand of the player to keep the original object protected
     def get_hand(self):
         return self.hand[:]
 

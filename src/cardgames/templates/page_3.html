@@ -3,15 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Attack!</title>
+    <title>Heart Attack</title>
+        
+    <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
+
+    <style>
+        .card-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .card-container pre {
+            margin: 0;
+        }
+
+        .slap-button {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
 
-    <pre>{{ card }}</pre>
+    <!-- display the current rank of the global card counter -->
+    <p>Card to Match: {{ rank }}</p>
 
-    <form method="POST">
-        <button type="submit">Play Card</button>
+    <!-- display current player's name -->
+    <p>Current Player: {{ current_player }}</p>
+
+    <div class="card-container">
+        <pre>{{ card }}</pre>
+
+
+        <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
+            <input type="hidden" name="timestamp" id="ts">
+            <button class="slap-button" type="submit"></button>
+        </form>
+    </div>
+
+    <form method="POST" action="/game">
+        <button id="play-card-btn" type="submit">
+            Play Card
+        </button>
     </form>
+
+    <script>
+        const playCardBtn = document.getElementById("play-card-btn");
+
+        function handleSlap(form) {
+            // Set timestamp
+            document.getElementById("ts").value = Date.now();
+
+            // Disable this player's slap button immediately
+            const slapBtn = form.querySelector(".slap-button");
+            slapBtn.disabled = true;
+
+            // Disable this player's play_card button immediately too
+            playCardBtn.disabled = true;
+
+            return true;
+        }
+
+        // Every 20 ms check if the play_card button should be disabled
+        setInterval(async () => {
+            const res = await fetch("/check_slap");
+            const data = await res.json();
+
+            if (data.status === "waiting") {
+                // Disable play card for everyone
+                playCardBtn.disabled = true;
+            }
+
+            if (data.status === "resolved") {
+                location.reload(); // refresh game state
+            }
+        }, 20);
+    </script>
 
 </body>
 </html>
