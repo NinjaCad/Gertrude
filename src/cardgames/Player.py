@@ -262,7 +262,7 @@ TIPS:
     # outputs: none
     # goal: a) add or subtract bet attribute from money attribute based on whether or not player one
     def resolve_bet(self, bet_results):
-            
+        
         for bet in bet_results.keys():
             if bet_results[bet]:
                 self.money += self.bets[bet]
