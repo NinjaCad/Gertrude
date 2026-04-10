@@ -1,4 +1,3 @@
-from cardgames import Card
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
@@ -7,6 +6,7 @@ import time
 import sys
 import os
 from pathlib import Path
+
 
 class Games:
     TEN_SECOND_TEST = "tenSecondTest"
@@ -22,8 +22,8 @@ class Games:
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
         self.assets_dir = Path(__file__).resolve().parents[2] / "assets"
-        self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
-        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
+        self.valueDict = {"a":1,"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
+        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"j":11,"jack":11,"jacks":11,"q":12,"queen":12,"queens":12,"k":13,"king":13,"kings":13}
 
     def choose_music_track(self):
         if random.random() < 0.8:
@@ -68,17 +68,17 @@ class Games:
 
         return selected_track
 
-    def clear():
+    def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def slow_Print(text, delay=0.03):
+    def slow_Print(self, text, delay=0.03):
         for char in text:
             print(char, end="")
             sys.stdout.flush()
             time.sleep(delay)
         print()
 
-    def show_Title():
+    def show_Title(self):
         print(r"""
     ========================================
     ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄ 
@@ -98,8 +98,8 @@ class Games:
     ========================================
     """)
 
-    def opening_Sequence():
-        show_Title()
+    def opening_Sequence(self):
+        self.show_Title()
 
         lines = [
             "The cards are shuffled...",
@@ -108,12 +108,12 @@ class Games:
         ]
 
         for line in lines:
-            slow_Print(line, 0.04)
+            self.slow_Print(line, 0.04)
             time.sleep(0.3)
 
-        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+        self.slow_Print("\nWelcome to Let's Fish!\n", 0.05)
 
-    def show_Rules():
+    def show_Rules(self):
         print("\n========== HOW TO PLAY ==========")
         print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
         print("- If the chosen player has the requested card, they must give ALL of them.")
@@ -122,7 +122,7 @@ class Games:
         print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
 
-    def main_Menu():
+    def main_Menu(self):
         while True:
             print("\n1. Start Game")
             print("2. How to Play")
@@ -133,17 +133,17 @@ class Games:
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                show_Rules()
+                self.show_Rules()
             elif choice == "3":
                 print("Bye bye!")
                 exit()
             else:
                 print("Please enter '1', '2', or '3'.\n")
 
-    def run_Game():
-        clear()
-        opening_Sequence()
-        choice = main_Menu()
+    def run_Game(self):
+        self.clear()
+        self.opening_Sequence()
+        choice = self.main_Menu()
         
         if choice == "Starting game...":
             print("\nStarting game...\n")
@@ -244,44 +244,65 @@ class Games:
                 player.showBooks()
         print()
 
-    def card_thievery(self, turn_list, host_player):
+    def playersWithCards(self, turn_list): #Players who still have cards
+
         player_number = []
         player_dict = {}
+        
         for playerNum, player in enumerate(turn_list):
-            if player != host_player and len(player.hand) != 0:
-                player_number.append(str(playerNum))
+            if len(player.hand) != 0:
+                player_number.append(playerNum)
                 player_dict[(str(player.name)).lower()] = playerNum
+        return(player_number, player_dict)
 
+    def card_thievery(self, turn_list, host_player):
+        playerNumber, playerDict = self.playersWithCards(turn_list)
         self.showOpponentsHands(turn_list)
 
-        target_choice = ""
-        while target_choice not in player_number:
-            target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
-            if target_choice in player_dict:
-                target_choice = str(player_dict[target_choice])
-            elif target_choice not in player_number and target_choice not in player_dict:
+        targetNumber = -1
+        playerAmount = [str(x) for x in range(len(turn_list))]
+        while targetNumber not in playerNumber:
+            targetChoice = (str(input("\n"+"Choose player to steal from: "))).lower()
+            if targetChoice in playerDict:
+                if turn_list[playerDict[targetChoice]] == host_player:
+                    print("Invalid Input! You cannot choose yourself!")
+                else:
+                    targetNumber = int(playerDict[targetChoice])
+            elif targetChoice in ["0","1","2","3"]:
+                if int(targetChoice) not in playerNumber:
+                    print("Invalid Input! You cannot choose player with no cards!")
+                elif turn_list[int(targetChoice)] == host_player:
+                    print("Invalid Input! You cannot choose yourself!")
+                else:
+                    targetNumber = int(targetChoice)
+            else:
                 print("Invalid Input! Enter player name or number.")
-                target_choice = ""
 
-        target_player = turn_list[int(target_choice)]
+        target_player = turn_list[int(targetNumber)]
         print("")
+        
+        valuesInHand = []
+        for card in host_player.hand:
+            if card.value not in valuesInHand:
+                valuesInHand.append(card.value)
 
-        #print("Put Card Names Here /n") #Place types of cards here
-        #print(host_player.hand) #Put Function for showing cards in hand here
-
-        thief_choice = 0
-
-        while thief_choice not in self.valueDict:
+        thief_choice = None
+        while thief_choice not in valuesInHand:
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
-            if thief_choice not in self.valueDict:
-                print("Invalid Choice! Choose Card Type, eg: aces, twos, ones, etc.\n")
+            if thief_choice in self.valueDict:
+                thief_choice = self.valueDict[thief_choice]
+            elif thief_choice in ["1","2","3","4","5","6","7","8","9","10","11","12","13"]:
+                thief_choice = int(thief_choice)
+            if thief_choice not in valuesInHand:
+                print("Invalid Choice! Choose Card in hand. (eg: ace, two, etc).\n")
+            
+                
 
 
         stolen_cards = 0
-        card_counter = 0
         target_list = target_player.hand[:]
         for card in target_list:
-            if card.value == self.valueDict[thief_choice]:
+            if card.value == thief_choice:
                 host_player.addCard(card)
                 target_player.removeCard(card)
                 stolen_cards += 1

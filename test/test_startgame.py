@@ -38,7 +38,7 @@ def test_4player():
     players = [Marlin, Dory, Nemo, FishThatAteNemosFamily]
     turn_list = game.start_game(players)
 
-    assert turn_list[0] != players[3]
+    assert turn_list != players
     print("May fail randomization test sometimes")
     assert len(turn_list) == 4
     print("Length of list = 4")

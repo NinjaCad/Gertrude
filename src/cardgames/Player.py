@@ -1,5 +1,6 @@
 from cardgames.Card import Card
 from cardgames.Deck import Deck
+from collections import defaultdict
 
 class Player:
     def __init__(self, name):
@@ -29,35 +30,48 @@ class Player:
         for idx in range(6):
             for i, card in enumerate(self.hand):
                 if printShort and i < len(self.hand)-1:
-                    image = card.shortImage[idx]    if self.knownCards[i] else card.cardBack[idx]
+                    image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
                     image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
 
-    #cmena sprint 2
     def sortHand(self):
         paired = list(zip(self.hand, self.knownCards))
         paired.sort(key=lambda p: p[0].value)
         self.hand = [card for card, _ in paired]
         self.knownCards = [known for _, known in paired]
+    
+    def sortHandIntoValues(self) -> list[Card]:
+        return sorted(self.hand, key=lambda card: card.value)
 
-    def sortHandIntoValues(self, returnDictionary = False):
+    def groupHandByValue(self) -> dict[str, list[Card]]:
         value_map = {
             1: "As", 2: "2s", 3: "3s", 4: "4s", 5: "5s", 6: "6s", 7: "7s",
             8: "8s", 9: "9s", 10: "10s", 11: "Js", 12: "Qs", 13: "Ks"
-        }
-        sorted_hand = sorted(self.hand, key=lambda card: card.value)
-        grouped_values = {}
-        if not returnDictionary:
-            return sorted_hand
-        for card in sorted_hand:
+            }
+        grouped_values: dict[str, list[Card]] = defaultdict(list)
+        for card in sorted(self.hand, key=lambda card: card.value):
             key = value_map.get(card.value, f"{card.value}s")
-            if key not in grouped_values:
-                grouped_values[key] = []
             grouped_values[key].append(card)
-        return sorted_hand, grouped_values
+        return dict(grouped_values)
+
+    #def sortHandIntoValues(self, returnDictionary = False):
+    #    value_map = {
+    #        1: "As", 2: "2s", 3: "3s", 4: "4s", 5: "5s", 6: "6s", 7: "7s",
+    #        8: "8s", 9: "9s", 10: "10s", 11: "Js", 12: "Qs", 13: "Ks"
+    #    }
+    #    sorted_hand = sorted(self.hand, key=lambda card: card.value)
+    #    grouped_values = {}
+    #    if not returnDictionary:
+    #        return sorted_hand
+    #    for card in sorted_hand:
+    #        key = value_map.get(card.value, f"{card.value}s")
+    #        if key not in grouped_values:
+    #            grouped_values[key] = []
+    #        grouped_values[key].append(card)
+    #    return sorted_hand, grouped_values
 
     def checkForFourOfAKind(self):      
         if len(self.hand) >= 4:
@@ -177,7 +191,7 @@ class Player:
                 return 
 
         ### Show hand
-        self.hand = self.sortHandIntoValues()
+        self.hand = self.sortHandIntoValues() #Causing error messages?
         print("\nYour hand:")
         self.showHand()
 
