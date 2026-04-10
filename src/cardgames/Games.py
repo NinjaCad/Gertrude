@@ -49,7 +49,12 @@ class Games:
 
             # Gertrude takes turn
             self.playerList[0].gertTurn(self.dealer)
-            self.playerList[0].showHand()
+            #Reveal all dealer cards before showing them to players
+            dealer = self.playerList[0]
+            if getattr(dealer, "knownCards", None):
+                dealer.knownCards = [True for _ in dealer.knownCards]
+            dealer.showHand()
+            """print(f"Gertrude ends with a hand value of {self.playerList[0].check_cards()}.")""" #?
 
             # Calculate results
             self.calculateWinner(self.playerList)
