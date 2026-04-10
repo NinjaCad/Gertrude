@@ -68,10 +68,10 @@ class Games:
 
         return selected_track
 
-    def clear():
+    def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def slow_Print(text, delay=0.03):
+    def slow_Print(self, text, delay=0.03):
         for char in text:
             print(char, end="")
             sys.stdout.flush()
@@ -98,8 +98,8 @@ class Games:
     ========================================
     """)
 
-    def opening_Sequence():
-        show_Title()
+    def opening_Sequence(self):
+        self.show_Title()
 
         lines = [
             "The cards are shuffled...",
@@ -108,12 +108,12 @@ class Games:
         ]
 
         for line in lines:
-            slow_Print(line, 0.04)
+            self.slow_Print(line, 0.04)
             time.sleep(0.3)
 
-        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+        self.slow_Print("\nWelcome to Let's Fish!\n", 0.05)
 
-    def show_Rules():
+    def show_Rules(self):
         print("\n========== HOW TO PLAY ==========")
         print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
         print("- If the chosen player has the requested card, they must give ALL of them.")
@@ -122,7 +122,7 @@ class Games:
         print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
 
-    def main_Menu():
+    def main_Menu(self):
         while True:
             print("\n1. Start Game")
             print("2. How to Play")
@@ -133,17 +133,17 @@ class Games:
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                show_Rules()
+                self.show_Rules()
             elif choice == "3":
                 print("Bye bye!")
                 exit()
             else:
                 print("Please enter '1', '2', or '3'.\n")
 
-    def run_Game():
-        clear()
-        opening_Sequence()
-        choice = main_Menu()
+    def run_Game(self):
+        self.clear()
+        self.opening_Sequence()
+        choice = self.main_Menu()
         
         if choice == "Starting game...":
             print("\nStarting game...\n")
@@ -209,6 +209,12 @@ class Games:
 
         self.turn_list = turn_list
         return turn_list
+    
+    def initialBookCheck(self, players):
+        for player in players:
+            if player.bookHandling():
+                print(f"{player} was the following books:")
+                player.showBooks()
 
     def goFishing(self, player):
 
@@ -266,9 +272,6 @@ class Games:
         target_player = turn_list[int(target_choice)]
         print("")
 
-        #print("Put Card Names Here /n") #Place types of cards here
-        #print(host_player.hand) #Put Function for showing cards in hand here
-
         thief_choice = 0
 
         while thief_choice not in self.valueDict:
@@ -287,22 +290,21 @@ class Games:
                 stolen_cards += 1
         
         if stolen_cards == 0:
-            self.goFishing(host_player)
-            return False
+            pickedCard = self.goFishing(host_player)
+            return False, thief_choice, pickedCard
         else:
-            return True
+            return True, None, None
         
 
     def main(self):
-        print('Welcome to the Games application!')
-        print('This games application is under development.')
-
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
-        
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
+
+        # Checks to see if books are made when players were initialized
+        self.initialBookCheck(turn_list)
+                
         
         game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
@@ -312,7 +314,7 @@ class Games:
                 input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                 player.isTurn = True
                 player.takeTurn(turn_list, self)
-
+                print('\n' * 50)
                 player.isTurn = False
     
         input('Press [Enter] to exit.')

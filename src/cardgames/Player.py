@@ -137,7 +137,7 @@ class Player:
             print("\nYour books: ")
             self.showBooks()
         
-        ### If opponents' hands are empty, draw
+        ### Testing if all opponents' hands are empty
         noCardsPlayers = []
         for player in players:
             if not player.isTurn and player.hand == []: # Skips the player whos turn it is, and takes players with empty hands
@@ -164,17 +164,12 @@ class Player:
 
         ### If hand is empty draw a card
         if len(self.hand) == 0: 
-            print("\nYour hand is empty! ", '')
+            print("\nYoSur hand is empty! ", '')
             self.hand.append(game.deck.getCard())
             self.knownCards.append(True)
             print("You picked up:")
             self.showHand()
-            if self.bookHandling():
-                print("\nAnd you've made a book!")
-                self.showBooks()
-                input("\nYou get to go again! Hit ENTER to continue...")
-                self.takeTurn(players, game)
-                return 
+            return
 
         ### Show hand
         self.hand = self.sortHandIntoValues()
@@ -182,7 +177,9 @@ class Player:
         self.showHand()
 
         ### Stealing cards
-        if game.card_thievery(players, self):
+        pickedCard = None
+        stoleCards, requestedCard, pickedCard = game.card_thievery(players, self)
+        if stoleCards:
             print("\nYou stole some cards!", "")
             if self.bookHandling():
                 print("And you've made a book!")
@@ -191,8 +188,11 @@ class Player:
         else:
             if self.bookHandling():
                 print("Lucky draw, you've made a book!")
+                print("\nYour books: ")
+                self.showBooks()
+            if game.valueDict[requestedCard] == pickedCard.value:
+                print("\nYou picked up the same card you asked for!")
                 input("\nYou get to go again, press ENTER to continue...")
                 self.takeTurn(players, game)
             else:
                 input("\nEnd of your turn! Hit enter to continue...")
-                print('\n' * 50)
