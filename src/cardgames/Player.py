@@ -57,21 +57,6 @@ class Player:
             grouped_values[key].append(card)
         return dict(grouped_values)
 
-    #def sortHandIntoValues(self, returnDictionary = False):
-    #    value_map = {
-    #        1: "As", 2: "2s", 3: "3s", 4: "4s", 5: "5s", 6: "6s", 7: "7s",
-    #        8: "8s", 9: "9s", 10: "10s", 11: "Js", 12: "Qs", 13: "Ks"
-    #    }
-    #    sorted_hand = sorted(self.hand, key=lambda card: card.value)
-    #    grouped_values = {}
-    #    if not returnDictionary:
-    #        return sorted_hand
-    #    for card in sorted_hand:
-    #        key = value_map.get(card.value, f"{card.value}s")
-    #        if key not in grouped_values:
-    #            grouped_values[key] = []
-    #        grouped_values[key].append(card)
-    #    return sorted_hand, grouped_values
 
     def checkForFourOfAKind(self):      
         if len(self.hand) >= 4:
