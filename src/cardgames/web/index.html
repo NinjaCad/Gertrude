@@ -160,6 +160,21 @@
         margin: 0 0 8px;
         text-align: center;
       }
+      .stats-actions {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 8px;
+      }
+      .stats-actions button {
+        padding: 8px 12px;
+        font-size: 0.88rem;
+      }
+      .stats-panel h4 {
+        margin: 10px 0 6px;
+        text-align: center;
+        color: #d9e4ff;
+        font-size: 0.95rem;
+      }
       .stats-grid {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -183,6 +198,13 @@
         overflow: auto;
       }
       #recentResults li { margin: 4px 0; }
+      .backend-stats {
+        border-top: 1px solid rgba(255, 255, 255, 0.14);
+        margin-top: 8px;
+        padding-top: 8px;
+        font-size: 0.9rem;
+      }
+      .backend-stats p { margin: 5px 0; color: #dbe4ff; }
       .player {
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 14px;
@@ -447,6 +469,7 @@
           <p id="turnSubtitle" class="screen-subtitle">Cards are hidden. Reveal to choose.</p>
           <div class="row">
             <button id="revealCardsBtn">Reveal Cards</button>
+            <button id="redrawBtn" class="hidden">Redraw (0)</button>
           </div>
           <div id="cardsArea"></div>
         </section>
@@ -470,6 +493,9 @@
       <aside class="side-col">
         <section class="stats-panel">
           <h3>🏆 Win Log</h3>
+          <div class="stats-actions">
+            <button id="resetScoresBtn">Reset Scores</button>
+          </div>
           <div class="stats-grid">
             <div class="stat-box">
               <div class="stat-label">Player 1 Wins</div>
@@ -485,6 +511,10 @@
             </div>
           </div>
           <ol id="recentResults"></ol>
+          <div class="backend-stats">
+            <h4>Backend Stats (Games.get_game_stats)</h4>
+            <div id="backendStatsText" class="muted">No completed round yet.</div>
+          </div>
         </section>
       </aside>
     </main>
@@ -531,6 +561,16 @@
         localStorage.setItem(LOG_KEY, JSON.stringify(winLog));
       }
 
+      function resetLocalWinLog() {
+        winLog = {
+          wins: {},
+          ties: 0,
+          recent: [],
+          loggedGameIds: [],
+        };
+        saveWinLog();
+      }
+
       function renderWinLog() {
         const p1Name = (document.getElementById('p1')?.value || 'Player 1').trim() || 'Player 1';
         const p2Name = (document.getElementById('p2')?.value || 'Player 2').trim() || 'Player 2';
@@ -547,6 +587,23 @@
         recentEl.innerHTML = winLog.recent
           .map((entry) => `<li>${escapeHtml(entry)}</li>`)
           .join('');
+      }
+
+      function renderBackendStats() {
+        const el = document.getElementById('backendStatsText');
+        if (!state || !state.backend_stats) {
+          el.innerHTML = '<span class="muted">No completed round yet.</span>';
+          return;
+        }
+
+        const s = state.backend_stats;
+        const playerEntries = Object.entries(s).filter(([k]) => k !== 'Ties');
+        const playerLines = playerEntries
+          .map(([name, stats]) => `${escapeHtml(name)} — Wins: ${stats.Wins}, Win-Rate: ${stats['Win-Rate']}`)
+          .map((line) => `<p>${line}</p>`)
+          .join('');
+
+        el.innerHTML = `${playerLines}<p>Ties: ${s.Ties ?? 0}</p>`;
       }
 
       function recordCurrentGameResult() {
@@ -786,6 +843,27 @@
         render();
       }
 
+      async function redrawCurrentPlayer() {
+        if (!state) return;
+        if (!(ui.screen === 'player1' || ui.screen === 'player2')) return;
+        if (!ui.revealed) return;
+
+        const gameId = state.game_id;
+        const res = await fetch(`/api/games/${gameId}/redraw-current`, {
+          method: 'POST',
+        });
+
+        if (!res.ok) {
+          const payload = await res.json().catch(() => ({ detail: 'Redraw failed' }));
+          alert(payload.detail || 'Redraw failed');
+          return;
+        }
+
+        state = await res.json();
+        // Keep revealed view if player already revealed cards.
+        render();
+      }
+
   // =========================================================
   // Player Interaction Handlers
   // ---------------------------------------------------------
@@ -805,6 +883,30 @@
         render();
       }
 
+      async function resetScores() {
+        resetLocalWinLog();
+
+        try {
+          await fetch('/api/stats/reset', { method: 'POST' });
+        } catch (_e) {
+          // Keep local reset even if backend endpoint is temporarily unavailable.
+        }
+
+        if (state && state.game_id) {
+          try {
+            const res = await fetch(`/api/games/${state.game_id}`);
+            if (res.ok) {
+              state = await res.json();
+            }
+          } catch (_e) {
+            // Ignore refresh failure; UI log has still been reset.
+          }
+        }
+
+        renderWinLog();
+        render();
+      }
+
   // =========================================================
   // Render Loop
   // ---------------------------------------------------------
@@ -821,6 +923,7 @@
           lobbyActions.classList.remove('hidden');
           playAgainBtn.classList.add('hidden');
           document.getElementById('nameSetup').classList.remove('hidden');
+          renderBackendStats();
           return;
         }
 
@@ -834,10 +937,16 @@
         if (isPlayer1Screen || isPlayer2Screen) {
           const turnLabel = state.players[turnPlayerIdx]?.name || (isPlayer1Screen ? 'Player 1' : 'Player 2');
           const player = state.players[turnPlayerIdx];
+          const redrawBtn = document.getElementById('redrawBtn');
           document.getElementById('turnTitle').textContent = `${turnLabel}'s Turn`;
           document.getElementById('turnSubtitle').textContent = ui.revealed
             ? `${turnLabel}, choose one card.`
             : 'Cards are hidden. Click Reveal Cards to view your hand.';
+
+          const tokens = Number(player.redraw_tokens || 0);
+          redrawBtn.textContent = `Redraw (${tokens})`;
+          redrawBtn.disabled = !ui.revealed || tokens <= 0;
+          redrawBtn.classList.remove('hidden');
 
           const cardsHtml = player.cards
             .map((card) => {
@@ -850,6 +959,8 @@
 
           document.getElementById('cardsArea').innerHTML = cardsHtml;
           document.getElementById('revealCardsBtn').disabled = ui.revealed;
+        } else {
+          document.getElementById('redrawBtn').classList.add('hidden');
         }
 
         const winnerDiv = document.getElementById('winner');
@@ -899,6 +1010,8 @@
         if (ui.screen !== 'winner') {
           revealWinnerRow.classList.remove('hidden');
         }
+
+        renderBackendStats();
       }
 
   // =========================================================
@@ -909,7 +1022,9 @@
       document.getElementById('newGameBtn').addEventListener('click', createGame);
     document.getElementById('playAgainBtn').addEventListener('click', createGame);
       document.getElementById('revealCardsBtn').addEventListener('click', revealCards);
+  document.getElementById('redrawBtn').addEventListener('click', redrawCurrentPlayer);
       document.getElementById('revealWinnerBtn').addEventListener('click', revealWinner);
+  document.getElementById('resetScoresBtn').addEventListener('click', resetScores);
       document.getElementById('p1').addEventListener('input', renderWinLog);
       document.getElementById('p2').addEventListener('input', renderWinLog);
       loadWinLog();

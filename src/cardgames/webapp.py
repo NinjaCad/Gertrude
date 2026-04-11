@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from cardgames.Card_Compare import Card
 from cardgames.Dealer import Dealer
 from cardgames.Deck import Deck
-from cardgames.Games import declare_winner
+from cardgames.Games import Games, HighCardDrawInstructions, declare_winner
 from cardgames.Player import Player
 from cardgames.turns import switch_turn
 
@@ -37,6 +37,7 @@ def card_label(card: Card) -> str:
 class GameSession:
     game_id: str
     players: list[Player]
+    dealer: Dealer
     phase: Literal["waiting_player1", "waiting_player2", "complete"] = "waiting_player1"
     player1_choice_idx: int | None = None
     player2_choice_idx: int | None = None
@@ -53,6 +54,15 @@ class ChooseCardRequest(BaseModel):
 
 
 _SESSIONS: dict[str, GameSession] = {}
+_PLAYER_PROFILES: dict[str, dict[str, int]] = {}
+_GLOBAL_STATS = {"ties": 0}
+_BACKEND_GAME_STATS: dict[tuple[str, str], dict] = {}
+
+
+def _get_profile(name: str) -> dict[str, int]:
+    if name not in _PLAYER_PROFILES:
+        _PLAYER_PROFILES[name] = {"wins": 0, "redraw_tokens": 0}
+    return _PLAYER_PROFILES[name]
 
 
 @app.get("/")
@@ -95,6 +105,7 @@ def _serialize_game(session: GameSession) -> dict:
 
         return {
             "name": player.name,
+            "redraw_tokens": player.redraw_tokens,
             "cards": cards,
             "chosen_card": chosen_label,
         }
@@ -106,12 +117,23 @@ def _serialize_game(session: GameSession) -> dict:
                 winner_index = i
                 break
 
+    player_names = (session.players[0].name, session.players[1].name)
+    backend_stats = _BACKEND_GAME_STATS.get(player_names)
+
     return {
         "game_id": session.game_id,
         "phase": session.phase,
         "current_player_index": current_player,
         "winner": session.winner,
         "winner_index": winner_index,
+        "backend_stats": backend_stats,
+        "stats": {
+            "ties": _GLOBAL_STATS["ties"],
+            "players": {
+                p.name: _get_profile(p.name)["wins"]
+                for p in session.players
+            },
+        },
         "players": [player_state(p, i) for i, p in enumerate(session.players)],
     }
 
@@ -131,11 +153,15 @@ def _setup_new_session(player1_name: str, player2_name: str) -> GameSession:
     player1 = Player(player1_name)
     player2 = Player(player2_name)
 
+    # Carry profile state across rounds for same player names.
+    player1.redraw_tokens = _get_profile(player1_name)["redraw_tokens"]
+    player2.redraw_tokens = _get_profile(player2_name)["redraw_tokens"]
+
     ok = dealer.dealCards(3, [player1, player2])
     if not ok:
         raise HTTPException(status_code=500, detail="Unable to deal cards")
 
-    return GameSession(game_id=str(uuid4()), players=[player1, player2])
+    return GameSession(game_id=str(uuid4()), players=[player1, player2], dealer=dealer)
 
 
 @app.post("/api/games")
@@ -193,6 +219,72 @@ def player2_choice(game_id: str, request: ChooseCardRequest):
     session.players[next_player_idx].chosen_card = session.players[next_player_idx].hand[p2_idx]
 
     session.winner = declare_winner(session.players[0], session.players[1])
+
+    # Track backend stats using existing Games.get_game_stats logic.
+    p1_name = session.players[0].name
+    p2_name = session.players[1].name
+    pair_key = (p1_name, p2_name)
+    current_backend_stats = _BACKEND_GAME_STATS.get(pair_key)
+    _BACKEND_GAME_STATS[pair_key] = Games().get_game_stats(
+        session.winner,
+        [p1_name, p2_name],
+        game_stats=current_backend_stats,
+    )
+
+    # Keep profile stats/tokens across rounds by player name.
+    if session.winner == session.players[0].name:
+        profile = _get_profile(session.players[0].name)
+        profile["wins"] += 1
+        profile["redraw_tokens"] += 1
+        session.players[0].record_round_win()
+    elif session.winner == session.players[1].name:
+        profile = _get_profile(session.players[1].name)
+        profile["wins"] += 1
+        profile["redraw_tokens"] += 1
+        session.players[1].record_round_win()
+    else:
+        _GLOBAL_STATS["ties"] += 1
+
     session.phase = "complete"
+
+    return _serialize_game(session)
+
+
+@app.get("/api/instructions/topics")
+def get_instruction_topics():
+    return {"topics": HighCardDrawInstructions.topics()}
+
+
+@app.get("/api/instructions/{topic}")
+def get_instruction(topic: str):
+    try:
+        return {"topic": topic, "text": HighCardDrawInstructions.get(topic)}
+    except ValueError as ex:
+        raise HTTPException(status_code=400, detail=str(ex)) from ex
+
+
+@app.post("/api/stats/reset")
+def reset_stats():
+    _PLAYER_PROFILES.clear()
+    _BACKEND_GAME_STATS.clear()
+    _GLOBAL_STATS["ties"] = 0
+    return {"ok": True}
+
+
+@app.post("/api/games/{game_id}/redraw-current")
+def redraw_current_player(game_id: str):
+    session = _get_session_or_404(game_id)
+    if session.phase == "complete":
+        raise HTTPException(status_code=409, detail="Round already complete")
+
+    current_idx = 0 if session.phase == "waiting_player1" else 1
+    player = session.players[current_idx]
+
+    ok = session.dealer.redraw_three_card_options(player)
+    if not ok:
+        raise HTTPException(status_code=400, detail="No redraw token available or deck issue")
+
+    # Persist token consumption to profile state.
+    _get_profile(player.name)["redraw_tokens"] = player.redraw_tokens
 
     return _serialize_game(session)
