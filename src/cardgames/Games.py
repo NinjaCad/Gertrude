@@ -49,7 +49,6 @@ class Games:
 
             # Gertrude takes turn
             self.playerList[0].gertTurn(self.dealer)
-            self.playerList[0].knownCards = [True for _ in self.playerList[0].knownCards]
             self.playerList[0].showHand()
 
             # Calculate results
@@ -115,8 +114,8 @@ class Games:
             
             name = str(input("Player {:d}'s name is: ".format(i+1)))
             # to avoid conflicts with checks when dealing with player.split() and Games.round() when split
-            while "left hand" in name:
-                name = str(input("Your name cannot contain the phrase 'left hand'. Please put in a new name: "))
+            while "hand" in name:
+                name = str(input("Your name cannot contain the word 'hand'. Please put in a new name: "))
             new_player = Player(name)
 
             new_player.money = starting_money
@@ -175,7 +174,6 @@ class Games:
                         player.stand()
                     elif choice in ["split", "sp"]:
                         player.split(self)
-                        print([player.name for player in self.playerList])
                     elif choice in ["double down", "dd"]:
                        player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
@@ -227,7 +225,10 @@ class Games:
             
             # unique resolve_bet run if there was a split
             if "right hand" in player.name:
+                split_bet = player.bets["standard"]
+                
                 player = playerList[playerList.index(player) - 1]
+                player.bets["split"] = split_bet
                 player.resolve_bet( { "split": standard_result } )
             else:
                 # Calculate results and give money for perfect pairs
@@ -241,8 +242,6 @@ class Games:
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
                 player.name = player.name[:-12]
-            elif "right hand" in player.name:
-                player.name = player.name[:-13]
 
 
 if __name__ == "__main__":

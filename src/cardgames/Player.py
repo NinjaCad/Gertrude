@@ -372,7 +372,7 @@ TIPS:
         rightHand.addCard(self.hand.pop(), True)
         
         self.name = f"{self.name}'s left hand"
-        self.bets["split"] = self.bets["standard"]
+        right.bets["standard"] = self.bets["standard"]
         
         playerIndex = game.playerList.index(self)
         game.playerList.insert(playerIndex + 1, rightHand)
@@ -385,7 +385,7 @@ TIPS:
     # outputs: can_split (boolean)
     # goals: return True if both cards in self.hand are same value
     def can_split(self):
-        return len(self.hand) == 2 and self.hand[0].value == self.hand[1].value and self.money - self.bet_totals() - self.bets["standard"] >= 0 and "left hand" not in self.name
+        return len(self.hand) == 2 and self.hand[0].value == self.hand[1].value and self.money - self.bet_totals() - self.bets["standard"] >= 0 and "hand" not in self.name
         #      ^^^only have two cards  ^^^two cards of equal value                  ^^^can't split to go below -$100                                  ^^^can't split if already split
     
     
