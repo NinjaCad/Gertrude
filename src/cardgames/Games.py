@@ -25,7 +25,7 @@ class Games:
         print('\nWelcome to the Gertrude\'s BlackJack!')
 
         # Sets up game and player list, which will be used for rounds
-        self.playerList = self.startGame()
+        self.playerList, starting_money = self.startGame()
 
         while True:
             # Each player places bets
@@ -69,6 +69,29 @@ class Games:
                 self.deck.reset()
         
         # End game
+        
+        #player_ranking = sort(self.playerList[:].money)
+        #may need ^ later
+        results_dict = {}
+        print("Total money made or lost by each player:")
+        for player in self.playerList:
+            if player.name == "GERTRUDE":
+                continue
+            print(f"{player.name}: ", end='')
+            if player.money < starting_money:
+                print(f"-${starting_money - player.money}")
+            elif player.money > starting_money:
+                print(f"+${player.money - starting_money}")
+            else:
+                print("No change in money!")
+            results_dict.update({player.name: player.money})
+        print("\nFinal Standings:")
+        sorted_results_dict = sorted(results_dict.items(), key=lambda item: item[1])
+        place = 1
+        for player in reversed(sorted_results_dict):
+            print(f"{place}: {player[0]}")
+            place += 1
+        
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
     
@@ -111,7 +134,7 @@ class Games:
 
             self.pl_list.append(new_player)
 
-        return self.pl_list
+        return self.pl_list, starting_money
 
     # Loop through all the players and there actions
     def round(self):
