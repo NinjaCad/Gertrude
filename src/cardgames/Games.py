@@ -49,6 +49,7 @@ class Games:
 
             # Gertrude takes turn
             self.playerList[0].gertTurn(self.dealer)
+            self.playerList[0].knownCards = [True for _ in self.playerList[0].knownCards]
             self.playerList[0].showHand()
 
             # Calculate results
@@ -73,6 +74,7 @@ class Games:
                         del self.playerList[i]
                         
                 self.deck.reset()
+                self.deck.shuffle()
         
         # End game
         print("\nThanks for playing!")
@@ -204,7 +206,6 @@ class Games:
         dealerScore = dealer.check_cards()
 
         for player in playerList[1:]:
-            print(f"calculateWinner for {player}")
             playerScore = player.check_cards()
 
             if playerScore > 21:
