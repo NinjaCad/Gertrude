@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>High Card Draw Web UI</title>
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        font-family: Inter, Arial, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background:
+          radial-gradient(circle at 20% 20%, rgba(96, 165, 250, 0.25), transparent 40%),
+          radial-gradient(circle at 80% 80%, rgba(192, 132, 252, 0.25), transparent 45%),
+          linear-gradient(135deg, #0a1024 0%, #101a36 55%, #12213f 100%);
+        color: #eef3ff;
+        padding: 28px;
+      }
+      .app {
+        width: min(1240px, 100%);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(10, 15, 32, 0.75);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        padding: 24px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 320px;
+        gap: 18px;
+      }
+      .main-col { min-width: 0; }
+      .side-col {
+        border-left: 1px solid rgba(255, 255, 255, 0.16);
+        padding-left: 14px;
+      }
+      .hero {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .king-fan {
+        position: relative;
+        width: 240px;
+        height: 120px;
+      }
+      .king-card {
+        position: absolute;
+        top: 8px;
+        width: 78px;
+        height: 108px;
+        border-radius: 10px;
+        border: 1px solid #d4d4d4;
+        background: #ffffff;
+        color: #202124;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+      }
+      .king-card .k-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 0.95;
+      }
+      .king-card .k-center .rank { font-size: 30px; font-weight: 800; }
+      .king-card .k-center .suit { font-size: 24px; margin-top: 2px; }
+      .king-card .k-corner {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        line-height: 1;
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .king-card .k-corner.top { top: 7px; left: 7px; }
+      .king-card .k-corner.bottom { bottom: 7px; right: 7px; transform: rotate(180deg); }
+      .king-card.red { color: #b10f2e; }
+      .king-card.black { color: #202124; }
+      .king-card.k1 { left: 6px; transform: rotate(-15deg); z-index: 1; }
+      .king-card.k2 { left: 56px; transform: rotate(-5deg); z-index: 2; }
+      .king-card.k3 { left: 106px; transform: rotate(5deg); z-index: 3; }
+      .king-card.k4 { left: 156px; transform: rotate(15deg); z-index: 4; }
+      h1 {
+        margin: 0;
+        text-align: center;
+        letter-spacing: 0.3px;
+      }
+      .subtitle {
+        margin: 8px 0 20px;
+        text-align: center;
+        color: #b8c3df;
+      }
+      .row {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 18px;
+      }
+      #lobbyActions.hidden { display: none; }
+      .name-inputs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(180px, 1fr));
+        gap: 10px;
+        max-width: 520px;
+        margin: 0 auto 14px;
+      }
+      #nameSetup.hidden { display: none; }
+      .name-inputs label {
+        font-size: 0.86rem;
+        color: #d2dcf7;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .name-inputs input {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.1);
+        color: #f6f8ff;
+        padding: 9px 10px;
+        outline: none;
+      }
+      .name-inputs input:focus {
+        border-color: rgba(155, 255, 203, 0.65);
+        box-shadow: 0 0 0 3px rgba(155, 255, 203, 0.16);
+      }
+      .screen {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 16px;
+      }
+      .screen h2 {
+        margin: 0 0 6px;
+        text-align: center;
+      }
+      .screen-subtitle {
+        text-align: center;
+        margin: 0 0 12px;
+        color: #b8c3df;
+      }
+      .stats-panel {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 12px;
+        position: sticky;
+        top: 12px;
+      }
+      .stats-panel h3 {
+        margin: 0 0 8px;
+        text-align: center;
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+      .stat-box {
+        text-align: center;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        background: rgba(255, 255, 255, 0.04);
+        padding: 8px;
+      }
+      .stat-label { font-size: 0.8rem; color: #b8c3df; }
+      .stat-value { font-size: 1.1rem; font-weight: 800; }
+      #recentResults {
+        margin: 0;
+        padding-left: 18px;
+        color: #dbe4ff;
+        max-height: 120px;
+        overflow: auto;
+      }
+      #recentResults li { margin: 4px 0; }
+      .player {
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.06);
+        padding: 14px;
+        margin: 12px 0;
+      }
+      #cardsArea {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+      }
+      .cards { display: flex; gap: 12px; flex-wrap: wrap; }
+      button {
+        padding: 10px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.26);
+        border-radius: 10px;
+        cursor: pointer;
+        color: #f8faff;
+        background: linear-gradient(135deg, rgba(90, 122, 255, 0.6), rgba(104, 57, 190, 0.7));
+      }
+      button:hover { filter: brightness(1.08); }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .winner {
+        font-size: 1.15rem;
+        font-weight: 700;
+        color: #9bffcb;
+        text-align: center;
+        margin: 6px 0 14px;
+      }
+      .muted { color: #b8c3df; }
+      .cardbtn {
+        border: none;
+        background: transparent;
+        padding: 0;
+        width: 104px;
+        height: 148px;
+      }
+      .cardbtn:disabled { opacity: 1; }
+      .card {
+        width: 104px;
+        height: 148px;
+        border-radius: 10px;
+        border: 1px solid #c9c9c9;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        background: #fff;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .cardbtn:not(:disabled) .card {
+        cursor: pointer;
+        transition: transform 0.1s ease, box-shadow 0.1s ease;
+      }
+      .cardbtn:not(:disabled):hover .card {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+      }
+      .cardbtn:disabled .card {
+        opacity: 0.7;
+      }
+      .card .corner {
+        position: absolute;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .card .corner .rank { font-size: 16px; }
+      .card .corner .suit { font-size: 14px; margin-top: 2px; }
+      .card .corner.top { top: 7px; left: 8px; }
+      .card .corner.bottom {
+        bottom: 7px;
+        right: 8px;
+        transform: rotate(180deg);
+      }
+      .card .center-suit { font-size: 36px; opacity: 0.95; }
+      .card .center-face {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        line-height: 0.95;
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.2));
+      }
+      .card .center-face .rank {
+        font-size: 42px;
+        font-weight: 800;
+      }
+      .card .center-face .suit {
+        font-size: 24px;
+        margin-top: 2px;
+      }
+      .card.red { color: #b10f2e; }
+      .card.black { color: #202124; }
+      .card.back {
+        border-color: #0d356f;
+        background:
+          radial-gradient(circle at center, rgba(255,255,255,0.15), rgba(255,255,255,0) 60%),
+          repeating-linear-gradient(45deg, #1f4f96 0px, #1f4f96 8px, #18417b 8px, #18417b 16px);
+      }
+      .card.back::before {
+        content: '';
+        position: absolute;
+        inset: 8px;
+        border: 2px solid rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+      }
+      .card.back .center-suit {
+        font-size: 24px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .card-index {
+        margin-top: 4px;
+        font-size: 12px;
+        color: #c6d0ea;
+        text-align: center;
+      }
+      .player-title {
+        margin: 0 0 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .turn-pill {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(155, 255, 203, 0.18);
+        border: 1px solid rgba(155, 255, 203, 0.4);
+        color: #baffd8;
+      }
+      .winner-details {
+        text-align: center;
+        margin-top: 12px;
+      }
+      .winner-details p {
+        margin: 6px 0;
+      }
+      .winner-banner {
+        text-align: center;
+        margin: 6px 0 10px;
+        font-size: clamp(1.8rem, 3vw, 2.6rem);
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        color: transparent;
+        background: linear-gradient(90deg, #fff7c9 0%, #b7ffd7 40%, #9fe9ff 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        text-shadow:
+          0 0 10px rgba(183, 255, 215, 0.5),
+          0 0 24px rgba(159, 233, 255, 0.35),
+          0 0 38px rgba(133, 111, 255, 0.25);
+      }
+      .winner-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+        align-items: start;
+      }
+      .winner-card-wrap {
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(255, 255, 255, 0.05);
+        padding: 12px;
+        text-align: center;
+      }
+      .winner-card-wrap h4 {
+        margin: 0 0 10px;
+        font-size: 1rem;
+      }
+      .winner-card-wrap .cardbtn {
+        pointer-events: none;
+        margin: 0 auto;
+      }
+      .winner-card-wrap.win {
+        box-shadow: 0 0 0 1px rgba(155,255,203,0.45), 0 0 24px rgba(155,255,203,0.35);
+        background: rgba(155, 255, 203, 0.11);
+      }
+      .hidden { display: none; }
+      @media (max-width: 700px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+        .side-col {
+          border-left: none;
+          border-top: 1px solid rgba(255, 255, 255, 0.16);
+          padding-left: 0;
+          padding-top: 12px;
+        }
+        .name-inputs {
+          grid-template-columns: 1fr;
+        }
+        .cardbtn {
+          width: 84px;
+          height: 122px;
+        }
+        .card {
+          width: 84px;
+          height: 122px;
+        }
+        .winner-cards {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section class="main-col">
+        <div class="hero">
+          <div class="king-fan" aria-hidden="true">
+            <div class="king-card black k1">
+              <div class="k-corner top"><span>K</span><span>♠</span></div>
+              <div class="k-center"><span class="rank">K</span><span class="suit">♠</span></div>
+              <div class="k-corner bottom"><span>K</span><span>♠</span></div>
+            </div>
+            <div class="king-card red k2">
+              <div class="k-corner top"><span>K</span><span>♥</span></div>
+              <div class="k-center"><span class="rank">K</span><span class="suit">♥</span></div>
+              <div class="k-corner bottom"><span>K</span><span>♥</span></div>
+            </div>
+            <div class="king-card red k3">
+              <div class="k-corner top"><span>K</span><span>♦</span></div>
+              <div class="k-center"><span class="rank">K</span><span class="suit">♦</span></div>
+              <div class="k-corner bottom"><span>K</span><span>♦</span></div>
+            </div>
+            <div class="king-card black k4">
+              <div class="k-corner top"><span>K</span><span>♣</span></div>
+              <div class="k-center"><span class="rank">K</span><span class="suit">♣</span></div>
+              <div class="k-corner bottom"><span>K</span><span>♣</span></div>
+            </div>
+          </div>
+        </div>
+        <h1>High Card Draw</h1>
+        <p class="subtitle">Web UI for your existing game logic (no gameplay rewrite).</p>
+
+        <section id="nameSetup">
+          <div class="name-inputs">
+            <div>
+              <label for="p1">Player 1 Name</label>
+              <input id="p1" value="Player 1" maxlength="50" />
+            </div>
+            <div>
+              <label for="p2">Player 2 Name</label>
+              <input id="p2" value="Player 2" maxlength="50" />
+            </div>
+          </div>
+        </section>
+
+        <div id="lobbyActions" class="row">
+          <button id="newGameBtn">Start New Game</button>
+        </div>
+
+        <section id="turnScreen" class="screen hidden">
+          <h2 id="turnTitle">Player Turn</h2>
+          <p id="turnSubtitle" class="screen-subtitle">Cards are hidden. Reveal to choose.</p>
+          <div class="row">
+            <button id="revealCardsBtn">Reveal Cards</button>
+          </div>
+          <div id="cardsArea"></div>
+        </section>
+
+        <section id="winnerScreen" class="screen hidden">
+          <h2>Round Complete</h2>
+          <p class="screen-subtitle">Cards are face-down. Click to reveal winner.</p>
+          <div id="revealWinnerRow" class="row">
+            <button id="revealWinnerBtn">Reveal Winner</button>
+          </div>
+          <div id="winnerBanner" class="winner-banner hidden"></div>
+          <div id="winner" class="hidden"></div>
+          <div id="winnerDetails" class="winner-details hidden"></div>
+          <div id="winnerCards" class="winner-cards hidden"></div>
+          <div class="row" style="margin-top: 16px;">
+            <button id="playAgainBtn" class="hidden">Start New Game</button>
+          </div>
+        </section>
+      </section>
+
+      <aside class="side-col">
+        <section class="stats-panel">
+          <h3>🏆 Win Log</h3>
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-label">Player 1 Wins</div>
+              <div id="p1Wins" class="stat-value">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Player 2 Wins</div>
+              <div id="p2Wins" class="stat-value">0</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-label">Ties</div>
+              <div id="tieWins" class="stat-value">0</div>
+            </div>
+          </div>
+          <ol id="recentResults"></ol>
+        </section>
+      </aside>
+    </main>
+
+    <script>
+      // =========================================================
+      // Frontend State (UI-only)
+      // ---------------------------------------------------------
+      // This state controls screen transitions and reveal behavior.
+      // Core game rules still live in Python backend endpoints.
+      // =========================================================
+      let state = null;
+      const ui = {
+        screen: 'lobby', // lobby | player1 | player2 | winner
+        revealed: false,
+        winnerRevealed: false,
+      };
+      const LOG_KEY = 'high-card-win-log-v1';
+      let winLog = {
+        wins: {},
+        ties: 0,
+        recent: [],
+        loggedGameIds: [],
+      };
+
+      function loadWinLog() {
+        try {
+          const raw = localStorage.getItem(LOG_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (!parsed || typeof parsed !== 'object') return;
+          winLog = {
+            wins: parsed.wins || {},
+            ties: Number(parsed.ties || 0),
+            recent: Array.isArray(parsed.recent) ? parsed.recent.slice(0, 10) : [],
+            loggedGameIds: Array.isArray(parsed.loggedGameIds) ? parsed.loggedGameIds : [],
+          };
+        } catch (_e) {
+          // Ignore malformed storage and keep defaults.
+        }
+      }
+
+      function saveWinLog() {
+        localStorage.setItem(LOG_KEY, JSON.stringify(winLog));
+      }
+
+      function renderWinLog() {
+        const p1Name = (document.getElementById('p1')?.value || 'Player 1').trim() || 'Player 1';
+        const p2Name = (document.getElementById('p2')?.value || 'Player 2').trim() || 'Player 2';
+
+        document.getElementById('p1Wins').textContent = String(winLog.wins[p1Name] || 0);
+        document.getElementById('p2Wins').textContent = String(winLog.wins[p2Name] || 0);
+        document.getElementById('tieWins').textContent = String(winLog.ties || 0);
+
+        const recentEl = document.getElementById('recentResults');
+        if (!winLog.recent.length) {
+          recentEl.innerHTML = '<li class="muted">No games recorded yet.</li>';
+          return;
+        }
+        recentEl.innerHTML = winLog.recent
+          .map((entry) => `<li>${escapeHtml(entry)}</li>`)
+          .join('');
+      }
+
+      function recordCurrentGameResult() {
+        if (!state || state.phase !== 'complete') return;
+        if (!state.game_id) return;
+        if (winLog.loggedGameIds.includes(state.game_id)) return;
+
+        const winnerName = state.winner || '';
+        const p1Name = state.players?.[0]?.name || 'Player 1';
+        const p2Name = state.players?.[1]?.name || 'Player 2';
+        const p1Card = state.players?.[0]?.chosen_card || '(none)';
+        const p2Card = state.players?.[1]?.chosen_card || '(none)';
+
+        if (winnerName.toLowerCase().includes('tie')) {
+          winLog.ties += 1;
+          winLog.recent.unshift(`Tie: ${p1Name} (${p1Card}) vs ${p2Name} (${p2Card})`);
+        } else {
+          winLog.wins[winnerName] = (winLog.wins[winnerName] || 0) + 1;
+          winLog.recent.unshift(`${winnerName} won — ${p1Name} (${p1Card}) vs ${p2Name} (${p2Card})`);
+        }
+
+        winLog.recent = winLog.recent.slice(0, 10);
+        winLog.loggedGameIds.push(state.game_id);
+        winLog.loggedGameIds = winLog.loggedGameIds.slice(-100);
+
+        saveWinLog();
+        renderWinLog();
+      }
+
+      function escapeHtml(str) {
+        return str
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+  // =========================================================
+  // Card Rendering Helpers (display only)
+  // ---------------------------------------------------------
+  // These functions map backend card labels into visual cards.
+  // No winner/dealing/comparison logic is implemented here.
+  // =========================================================
+      function parseLabel(label) {
+        // label format from API: "Queen of Diamonds"
+        const parts = label.split(' of ');
+        if (parts.length !== 2) {
+          return { rank: '?', suitName: '', suit: '🂠', colorClass: 'black' };
+        }
+
+        const rankName = parts[0];
+        const suitName = parts[1];
+
+        const rankMap = {
+          Ace: 'A',
+          Jack: 'J',
+          Queen: 'Q',
+          King: 'K',
+        };
+
+        const suitMap = {
+          Hearts: '♥',
+          Diamonds: '♦',
+          Clubs: '♣',
+          Spades: '♠',
+        };
+
+        const rank = rankMap[rankName] || rankName;
+        const suit = suitMap[suitName] || '?';
+        const colorClass = suitName === 'Hearts' || suitName === 'Diamonds' ? 'red' : 'black';
+
+        return { rank, suitName, suit, colorClass };
+      }
+
+      function isFaceRank(rank) {
+        return rank === 'J' || rank === 'Q' || rank === 'K';
+      }
+
+      function renderCenterMarkup(parsed) {
+        if (isFaceRank(parsed.rank)) {
+          return `<div class="center-face"><span class="rank">${parsed.rank}</span><span class="suit">${parsed.suit}</span></div>`;
+        }
+        return `<div class="center-suit">${parsed.suit}</div>`;
+      }
+
+      function renderCardHtml(card, canChoose) {
+        const disabled = canChoose ? '' : 'disabled';
+
+        if (!card.known) {
+          return `
+            <button class="cardbtn" ${disabled} onclick="chooseForPlayer(${card.index})" title="Hidden card">
+              <div class="card back">
+                <div class="center-suit">🂠</div>
+              </div>
+              <div class="card-index">#${card.index + 1}</div>
+            </button>
+          `;
+        }
+
+        const parsed = parseLabel(card.label);
+        const centerMarkup = renderCenterMarkup(parsed);
+
+        return `
+          <button class="cardbtn" ${disabled} onclick="chooseForPlayer(${card.index})" title="${escapeHtml(card.label)}">
+            <div class="card ${parsed.colorClass}">
+              <div class="corner top"><span class="rank">${parsed.rank}</span><span class="suit">${parsed.suit}</span></div>
+              ${centerMarkup}
+              <div class="corner bottom"><span class="rank">${parsed.rank}</span><span class="suit">${parsed.suit}</span></div>
+            </div>
+            <div class="card-index">#${card.index + 1}</div>
+          </button>
+        `;
+      }
+
+      function renderHiddenCardHtml(cardIndex) {
+        return `
+          <button class="cardbtn" disabled title="Hidden card">
+            <div class="card back">
+              <div class="center-suit">🂠</div>
+            </div>
+            <div class="card-index">#${cardIndex + 1}</div>
+          </button>
+        `;
+      }
+
+      function renderChosenCardForWinner(playerName, chosenLabel, isWinner) {
+        const hasCard = Boolean(chosenLabel);
+        const parsed = hasCard ? parseLabel(chosenLabel) : null;
+        const centerMarkup = hasCard
+          ? renderCenterMarkup(parsed)
+          : `<div class="center-suit">🂠</div>`;
+
+        const cardHtml = hasCard
+          ? `
+            <button class="cardbtn" disabled>
+              <div class="card ${parsed.colorClass}">
+                <div class="corner top"><span class="rank">${parsed.rank}</span><span class="suit">${parsed.suit}</span></div>
+                ${centerMarkup}
+                <div class="corner bottom"><span class="rank">${parsed.rank}</span><span class="suit">${parsed.suit}</span></div>
+              </div>
+            </button>
+          `
+          : `
+            <button class="cardbtn" disabled>
+              <div class="card back">
+                ${centerMarkup}
+              </div>
+            </button>
+          `;
+
+        return `
+          <article class="winner-card-wrap ${isWinner ? 'win' : ''}">
+            <h4>${escapeHtml(playerName)}</h4>
+            ${cardHtml}
+            <div class="card-index">${hasCard ? escapeHtml(chosenLabel) : 'No card selected'}</div>
+          </article>
+        `;
+      }
+
+      // =========================================================
+      // UI Screen Router (display only)
+      // ---------------------------------------------------------
+      // Decides which screen is visible based on UI flow.
+      // Backend phase values still come from API responses.
+      // =========================================================
+      function setScreen(screen) {
+        ui.screen = screen;
+
+        document.getElementById('turnScreen').classList.toggle('hidden', !(screen === 'player1' || screen === 'player2'));
+        document.getElementById('winnerScreen').classList.toggle('hidden', screen !== 'winner');
+      }
+
+  // =========================================================
+  // Backend Integration Layer (game logic wrapper)
+  // ---------------------------------------------------------
+  // These calls wrap/interact with Python game logic:
+  // - POST /api/games                 -> create/deal game
+  // - POST /player1-choice            -> record player1 choice
+  // - POST /player2-choice            -> apply switch_turn + winner
+  // The frontend only sends choices and renders returned state.
+  // =========================================================
+      async function createGame() {
+        const p1Input = (document.getElementById('p1').value || '').trim();
+        const p2Input = (document.getElementById('p2').value || '').trim();
+        const payload = {
+          player1_name: p1Input || 'Player 1',
+          player2_name: p2Input || 'Player 2',
+        };
+        const res = await fetch('/api/games', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        state = await res.json();
+        ui.revealed = false;
+        ui.winnerRevealed = false;
+        document.getElementById('nameSetup').classList.add('hidden');
+        document.getElementById('lobbyActions').classList.add('hidden');
+        document.getElementById('playAgainBtn').classList.add('hidden');
+        setScreen('player1');
+        renderWinLog();
+        render();
+      }
+
+      async function chooseForPlayer(cardIndex) {
+        if (!state) return;
+        if (!ui.revealed) return;
+
+        const gameId = state.game_id;
+        let endpoint = null;
+
+        if (state.phase === 'waiting_player1') {
+          endpoint = `/api/games/${gameId}/player1-choice`;
+        } else if (state.phase === 'waiting_player2') {
+          endpoint = `/api/games/${gameId}/player2-choice`;
+        } else {
+          return;
+        }
+
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ card_index: cardIndex }),
+        });
+        state = await res.json();
+
+        if (ui.screen === 'player1') {
+          ui.revealed = false;
+          setScreen('player2');
+        } else if (ui.screen === 'player2') {
+          ui.revealed = false;
+          ui.winnerRevealed = false;
+          setScreen('winner');
+        }
+
+        render();
+      }
+
+  // =========================================================
+  // Player Interaction Handlers
+  // ---------------------------------------------------------
+  // Reveal controls are UI interactions; game completion and
+  // winner determination are still backend-driven.
+  // =========================================================
+      function revealCards() {
+        if (!state) return;
+        ui.revealed = true;
+        render();
+      }
+
+      function revealWinner() {
+        if (!state || ui.screen !== 'winner') return;
+        ui.winnerRevealed = true;
+        recordCurrentGameResult();
+        render();
+      }
+
+  // =========================================================
+  // Render Loop
+  // ---------------------------------------------------------
+  // Interprets backend response (`state`) for display:
+  // - whose turn screen to show
+  // - hidden/revealed cards
+  // - winner banner and highlighted winning card
+  // =========================================================
+      function render() {
+        const playAgainBtn = document.getElementById('playAgainBtn');
+        const lobbyActions = document.getElementById('lobbyActions');
+
+        if (!state) {
+          lobbyActions.classList.remove('hidden');
+          playAgainBtn.classList.add('hidden');
+          document.getElementById('nameSetup').classList.remove('hidden');
+          return;
+        }
+
+        lobbyActions.classList.add('hidden');
+        playAgainBtn.classList.toggle('hidden', !(ui.screen === 'winner' && ui.winnerRevealed));
+
+        const isPlayer1Screen = ui.screen === 'player1';
+        const isPlayer2Screen = ui.screen === 'player2';
+        const turnPlayerIdx = isPlayer1Screen ? 0 : 1;
+
+        if (isPlayer1Screen || isPlayer2Screen) {
+          const turnLabel = state.players[turnPlayerIdx]?.name || (isPlayer1Screen ? 'Player 1' : 'Player 2');
+          const player = state.players[turnPlayerIdx];
+          document.getElementById('turnTitle').textContent = `${turnLabel}'s Turn`;
+          document.getElementById('turnSubtitle').textContent = ui.revealed
+            ? `${turnLabel}, choose one card.`
+            : 'Cards are hidden. Click Reveal Cards to view your hand.';
+
+          const cardsHtml = player.cards
+            .map((card) => {
+              if (!ui.revealed) {
+                return renderHiddenCardHtml(card.index);
+              }
+              return renderCardHtml(card, true);
+            })
+            .join('');
+
+          document.getElementById('cardsArea').innerHTML = cardsHtml;
+          document.getElementById('revealCardsBtn').disabled = ui.revealed;
+        }
+
+        const winnerDiv = document.getElementById('winner');
+        const detailsDiv = document.getElementById('winnerDetails');
+        const winnerBanner = document.getElementById('winnerBanner');
+        const winnerCards = document.getElementById('winnerCards');
+        const revealWinnerRow = document.getElementById('revealWinnerRow');
+
+        if (ui.screen === 'winner') {
+          if (ui.winnerRevealed) {
+            document.getElementById('nameSetup').classList.remove('hidden');
+            revealWinnerRow.classList.add('hidden');
+            winnerDiv.classList.remove('hidden');
+            detailsDiv.classList.remove('hidden');
+            winnerCards.classList.remove('hidden');
+            winnerBanner.classList.remove('hidden');
+
+            const p1 = state.players[0];
+            const p2 = state.players[1];
+            const winnerName = state.winner || 'Unknown';
+            const isTie = winnerName.toLowerCase().includes('tie');
+
+            winnerBanner.textContent = isTie ? "It's a Tie!" : `${winnerName} Won`;
+            winnerDiv.innerHTML = '';
+            detailsDiv.innerHTML = `
+              <p>Reveal complete. Winning card is highlighted.</p>
+            `;
+
+            winnerCards.innerHTML = `
+              ${renderChosenCardForWinner(p1.name || 'Player 1', p1.chosen_card, !isTie && state.winner_index === 0)}
+              ${renderChosenCardForWinner(p2.name || 'Player 2', p2.chosen_card, !isTie && state.winner_index === 1)}
+            `;
+          } else {
+            document.getElementById('nameSetup').classList.add('hidden');
+            revealWinnerRow.classList.remove('hidden');
+            winnerDiv.classList.add('hidden');
+            detailsDiv.classList.add('hidden');
+            winnerBanner.classList.add('hidden');
+            winnerCards.classList.add('hidden');
+            winnerDiv.innerHTML = '';
+            detailsDiv.innerHTML = '';
+            winnerBanner.textContent = '';
+            winnerCards.innerHTML = '';
+          }
+        }
+
+        if (ui.screen !== 'winner') {
+          revealWinnerRow.classList.remove('hidden');
+        }
+      }
+
+  // =========================================================
+  // Bootstrapping
+  // ---------------------------------------------------------
+  // Wire events and initialize persistent win log.
+  // =========================================================
+      document.getElementById('newGameBtn').addEventListener('click', createGame);
+    document.getElementById('playAgainBtn').addEventListener('click', createGame);
+      document.getElementById('revealCardsBtn').addEventListener('click', revealCards);
+      document.getElementById('revealWinnerBtn').addEventListener('click', revealWinner);
+      document.getElementById('p1').addEventListener('input', renderWinLog);
+      document.getElementById('p2').addEventListener('input', renderWinLog);
+      loadWinLog();
+      renderWinLog();
+      setScreen('lobby');
+      render();
+    </script>
+  </body>
+</html>
