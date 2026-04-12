@@ -119,6 +119,29 @@ class Games:
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
 
+    def handle_ties(self, players):
+        player1 = players[0]
+        player2 = players[1]
+        begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+        # Player 1 chooses a card
+        if begin == "":
+            self.select_card(player1)
+            
+        # swap turn function
+        end_turn = input("\nPress [Enter] to end your turn: ")
+        if end_turn == "":
+            player1.clear_screen()
+        
+        begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+        # Player 2 chooses a card
+        if begin == "":
+            self.select_card(player2)
+    
+        end_turn = input("\nPress [Enter] to end your turn: ")
+        if end_turn == "":
+            player2.clear_screen()
+
+
     def main(self, test_mode= False):
         print('\nWelcome to High Card Draw!')
         print(HighCardDrawInstructions.get("overview"))
@@ -158,7 +181,8 @@ class Games:
             # display winner
             winner = declare_winner(player1, player2)
             while winner == "It's a tie!":
-                self.main()
+                self.handle_ties([player1, player2])
+                winner = declare_winner(player1, player2)
             print("\nThe winner is: ", winner)
             print("\n" + player1.name + " chose: ")
             print(player1.chosen_card)
@@ -212,3 +236,4 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
+
