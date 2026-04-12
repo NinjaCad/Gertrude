@@ -157,6 +157,8 @@ class Games:
         if display_winner == "":
             # display winner
             winner = declare_winner(player1, player2)
+            while winner == "It's a tie!":
+                self.main()
             print("\nThe winner is: ", winner)
             print("\n" + player1.name + " chose: ")
             print(player1.chosen_card)
