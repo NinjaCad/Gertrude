@@ -1,7 +1,6 @@
-from cardgames.Card import Card
-from cardgames..Card_Compare import Card
-from cardgames..Deck import Deck
-from cardgames..Player import Player
+from cardgames.Card_Compare import Card
+from cardgames.Deck import Deck
+from cardgames.Player import Player
 
 class Dealer:
     def __init__(self, deck: Deck):
