@@ -54,7 +54,6 @@ class Games:
             if getattr(dealer, "knownCards", None):
                 dealer.knownCards = [True for _ in dealer.knownCards]
             dealer.showHand()
-            """print(f"Gertrude ends with a hand value of {self.playerList[0].check_cards()}.")""" #?
 
             # Calculate results
             self.calculateWinner(self.playerList)
@@ -184,6 +183,7 @@ class Games:
     def calculateWinner(self, playerList):
         dealer = playerList[0]
         dealerScore = dealer.check_cards()
+        print(f"{dealer.name} ends with a hand value of {dealerScore}.") #this prints the value of Gertrude's hand too! 
 
         for player in playerList[1:]:
             playerScore = player.check_cards()
