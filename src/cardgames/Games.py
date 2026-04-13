@@ -119,6 +119,8 @@ class Games:
             except ValueError:
                 print("Invalid input. Please enter a valid number.")
 
+# HANNAH'S CODE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
     def handle_ties(self, players):
         player1 = players[0]
         player2 = players[1]
@@ -140,6 +142,8 @@ class Games:
         end_turn = input("\nPress [Enter] to end your turn: ")
         if end_turn == "":
             player2.clear_screen()
+            
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
     def main(self, test_mode= False):
@@ -180,9 +184,15 @@ class Games:
         if display_winner == "":
             # display winner
             winner = declare_winner(player1, player2)
+
+# HANNAH'S CODE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
             while winner == "It's a tie!":
                 self.handle_ties([player1, player2])
                 winner = declare_winner(player1, player2)
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
             print("\nThe winner is: ", winner)
             print("\n" + player1.name + " chose: ")
             print(player1.chosen_card)
