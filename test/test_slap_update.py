@@ -36,13 +36,11 @@ def setup_game():
     game_state["current_card"] = ace_diamonds
     game_state["counter"] = 1
 
-    # Deal 10 cards to each player and 10 to played_cards
-    for _ in range(10):
-        faith.add_card(new_deck.get_card())
-        rose.add_card(new_deck.get_card())
-        game_state["played_cards"].append(new_deck.get_card())
-
     players = [faith, rose, david, joseph, eli, daniel]
+    Dealer(Deck()).deal_cards(players)
+
+    for player in players:
+        game_state["played_cards"].append(player.pop_card())
 
     return game_state, players
 
