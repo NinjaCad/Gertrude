@@ -186,11 +186,11 @@ class Player:
             input("\nYou get to go again, press ENTER to continue...")
             self.takeTurn(players, game)
         else:
-            if self.bookHandling():
-                print("Lucky draw, you've made a book!")
+            if self.bookHandling(): # If picked up card makes a book
+                print("\nLucky draw, you've made a book!")
                 print("\nYour books: ")
                 self.showBooks()
-            if game.valueDict[requestedCard] == pickedCard.value:
+            if game.valueDict[requestedCard] == pickedCard.value: # If the player picks up the card they asked another player for
                 print("\nYou picked up the same card you asked for!")
                 input("\nYou get to go again, press ENTER to continue...")
                 self.takeTurn(players, game)
