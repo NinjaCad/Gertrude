@@ -52,38 +52,41 @@ def card_art(rank, suit):
 
 # RESOLVE SLAPS
 def resolve_slap(game_state, player_list: "list[Player]"):
-    # Sort players in order of slap time
-    sorted_players = sorted(game_state["slap_dict"].items(), key=lambda item: item[1]["time"])
-
-    # Get just the player names
-    player_keys = [p[0] for p in sorted_players]
+    slap_list = game_state["slap_list"]
 
     current_count = game_state["counter"]
     current_card_value = game_state["current_card"].get_value()
 
     # Shuffle the played cards to add to the player hand
     random.shuffle(game_state["played_cards"])
+    
+    # Default player for testing
+    loser = player_list[0]  # delete this for the final submission
 
     valid_slap = (current_card_value == current_count)
 
     if valid_slap:
-        loser_name = player_keys[-1]
+        if len(slap_list) < len(player_list) - 1:
+            # Uncomment this for final submisson
+            # return 
+            return loser.get_name(), game_state # delete this for final submission
+        else:
+            loser = next(player for player in player_list if player.get_name() not in slap_list)
     else:
-        loser_name = player_keys[0]
-
-    loser = next(p for p in player_list if p.get_name() == loser_name)
+        loser = next(player for player in player_list if player.get_name() == slap_list[0])
 
     for card in game_state["played_cards"]:
         loser.add_card(card)
 
     # Reset the GAME_STATE variable
     game_state["played_cards"].clear()
-    game_state["slap_dict"].clear()
+    game_state["slap_list"].clear()
     game_state["slap_in_progress"] = False
-    game_state["slap_start_time"] = None
+
+    # UNCOMMENT FOR FINAL SUBMISSION
+    # return game_state
 
     # Return statement for tests, to be deleted in final submission - but keep game_state
-    if game_state["current_card"] is None:
-        return game_state, [], None
-    else:
-        return game_state, player_keys, loser_name
+    return loser.get_name(), game_state
+
+    
