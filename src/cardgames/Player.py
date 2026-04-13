@@ -17,6 +17,7 @@ class Player:
         self.money = 100
         self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
         self.niceGert = False
+        self.blackjack_bonus_applied = False
 
         # GERT-15 for recording split() functionality
         self.split_hands_score = { }
@@ -48,6 +49,7 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        self.blackjack_bonus_applied = False
         
     # stand()
     # inputs: none
@@ -126,6 +128,11 @@ class Player:
     # goal: add a card from the game deck to the player hand
     # suggestions: none
     def hit(self, dealer, isKnown: bool = True):
+        # Player cannot hit after standing, busting, or reaching 21.
+        if not self.active or self.check_cards() >= 21:
+            self.active = False
+            return None
+
         # hit() now goes through dealer 
         deck = dealer.deck
 
@@ -135,6 +142,7 @@ class Player:
 
         card = deck.getCard()
         self.addCard(card, isKnown)
+        self.check_cards()
         return card
 
 
