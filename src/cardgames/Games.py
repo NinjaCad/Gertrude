@@ -212,8 +212,9 @@ class Games:
     
     def initialBookCheck(self, players):
         for player in players:
-            if player.bookHandling():
-                print(f"{player} was the following books:")
+            player.bookHandling()
+            if player.books != []:
+                print(f"\n{player.name} started the following books:")
                 player.showBooks()
 
     def goFishing(self, player):
