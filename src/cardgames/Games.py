@@ -8,6 +8,7 @@ from cardgames.page_3 import *
 
 import random
 import time
+from typing import Dict, Any
 from flask import Flask, render_template, url_for, Response, request, session, redirect
 
 app = Flask(__name__)
@@ -15,7 +16,7 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 
 #The player objects will be appended to this list. 
 player_list = []
-GAME_STATE = {
+GAME_STATE: Dict[str, Any] = {
     "current_card": None,
     "current_player": None,
     "played_cards": [],
@@ -123,6 +124,14 @@ def start_game():
     card = ""
     return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
+@app.route("/win_page")
+def win_page():
+    global player_list
+    player_list = [Player('Prof Lee'), Player('Faith')]          #this line to make testing win_page() route more straightforward; can be deleted when we merge
+    winner = None
+    if win_check(player_list):
+        winner = player_list[0]
+    return render_template("page_4.html", winner=winner)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
