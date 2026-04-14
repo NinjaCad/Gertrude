@@ -127,10 +127,10 @@ def start_game():
 @app.route("/win_page")
 def win_page():
     global player_list
+    global GAME_STATE
     player_list = [Player('Prof Lee'), Player('Faith')]          #this line to make testing win_page() route more straightforward; can be deleted when we merge
-    winner = None
-    if win_check(player_list):
-        winner = player_list[0]
+    #winner, GAME_STATE = resolve_slap(GAME_STATE, player_list)
+        #winner = player_list[0]
     return render_template("page_4.html", winner=winner)
 
 if __name__ == "__main__":
