@@ -10,6 +10,7 @@ from cardgames.Deck import Deck
 from cardgames.Player import Player, Gertrude
 from cardgames.Dealer import Dealer
 
+
 class Games:
 
     def __init__(self):
@@ -151,10 +152,15 @@ class Games:
                 if choice in enabled_moves or choice in aliases:
                     if choice in ["hit", "h"]:
                         player.hit(self.dealer)
+                        if player.check_cards() > 21:
+                            print(self.playerList[0].trashTalk("bust"))
+                        else: print(self.playerList[0].trashTalk("hit"))
                     elif choice in ["stand", "s"]:
                         player.stand()
+                        print(self.playerList[0].trashTalk("stand"))
                     elif choice in ["split", "sp"]:
                         player.split(self.dealer)
+                        print(self.playerList[0].trashTalk("split"))
                     # elif choice in ["double down", "dd"]:
                     #    player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
