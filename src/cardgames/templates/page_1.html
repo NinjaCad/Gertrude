@@ -14,15 +14,17 @@
     </head>
     <body>
         <header>
-            <h1>Scrumptious Bytes</h1>
+            <h1>Heart Attack</h1>
+            <p class="site-subtitle">by Scrumptious Bytes</p>
         </header>
+        <!-- Removed nav section because it is not needed on the home page since there are no useful pages to navigate to at this time.
         <nav>
             <ul>
                 <li><a href="page_1.html">Home</a></li>
-                <!-- <li><a href="page_3.html">Walkthroughs</a></li> page_3.html reserved for game, commented for future change and/or removal-->
+                <li><a href="page_3.html">Walkthroughs</a></li> page_3.html reserved for game, would need to be changed and/or removed in future
                 <li><a href="#footer">Contact</a></li>
             </ul>
-        </nav>        
+        </nav>         -->
         <main>
             <article>
                 <div id="Quotation">
@@ -31,19 +33,25 @@
                 </div>
 
                 <h2>Heart Attack</h2>
+                
+                <section class="intro-text">
+                    <p>Test your mettle, test your reflexes, and see if you can survive the heart attack! Enter your name in the box below and click "Submit" and you will be placed in a waiting room until the game starts.</p>
+                </section>
 
-                <p>Test your mettle, test your reflexes, and see if you can survive the heart attack! Enter your name in the box below and click "Submit" and you will be placed in a waiting room until the game starts.</p>
-                <form action="/home" method="POST" class="player-input">
-                    <label for="player_name">Name:</label>
-                    <input type="text" id="player_name" name="player_name" placeholder="Enter your name" required>
-                    <button type="submit">Submit</button>
-                </form>
+                <section class="panel form-panel">
+                    <form action="/home" method="POST" class="player-input">
+                        <label for="player_name" class="sr-only">Player name</label>
+                        {% if error %}
+                            <div class="error-message">{{ error }}</div>
+                        {% endif %}
+                        <input type="text" id="player_name" name="player_name" placeholder="Enter your name" maxlength="12" required>
+                        <button type="submit" class="button button-primary">Submit</button>
+                    </form>
+                </section>
             </article>
 
             <aside>
-                <a href="#" class="tab">
-                    Credits
-                </a>
+                <div class="tab">Credits</div>
 
                 <div class="aside-content">
                     <h3>Attribution:</h3>

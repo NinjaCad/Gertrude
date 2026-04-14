@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Roboto:wght@400;500&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
 
+/* NEW/EDITED VERSION; Original:src/cardgames/static/card_styles_old.css */
+
 * {
     margin: 0;
     padding: 0;
@@ -42,6 +44,31 @@ h1, h2, h3, h4 {
     font-family: 'Audiowide', cursive;
 }
 
+h1 {
+    font-size: 36px;
+}
+
+h2 {
+    font-size: 24px;
+}
+
+h3 {
+    font-size: 20px;
+    padding: 1em;
+}
+
+
+
+a {
+    color: inherit;
+}
+
+a:hover {
+    color: #8c91ab;
+}
+
+
+
 main {
     flex: 1;
     display: flex;
@@ -56,6 +83,7 @@ header {
     padding: 1.5em;
     background: transparent;    /* transparent header to show background gradient */
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     color: #dcdde0;
@@ -67,6 +95,13 @@ header h1 {
     position: relative;
     z-index: 1;
     font-size: 3.5em;
+}
+
+.site-subtitle {
+    margin-top: 0.35rem;
+    font-size: 0.95rem;
+    letter-spacing: 0.04em;
+    color: #b5b8c4;
 }
 
 nav ul {
@@ -98,6 +133,8 @@ nav li a:hover {
     color: #0e1c58;
 }
 
+
+
 #Quotation {
     padding: 1%;
     display: none;
@@ -109,14 +146,39 @@ nav li a:hover {
     display: block;
 }
 
+
+
 article {
     flex: 4;
-    padding: 2% 5% 0% 2%; /* top right bottom left */
+    padding: 2rem 3em 2rem 3em; /* top right bottom left */
+    max-width: 1100px;
+    margin: 0 auto;
     background: transparent; /* transparent to show background gradient */
     color: #dcdde0;
 }
 
-article p::first-letter {
+article h2 {
+    margin-bottom: 0.75em;
+}
+
+article p {
+    margin-bottom: 1em;
+    line-height: 1.5;
+}
+
+article ol, article ul {
+    margin-bottom: 1.25rem;
+}
+
+article li {
+    margin-bottom: 0.5rem;
+}
+
+article ul {
+    padding-left: 1.5em;
+}
+
+.intro-text p::first-letter {
     font-size: 2.5em;
     color: #0e1c58; 
     float: left;
@@ -126,26 +188,198 @@ article p::first-letter {
     line-height: .55em;
 }
 
-.aside-content p {
-    font-size: 0.9rem;
-    /* placeholder for future formating if desired */
-}   
-
-h2 {
-    font-size: 24px;
+.error-message {
+    background: rgba(220, 80, 80, 0.15);
+    color: #dcdde0;
+    border: 1px solid rgba(220, 80, 80, 0.45);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0.75rem 0 1rem 0;
 }
+.player-input {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;   /* centers input + button */
+    width: 100%;
+    max-width: 300px;
+    margin-top: 0 auto;
+}
+.player-input input {
+    padding: 0.6rem 0.75rem;
+    border-radius: 6px;
+    border: 1px solid rgba(220, 221, 224, 0.3);
+    background: rgba(220, 221, 224, 0.08);
+    color: #dcdde0;
+    width: 100%;
+}
+.player-input input:focus {
+    outline: none;
+    border-color: #b5b8c4;
+}
+.player-input input::placeholder {
+    color: #b5b8c4;
+    opacity: 1; /* ensures visibility  */
+}
+.player-input input:focus::placeholder {
+    color: #8c91ab;
+}
+.player-input button {
+    width: 100%;
+}
+
+
+.panel {
+    background: rgba(220, 221, 224, 0.08);
+    border: 1px solid rgba(220, 221, 224, 0.15);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.panel h2 {
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(220, 221, 224, 0.15);
+    padding-bottom: 0.25rem;
+}
+
+.panel-content {
+    margin-left: 1rem;
+}
+
+.panel ol.panel-content {
+    padding-left: 1.25rem;
+    margin-bottom: 1.25rem;
+}
+
+.panel p.panel-content {
+    margin-bottom: 0;
+    line-height: 1.5;
+}
+
+.form-panel {
+    max-width: 340px;
+    margin: 1rem auto 0 auto;  /* center the panel */
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+
+
+#waiting_list {
+    min-height: 4rem;
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: 0.5rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(220, 221, 224, 0.25) transparent;
+}
+
+#waiting_list::-webkit-scrollbar {
+    width: 6px;
+}
+
+#waiting_list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#waiting_list::-webkit-scrollbar-thumb {
+    background: rgba(220, 221, 224, 0.25);
+    border-radius: 4px;
+}
+
+#waiting_list::-webkit-scrollbar-thumb:hover {
+    background: rgba(220, 221, 224, 0.4);
+}
+
+#waiting_list ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#waiting_list li {
+    padding: 0.55rem 0.9rem;
+    background: rgba(220, 221, 224, 0.08);
+    border: 1px solid rgba(220, 221, 224, 0.12);
+    border-radius: 8px;
+    min-width: 140px;
+    max-width: 220px;
+    text-align: center;
+}
+
+
+
+.game-status-panel p {
+    margin-bottom: 0.75rem;
+}
+
+.game-table-panel {
+    text-align: center;
+}
+
+.card-container {
+    position: relative;
+    display: inline-block;
+    margin: 1rem auto;
+}
+
+.card-container pre {
+    margin: 0;
+    padding: 1rem;
+    background: rgba(220, 221, 224, 0.06);
+    border: 1px solid rgba(220, 221, 224, 0.12);
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.slap-button {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background: transparent; */
+    /* Switch these for testing */
+    background: rgba(255, 0, 0, 0.25);
+    border: none;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
 
 aside {
     position: fixed;
     top: 0;
-    right: -170px;          /* mostly hidden off-screen */
-    width: 200px;
+    right: -300px;
+    width: 340px;
     height: 100vh;
     background: linear-gradient(135deg, #3b4b97, #0e1c58);
-    padding: 1rem;
+    padding: 1rem 1.25rem 1.25rem 1.25rem;
     box-shadow: -2px 0 5px rgba(0,0,0,0.2);
     transition: right 0.3s ease;
     z-index: 1000;
+    overflow: hidden;
 }
 
 .tab {
@@ -165,38 +399,128 @@ aside {
     z-index: 1001;
 }
 
-.tab:hover {
-    color: #0e1c58;  /* dark text on teal background for contrast */
-    background-color: #8c91ab; /* slightly lighter teal on hover */
-}
-
 aside:hover {               /* Hover effect: expand the sidebar */
     right: 0;               /* slide fully into view */
-}
-
-.aside-content {
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    font-size: 0.9rem;
-    padding-bottom: 8px;
 }
 
 aside:hover .aside-content {
     opacity: 1;
 }
 
-.aside-content ul {
-    list-style: none;
+.aside-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 1rem;
+    line-height: 1.5;
+    padding: 1rem 0 0.5rem 2.25rem;
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(220, 221, 224, 0.25) transparent;
+}
+
+.aside-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.aside-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.aside-content::-webkit-scrollbar-thumb {
+    background: rgba(220, 221, 224, 0.25);
+    border-radius: 4px;
+}
+
+.aside-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(220, 221, 224, 0.4);
+}
+
+.aside-content h3 {
+    font-size: 1.2rem;
+    letter-spacing: 0.03em;
+    padding: 0 0 0.75rem 0;
+    margin-bottom: 0.5rem;
+}
+
+.aside-content p, .aside-content li {
+    font-size: 1.05rem;
+    line-height: 1.65;
+}
+
+.aside-content ul, .aside-content ol {
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.aside-content li {
+    margin-bottom: 0.6rem;
 }
 
 .aside-content li a {
-    color: inherit;
+    color: #dcdde0;
     text-decoration: none;
+    transition: color 0.2s ease;
 }
 
 .aside-content li a:hover {
-    color: #8c91ab; /* accent on hover */
+    color: #8c91ab;
 }
+
+
+.action-zone {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+
+.button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.3s, color 0.3s, opacity 0.3s;
+}
+
+.button-large {
+    padding: 0.85rem 1.8rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    border-radius: 8px;
+}
+
+.button-primary {
+    background: linear-gradient(135deg, #b5b8c4, #8c91ab);
+    color: #0e1c58;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+}
+
+.button-primary:hover {
+    background: linear-gradient(135deg, #c4c7d2, #9aa0ba);
+    transform: translateY(-1px);
+}
+
+.button-secondary {
+    background-color: #8c91ab;
+    color: #0e1c58;
+}
+
+.button-danger {
+    background-color: #3b4b97;
+    color: #dcdde0;
+}
+
+.button:hover {
+    opacity: 0.9;
+}
+
+
 
 footer {
     display: grid;
@@ -208,13 +532,7 @@ footer {
     color: #dcdde0;
 }
 
-a {
-    color: inherit;
-}
 
-a:hover {
-    color: #8c91ab;
-}
 
 @media (max-width: 900px) {
     h1 {
@@ -231,7 +549,6 @@ a:hover {
         margin: 0;
         list-style: none;
     }
-
     article {
         width: 100%;
         padding: 3% 3% 10% 3%; /* top right bottom left */
@@ -248,18 +565,18 @@ a:hover {
         margin-top: auto; /* push to bottom if content is short */
     }
     .tab {
-        position: absolute;
-        top: 10px;
-        left: 44%;                 /* center at top */
-        transform: translateY(-50%) rotate(0deg); /* horizontal */
-        border-radius: 4px 4px 0 0;
-        padding: 5px 10px;
-        font-weight: bold;
-        text-align: center;
-        line-height: 30px;
+        position: static;
+        display: block;
+        width: fit-content;
+        margin: 0 auto 0.75rem auto;
+        transform: none;
+        border-radius: 6px;
+        padding: 0.4rem 1rem;
+        line-height: normal;
     }
     .aside-content {
-        padding-top: 40px;
+        padding-top: 0.5rem;
+        padding-left: 0;
         opacity: 1;
         display: flex;
         flex-direction: column;
@@ -270,11 +587,15 @@ a:hover {
         flex-direction: row;
         gap: 2em;
         padding: .5em;
+        padding-left: 1.25rem;
         margin: 0;
         list-style: none;
     }
-    .aside-content li {
-        display: flex;
+    .aside-content ol {
+        padding-left: 1.5rem;
+    }
+    .aside-content ol li {
+        display: list-item;
     }
 }
 
@@ -282,17 +603,4 @@ a:hover {
     #Quotation {
         display: block;
     }
-}
-
-article p {
-    margin-bottom: 1em;
-}
-
-article ul {
-    padding-left: 1.5em;
-}
-
-h3 {
-    font-size: 20px;
-    padding: 1em;
 }

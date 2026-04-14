@@ -31,8 +31,18 @@ last_player_joined = None
 def home():
     if request.method == 'GET':
         return render_template("page_1.html")
+    
     elif request.method == 'POST':
-        name = request.form.get("player_name")
+        name = request.form.get("player_name", "").strip()
+
+        # length check
+        if not (1 <= len(name) <= 12):
+            return render_template("page_1.html", error="Name must be 1 to 12 characters.")
+        
+        # uniqueness check (case-insensitive)
+        if any(p.name.lower() == name.lower() for p in player_list):
+            return render_template("page_1.html", error="Name is already taken.")
+
         session['name'] = name
         player_list.append(Player(name))
         global last_player_joined

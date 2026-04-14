@@ -1,63 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Attack</title>
-        
-    <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Waiting Room</title>
 
-    <style>
-        .card-container {
-            position: relative;
-            display: inline-block;
-        }
+        <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
 
-        .card-container pre {
-            margin: 0;
-        }
+        <!-- <link rel="stylesheet" href="card_styles.css"> -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='card_styles.css') }}">
 
-        .slap-button {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }
+    </head>
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
-</head>
-<body>
+    <body>
+        <header>
+            <h1>Heart Attack</h1>
+            <p class="site-subtitle">by Scrumptious Bytes</p>
+        </header>
 
-    <!-- display the current rank of the global card counter -->
-    <p>Card to Match: {{ rank }}</p>
+        <!-- Removed nav section because it is not needed on the home page since there are no useful pages to navigate to at this time.
+        <nav>
+            <ul>
+                <li><a href="page_1.html">Home</a></li>
+                <li><a href="page_3.html">Walkthroughs</a></li> page_3.html reserved for game, chage if used in future change
+                <li><a href="#footer">Contact</a></li>
+            </ul>
+        </nav> 
+        -->
 
-    <!-- display current player's name -->
-    <p>Current Player: {{ current_player }}</p>
+        <main>
+            <article>
+                <section class="panel game-status-panel">
+                    <h2>Current Round</h2>
+                    <p><strong>Card to Match:</strong> {{ rank }}</p>
+                    <p><strong>Current Player:</strong> {{ current_player }}</p>
+                </section>
 
-    <div class="card-container">
-        <pre>{{ card }}</pre>
+                <section class="panel game-table-panel">
+                    <h2>Center Pile</h2>
 
+                    <div class="card-container">
+                        <pre>{{ card }}</pre>
 
-        <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
-            <input type="hidden" name="timestamp" id="ts">
-            <button class="slap-button" type="submit"></button>
-        </form>
-    </div>
+                        <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
+                            <input type="hidden" name="timestamp" id="ts">
+                            <button class="slap-button" type="submit" aria-label="Slap card"></button>
+                        </form>
+                    </div>
 
-    <form method="POST" action="/game">
-        <button id="play-card-btn" type="submit">
-            Play Card
-        </button>
-    </form>
+                    <div class="action-zone">
+                        <form method="POST" action="/game">
+                            <button id="play-card-btn" class="button button-primary button-large" type="submit">Play Card</button>
+                        </form>
+                    </div>
+                </section>
+
+            </article>
+
+            <aside>
+                <div class="tab">Rules</div>
+
+                <div class="aside-content">
+                    <h3>How to Play:</h3>
+                    <ol>
+                        <li>On their turn a player will play a card by pressing the "play card" button</li>
+                        <li>If the card played matches the card rank displayed slap the card using the "slap card" button as quickly as possible</li>
+                        <li>The player who slaps the card last adds the entire stack to their hand</li>
+                        <li>If a player slaps the card when the card played and the displayed rank do not match they take the entire stack</li>
+                    </ol>
+                    <h3>How to Win:</h3>
+                        <p>Once your hand is empty be the first to slap the deck when appropriate to win the game.</p>
+                </div>
+            </aside>
+
+        </main>
+
+        <footer id="footer">
+            <small>E-mail: <a href="mailto:ScrumptiousBytes2026@gmail.com">ScrumptiousBytes2026@gmail.com</a></small>
+            <small>&copy; ScrumptiousBytes 2026</small>
+        </footer>
+    </body>
+
 
     <script>
         const playCardBtn = document.getElementById("play-card-btn");
@@ -91,6 +116,5 @@
             }
         }, 20);
     </script>
-
-</body>
-</html>
+    
+</html> 

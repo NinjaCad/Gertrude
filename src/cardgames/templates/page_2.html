@@ -1,5 +1,3 @@
-<!-- pageTwo = """ -->
-
 <!DOCTYPE html>
 <html lang="en">
     
@@ -8,48 +6,86 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Waiting Room</title>
 
-        <style>
-            body {background-color: #8c92ac;;}
-            li   {color: #022658;}
-            p    {color: #ffffffc9;}
-        </style>
+        <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
+
+        <!-- <link rel="stylesheet" href="card_styles.css"> -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='card_styles.css') }}">
+
     </head>
 
     <body>
-        <p>
-            <strong>Players:</strong>
-        </p>
-        
-        <div id="list">
-            {% block body %}
-            {% endblock body %}
-        </div> <!-- Dynamic section of List to be replaced on player joining -->
-        <p>
-  
-            <Strong>How to Play:</Strong>
-                <br><br>
-                <ol>
-                    <li>On their turn a player will play a card by pressing the "play card" button</li>
-                    <li>If the card played matches the card rank displayed slap the card using the "slap card" button as quickly as possible</li>
-                    <li>The player who slaps the card last adds the entire stack to their hand</li>
-                    <li>If a player slaps the card when the card played and the displayed rank do not match they take the entire stack</li>
-                </ol>
+        <header>
+            <h1>Heart Attack</h1>
+            <p class="site-subtitle">by Scrumptious Bytes</p>
+        </header>
 
-          <Strong>To Win:</Strong>
-                <br><br>
-                <ol>
-                    <li>Once your hand is empty be the first to slap the deck when appropriate to win the game</li>
-                </ol>
-        </p>
+        <!-- Removed nav section because it is not needed on the home page since there are no useful pages to navigate to at this time.
+        <nav>
+            <ul>
+                <li><a href="page_1.html">Home</a></li>
+                <li><a href="page_3.html">Walkthroughs</a></li> page_3.html reserved for game, chage if used in future change
+                <li><a href="#footer">Contact</a></li>
+            </ul>
+        </nav> 
+        -->
 
-            <br><br><br>
+        <main>
+            <article>
+                <section class="panel">
+                    <h2>Players:</h2>
+                        <div id="waiting_list">
+                            {% block body %}
+                            {% endblock body %}
+                        </div> <!-- Dynamic section of List to be replaced on player joining -->
+                </section>
 
-            <h1>
-                <a href="{{ url_for('game') }}"><button>Start Game</button></a>
-                <!--<button type="button" title="Start game once all players are in">
-                    <strong>Start Game</strong>
-                </button> -->
-            </h1>
+                <section class="panel">
+                    <h2>Starting the Game:</h2>
+                        <p class="panel-content">Once all players have joined the waiting room, the "Start Game" button will become active. The first player to click the "Start Game" button will start the game for all players.</p>
+                    <!-- <h2>How to Play:</h2>
+                        <ol class="panel-content">
+                            <li>On their turn a player will play a card by pressing the "play card" button</li>
+                            <li>If the card played matches the card rank displayed slap the card using the "slap card" button as quickly as possible</li>
+                            <li>The player who slaps the card last adds the entire stack to their hand</li>
+                            <li>If a player slaps the card when the card played and the displayed rank do not match they take the entire stack</li>
+                        </ol>
+
+                    <h2>To Win:</h2>
+                        <p class="panel-content">Once your hand is empty be the first to slap the deck when appropriate to win the game.</p> -->
+                    <div class="action-zone">
+                        <a href="{{ url_for('game') }}" class="button button-primary button-large">Start Game</a>
+                            <!--<button title="Start game once all players are in"</button>-->
+                    </div>
+                </section>
+
+                
+
+
+            </article>
+
+            <aside>
+                <div class="tab">Rules</div>
+
+                <div class="aside-content">
+                    <h3>How to Play:</h3>
+                    <ol>
+                        <li>On their turn a player will play a card by pressing the "play card" button</li>
+                        <li>If the card played matches the card rank displayed slap the card using the "slap card" button as quickly as possible</li>
+                        <li>The player who slaps the card last adds the entire stack to their hand</li>
+                        <li>If a player slaps the card when the card played and the displayed rank do not match they take the entire stack</li>
+                    </ol>
+                    <h3>How to Win:</h3>
+                        <p>Once your hand is empty be the first to slap the deck when appropriate to win the game.</p>
+                </div>
+            </aside>
+
+        </main>
+
+        <footer id="footer">
+            <small>E-mail: <a href="mailto:ScrumptiousBytes2026@gmail.com">ScrumptiousBytes2026@gmail.com</a></small>
+            <small>&copy; ScrumptiousBytes 2026</small>
+        </footer>
     </body>
 
 
@@ -57,10 +93,8 @@
         const source = new EventSource("/player-list-stream");
 
         source.onmessage = (event) => {
-            document.getElementById("list").innerHTML = event.data;
+            document.getElementById("waiting_list").innerHTML = event.data;
         };
     </script>
-
+    
 </html> 
-
-<!--"""-->
