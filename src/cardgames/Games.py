@@ -69,10 +69,7 @@ class Games:
                 self.deck.reset()
         
         # End game
-        
-        #player_ranking = sort(self.playerList[:].money)
-        #may need ^ later
-        results_dict = {}
+        results_list = []
         print("Total money made or lost by each player:")
         for player in self.playerList:
             if player.name == "GERTRUDE":
@@ -84,14 +81,20 @@ class Games:
                 print(f"+${player.money - starting_money}")
             else:
                 print("No change in money!")
-            results_dict.update({player.name: player.money})
+            results_list.append([player.name, player.money])
         print("\nFinal Standings:")
-        sorted_results_dict = sorted(results_dict.items(), key=lambda item: item[1])
-        place = 1
-        for player in reversed(sorted_results_dict):
-            print(f"{place}: {player[0]}")
-            place += 1
+        sorted_results_list = sorted(results_list, key=lambda item: item[1],reverse=True)
         
+        store = ""
+        for player in range(len(sorted_results_list)):
+            if player == len(sorted_results_list) or sorted_results_list[len(sorted_results_list)-1][1] == sorted_results_list[player][1]:
+                if player != len(sorted_results_list):
+                    store += ", "
+                store += sorted_results_list[player-1][0]
+            print(f"{player + 1}: ${sorted_results_list[player][0]}..........{sorted_results_list[player][1]}")
+        
+        print(f"Congratulations to {store} for winning!")
+
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
     
