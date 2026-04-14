@@ -22,6 +22,7 @@ class Games:
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
         self.assets_dir = Path(__file__).resolve().parents[2] / "assets"
+        self.go_fish_sound = None
         self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
         "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
 
@@ -47,13 +48,19 @@ class Games:
             return self.FULL_TEST
         return self.REPEAT_FOREVER
 
-    def play_background_music(self, playback_mode=None):
+    def _ensure_audio_ready(self):
         import pygame
 
         if pygame.mixer.get_init() is None:
             pygame.mixer.init()
 
-        selected_track = self.choose_music_track()
+        return pygame
+
+    def play_background_music(self, playback_mode=None, selected_track=None):
+        pygame = self._ensure_audio_ready()
+
+        if selected_track is None:
+            selected_track = self.choose_music_track()
         pygame.mixer.music.load(str(selected_track))
 
         if playback_mode is None:
@@ -67,6 +74,16 @@ class Games:
             pygame.mixer.music.stop()
 
         return selected_track
+
+    def play_go_fish_sound(self):
+        try:
+            pygame = self._ensure_audio_ready()
+            if self.go_fish_sound is None:
+                self.go_fish_sound = pygame.mixer.Sound(str(self.assets_dir / self.GOLDFISH_TRACK))
+            self.go_fish_sound.play()
+            return True
+        except Exception:
+            return False
 
     def clear():
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -213,6 +230,7 @@ class Games:
     def goFishing(self, player):
 
         print("\n"+"Go Fishing!") #Maybe replace with Prettier Font?
+        self.play_go_fish_sound()
         card = self.deck.getCard()
         print(str(card))
         player.addCard(card)
@@ -254,14 +272,17 @@ class Games:
 
         self.showOpponentsHands(turn_list)
 
-        target_choice = ""
-        while target_choice not in player_number:
-            target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
-            if target_choice in player_dict:
-                target_choice = str(player_dict[target_choice])
-            elif target_choice not in player_number and target_choice not in player_dict:
-                print("Invalid Input! Enter player name or number.")
-                target_choice = ""
+        if len(player_number) == 1:
+            target_choice = player_number[0]
+        else:
+            target_choice = ""
+            while target_choice not in player_number:
+                target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
+                if target_choice in player_dict:
+                    target_choice = str(player_dict[target_choice])
+                elif target_choice not in player_number and target_choice not in player_dict:
+                    print("Invalid Input! Enter player name or number.")
+                    target_choice = ""
 
         target_player = turn_list[int(target_choice)]
         print("")
@@ -298,6 +319,13 @@ class Games:
         print('This games application is under development.')
 
         self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
+        try:
+            self.play_background_music(
+                playback_mode=self.REPEAT_FOREVER,
+                selected_track=self.assets_dir / self.SMOOTH_JAZZ_TRACK
+            )
+        except Exception:
+            print("Audio unavailable; continuing without background music.")
         
         # Access each player by "for player in players" loop OR by using indexing (player[0].name)
         players = self.create_players()
