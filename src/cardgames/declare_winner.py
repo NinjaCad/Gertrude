@@ -9,5 +9,6 @@ def declare_winner(player1, player2):
             return player2.name
         else:
             return "It's a tie!"
-    except TypeError: # tie
-        print("Error: Both players must have chosen a card to declare a winner.")
+    except TypeError:
+        print("\n[!] Error: One or both players are missing a chosen card.")
+        return "No winner (Invalid Card Selection)"
