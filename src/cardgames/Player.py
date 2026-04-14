@@ -160,8 +160,8 @@ SETUP:
 PLAYER ACTIONS:
   - Hit: Take another card
   - Stand: Keep your hand
-  - Double Down: Double bet, take 1 card only
-  - Split: If you have 2 matching cards, split into 2 hands
+  - Double Down: Double bet but take 1 additionaly card and end your turn
+  - Split: If you have 2 matching cards at the start of your turn, split into 2 hands
 
 BUST:
   - If your total goes over 21, you lose immediately
@@ -180,13 +180,32 @@ WINNING:
 BLACKJACK:
   - Ace + 10-value card
   - Best possible hand
-  - Pays extra (usually 3:2)
+  - Pays extra -> 3:2
 
-TIPS:
+SIDE BETS:
+  - Insurance:
+      - You can bet up to half your orginal bet that the dealers face card will be an Ace
+  - Perfect Pairs:
+      - You can bet on what your starting hand will be and will get payed extra
+        - Colored Pairs -> 10:1
+        - Mixed Pairs -> 5:1
+  - 21+3:
+      - You can bet on what your starting hand and the face card of the dealer will be and will get payed extra
+        - Flush -> 5:1
+        - Straight -> 10:1
+        - Three of a Kind -> 30:1
+        - Straight Flush -> 40:1
+
+TIPPING THE DEALER:
+  - It is proper etiquette to give some of your earnings to the dealer
+
+HELPFUL TIPS:
   - Hit if under 12
   - Stand on 17+
   - Play aggressive if dealer has 7 or higher
   - Be cautious if dealer has 4–6
+  - Double down on a hand value of 10
+  - Split whenever possible but not at hand value 20
 """)
 
         # Print all the commands, their alternate name(s), and if they they can use it
@@ -240,11 +259,13 @@ TIPS:
         while True: # while loop guarantees valid input
             # Getting players money
             if (type == "pairs"):
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ").strip()
+            elif (type == "21+3"):
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for 21+3? ").strip()
             elif (type == "insurance"):
-                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
+                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ").strip()
             else:
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ").strip()
             
             # guarantee that bet is an integer
             try:
@@ -261,13 +282,15 @@ TIPS:
                 print(f"Insurance bet cannot be more than half of your original bet (${self.bets['standard']}). Please enter a valid amount")
                 continue
             
-            elif self.money - bet < -100: # guarantee player doesn't go more than $100 in debt
-                print(f"You cannot go more than $100 in debt. Be responsible!")
+            elif self.money - bet < 0: # guarantee player doesn't go more than $0 in debt
+                print(f"You cannot go in debt. Be responsible!")
                 continue
             
             else: # if all checks are passed, set bet and break loop
                 if (type == "pairs"):
                     self.bets["pairs"] = bet
+                elif (type == "21+3"):
+                    self.bets["21+3"] = bet
                 elif (type == "insurance"):
                     self.bets["insurance"] = bet
                 else:
@@ -301,11 +324,11 @@ TIPS:
     def tipDealer(self):
         while True:
             print(f"{self.name}, you have ${self.money}.")
-            self.tipChoice = input("Do you want to tip the dealer? (y/n) ").lower()
+            self.tipChoice = input("Do you want to tip the dealer? (y/n) ").strip().lower()
             if self.tipChoice == "y":
                 while True:
                     try:
-                        self.tipAmt = int(input("How much do you want to tip? (integer value only) "))
+                        self.tipAmt = int(input("How much do you want to tip? (integer value only) ").strip())
                         if self.tipAmt > self.money:
                             print("You don't have that much money! Try again.")
                         elif self.tipAmt <= 0:
@@ -341,18 +364,74 @@ TIPS:
     
     # GERT-40 perfectPairs()
     # inputs: none
-    # outputs: pairType (string) based on whether or not there is a mixed pair, colored pair, or no pair
+    # outputs: True or False based on if the player won the bet
+        # Colored pair -> 10:1
+        # Mixed pair -> 5:1
     # goals: check self.hand for mixed or colored pair
     def perfectPairs(self):
+        # Requirements
         if len(self.hand) == 2:
             if self.hand[0].value == self.hand[1].value:
+                # Check if it's the same color ((spades and clubs == black) and (hearts and diamonds == red)
                 if (self.hand[0].suit in ["S", "C"] and self.hand[1].suit in ["S", "C"]) or (self.hand[0].suit in ["H", "D"] and self.hand[1].suit in ["H", "D"]):
                     self.bets["pairs"] *= 10
                 else:
                     self.bets["pairs"] *= 5
                 return True
         return False
+    
+    # GERT-41 twentyone()
+    # inputs: dealers top card
+    # outputs: True/False based on whether or not there is a flush, straight, three of a kind, and straight flush
+        # Flush -> 5:1
+        # Straight -> 10:1
+        # Three of a Kind -> 30:1
+        # Straight Flush -> 40:1
+    # goals: check self.hand for flush, straight, three of a kind, and straight flush
+    def twentyone(self, dealersCard = None):
+        # Requirements
+        if dealersCard is not None and len(self.hand) == 2:
+            # Get the three cards
+            c1, c2, c3 = self.hand[0], self.hand[1], dealersCard
 
+            # Same suit
+            is_flush = (c1.suit == c2.suit == c3.suit)
+            # Same value
+            is_three_kind = (c1.value == c2.value == c3.value)
+            
+            # List of values
+            vals = [c1.value, c2.value, c3.value]
+
+            # Sorted values list but A has a value of 1
+            def ranks_with_ace_low(vs):
+                return sorted(vs)
+
+            # Sorted value list but A(1) has a value of 14
+            def ranks_with_ace_high(vs):
+                return sorted([14 if v == 1 else v for v in vs])
+
+            # Find if it's a straight
+            def is_consecutive(rs):
+                return rs[0] + 1 == rs[1] and rs[1] + 1 == rs[2]
+
+            is_straight = is_consecutive(ranks_with_ace_low(vals)) or is_consecutive(ranks_with_ace_high(vals))
+
+            is_straight_flush = is_straight and is_flush
+
+            # Payouts
+            if is_straight_flush:
+                self.bets["21+3"] *= 40
+            elif is_three_kind:
+                self.bets["21+3"] *= 30
+            elif is_straight:
+                self.bets["21+3"] *= 10
+            elif is_flush:
+                self.bets["21+3"] *= 5
+            else:
+                return False
+            return True
+        else:
+            return False
 
     # GERT-15 split()
     # inputs: none

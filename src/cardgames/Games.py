@@ -32,6 +32,7 @@ class Games:
             for player in self.playerList[1:]:
                 player.bet("standard")
                 player.bet("pairs")
+                player.bet("21+3")
 
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
@@ -67,6 +68,7 @@ class Games:
                     player.active = True
                     player.clearHand()
                 self.deck.reset()
+                self.deck.shuffle()
         
         # End game
         print("\nThanks for playing!")
@@ -76,7 +78,7 @@ class Games:
 
         while True:
             try:
-                self.amtPlayers = int(input("How many people are playing? (7 players max.): "))
+                self.amtPlayers = int(input("How many people are playing? (7 players max.): ").strip())
                 
                 if self.amtPlayers > 7:
                     print("That's too many players! Try again.")
@@ -90,7 +92,7 @@ class Games:
 
         while True:
             try:
-                starting_money = int(input("Enter the amount of starting Money: $"))
+                starting_money = int(input("Enter the amount of starting Money: $").strip())
                 if starting_money <= 0:
                     print("Starting money must be more than 0.")
                     continue
@@ -196,7 +198,7 @@ class Games:
                 standard_result = False
                 print(f"{player.name}, you lose! Dealer has a higher score!")
             else:
-                print(player.name, ", push! You Tied with the dealer.")
+                print(f"{player.name}, you push! You Tied with the dealer.")
                 player.bets["standard"] = 0
                 continue
             
@@ -204,8 +206,8 @@ class Games:
             player.resolve_bet({
                 "standard": standard_result,
                 "pairs": player.perfectPairs(),
+                "21+3": player.twentyone(),
                 "insurance": player.insurance(self.playerList[0])
-                # "21+3": player.twentyone(),
             })
 
 
