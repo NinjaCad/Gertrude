@@ -263,9 +263,9 @@ TIPS:
                 ],
             }
 
-            # fallback if an unknown event comes in
-            lines = lines_by_event.get(event) or lines_by_event["hit"]
-            return "\n" + random.choice(lines) + "\n"
+        # fallback if an unknown event comes in
+        lines = lines_by_event.get(event) or lines_by_event["hit"]
+        return "\n" + random.choice(lines) + "\n"
         
     
     
