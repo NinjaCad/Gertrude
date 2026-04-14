@@ -240,7 +240,7 @@ TIPS:
         while True: # while loop guarantees valid input
             # Getting players money
             if (type == "pairs"):
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+                bet = input(f"{self.name}, you have ${self.money - self.bets['standard']}. How much do you want to bet for perfect pairs? ")
             elif (type == "insurance"):
                 bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
             else:
