@@ -275,6 +275,12 @@ TIPS:
                 break
             
         return
+    
+    #Gert-54 checkBankrupt()
+    def checkBankrupt(self):
+        if self.money < 5:
+            print(f"{self.name}, you are so broke that we had to remove you from the game hahahaha")
+            self.active = False
 
     
     # GERT-18 resolve_bet()
@@ -295,7 +301,9 @@ TIPS:
                 self.money -= self.bets[bet]
                 
             self.bets[bet] = 0
-            
+        
+        #GERT-54 putting bankrupt checker into resolve_bet()
+        self.checkBankrupt 
         return
     
     def tipDealer(self):

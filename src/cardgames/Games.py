@@ -30,6 +30,10 @@ class Games:
         while True:
             # Each player places bets
             for player in self.playerList[1:]:
+                #GERT-54 checks broke players before allowing to bet
+                if not player.active:
+                    continue
+
                 player.bet("standard")
                 player.bet("pairs")
 
@@ -64,8 +68,13 @@ class Games:
             else:
                 # resetting player active status, hands, and the deck after each round
                 for player in self.playerList:
-                    player.active = True
+                    #GERT-54 check for player money to be above 5 dollars
+                    if player.money < 5:
+                        player.active = False
+                    else:
+                        player.active = True
                     player.clearHand()
+
                 self.deck.reset()
         
         # End game
@@ -121,6 +130,11 @@ class Games:
         self.playerList[0].showHand()
         
         for player in self.playerList[1:]:
+
+            #GERT-54 check bankrupt player at beginning of round
+            if not player.active:
+                continue
+
             print(f"\n--- {player.name}'s turn ---")
             print(f"--- {player.name}'s hand ---")
             player.showHand()
