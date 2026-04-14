@@ -47,16 +47,18 @@
         <pre>{{ card }}</pre>
 
 
-        <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
+        <form method="POST" action="/slap" onsubmit="return handleSlap(this);" onclick="play_random_sound()">
             <button id="slap-button" type="submit"></button>
         </form>
     </div>
 
     <form method="POST" action="/game">
-        <button id="play-card-button" type="submit">
+        <button id="play-card-button" type="submit" onclick="play_sound('Slurp.mp3')">
             Play Card
         </button>
     </form>
+
+    <audio id="sfx" preload="auto"></audio>
 
     <script>
         const play_card_button = document.getElementById("play-card-button");
@@ -70,7 +72,37 @@
             play_card_button.disabled = true;
 
             return true;
-        }
+        };
+
+        const sound_effects = [
+            "Slurp.mp3",
+            "slap_effects/Bonk.mp3",
+            "slap_effects/Goat.mp3",
+            "slap_effects/Slap.mp3",
+            "slap_effects/Vine_boom.mp3"
+        ]
+
+        const sounds = {}
+
+        sound_effects.forEach(file => {
+            const audio = new Audio(`/static/sfx/${file}`);
+            audio.preload = "auto";
+            audio.load();
+            sounds[file] = audio;
+        });
+
+        function play_sound(name) {
+            const audio = sounds[name];
+            if (!audio) return;
+            audio.currentTime = 0;
+            audio.play();
+        };
+
+        function play_random_sound() {
+            const keys = Object.keys(sounds);
+            const random = keys[Math.floor(Math.random() * keys.length)];
+            play_sound(random);
+        };
     </script>
 
 </body>
