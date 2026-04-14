@@ -19,6 +19,10 @@ class Player:
     # method to return the hand of the player to keep the original object protected
     def get_hand(self):
         return self.hand[:]
+    
+    # Delete this if unneeded - I'm jsut using it for the resolve_slap test file
+    def set_hand(self, hand):
+        self.hand = hand
 
     def get_angle(self):
         return self.angle

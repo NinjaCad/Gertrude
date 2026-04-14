@@ -43,16 +43,17 @@
 
                     <div class="card-container">
                         <pre>{{ card }}</pre>
-
                         <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
-                            <input type="hidden" name="timestamp" id="ts">
-                            <button class="slap-button" type="submit" aria-label="Slap card"></button>
+                            <!-- Later: change Class name for slap-button -->
+                            <button id="slap-button" class="slap-button" type="submit" aria-label="Slap card"></button>
                         </form>
                     </div>
 
                     <div class="action-zone">
                         <form method="POST" action="/game">
-                            <button id="play-card-btn" class="button button-primary button-large" type="submit">Play Card</button>
+                            <button id="play-card-button" class="button button-primary button-large" type="submit">
+                                Play Card
+                            </button>
                         </form>
                     </div>
                 </section>
@@ -83,38 +84,19 @@
         </footer>
     </body>
 
-
     <script>
-        const playCardBtn = document.getElementById("play-card-btn");
+        const play_card_button = document.getElementById("play-card-button");
 
         function handleSlap(form) {
-            // Set timestamp
-            document.getElementById("ts").value = Date.now();
-
             // Disable this player's slap button immediately
-            const slapBtn = form.querySelector(".slap-button");
-            slapBtn.disabled = true;
+            const slap_button = document.getElementById("slap-button");
+            slap_button.disabled = true;
 
             // Disable this player's play_card button immediately too
-            playCardBtn.disabled = true;
+            play_card_button.disabled = true;
 
             return true;
         }
-
-        // Every 20 ms check if the play_card button should be disabled
-        setInterval(async () => {
-            const res = await fetch("/check_slap");
-            const data = await res.json();
-
-            if (data.status === "waiting") {
-                // Disable play card for everyone
-                playCardBtn.disabled = true;
-            }
-
-            if (data.status === "resolved") {
-                location.reload(); // refresh game state
-            }
-        }, 20);
     </script>
     
 </html> 
