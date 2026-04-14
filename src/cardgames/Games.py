@@ -87,14 +87,18 @@ class Games:
         
         store = ""
         for player in range(len(sorted_results_list)):
-            if player == len(sorted_results_list) or sorted_results_list[len(sorted_results_list)-1][1] == sorted_results_list[player][1]:
-                if player != len(sorted_results_list):
+            if player == 0 or sorted_results_list[0][1] == sorted_results_list[player][1]:
+                if player != 0:
                     store += ", "
-                store += sorted_results_list[player-1][0]
-            print(f"{player + 1}: ${sorted_results_list[player][0]}..........{sorted_results_list[player][1]}")
+                store += sorted_results_list[player][0]
+            print(f"{player + 1}: {sorted_results_list[player][0]}..........${sorted_results_list[player][1]}")
         
-        print(f"Congratulations to {store} for winning!")
-
+        print(f"\nGertrude rolls her eyes: 'Congrats to {store} for winning... I guess...'")
+        if sorted_results_list[0][1] < starting_money:
+            print(f"Gertrude looks away: 'Although now that I think about it, {store} didn't actually make any money...", end='')
+            print("You know what they say, the house ALWAYS wins...'")
+            print("Gertrude smiles eerily...")
+        print("Gertrude laughs: 'Losers... better luck next time!'")
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
     
