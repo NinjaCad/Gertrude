@@ -47,35 +47,39 @@ def setup_game():
 # Check nothing happens if there's not enough slaps
 def test_num_slaps():
     game_state, players = setup_game()
-    game_state["slap_list"].extend(["rose", "david"])
+    # Rose and David
+    game_state["slap_list"].extend(players[1:3])
     deck_receiver, game_state = resolve_slap(copy.deepcopy(game_state), players)
 
-    assert deck_receiver == "faith" # the default is the first player in the player_list for testing purposes - which would be faith
+    assert deck_receiver.get_name() == "faith" # the default is the first player in the player_list for testing purposes - which would be faith
 
 # Check the last person to slap (only person to not slap) received the deck when they were supposed to slap
 def test_valid_slap_loser():
     game_state, players = setup_game()
-    game_state["slap_list"].extend(["rose", "david", "joseph", "eli", "daniel"])
+    # Rose, David, Joseph, Eli, Daniel
+    game_state["slap_list"].extend(players[1:])
 
     # Check faith slapped last when it was correct to slap
     deck_receiver, _ = resolve_slap(copy.deepcopy(game_state), players)
-    assert deck_receiver == "faith"
+    assert deck_receiver.get_name() == "faith"
 
 # Check the first person to slap received the deck when they weren't supposed to slap
 def test_invalid_slap_loser():
     game_state, players = setup_game()
-    game_state["slap_list"].extend(["rose", "david"])
+    # Rose, David
+    game_state["slap_list"].extend(players[1:3])
 
     # Check rose slapped first when it wasn't correct to slap
     game_state["counter"] = 2
     deck_receiver, _ = resolve_slap(copy.deepcopy(game_state), players)
-    assert deck_receiver == "rose"
+    assert deck_receiver.get_name() == "rose"
 
 # Check the deck receiver actually has the played_cards in their hand
 def test_received_deck():
     game_state, players = setup_game()
     faith = players[0]
-    game_state["slap_list"].extend(["rose", "david", "joseph", "eli", "daniel"])
+    # Everyone except faith
+    game_state["slap_list"].extend(players[1:])
 
     played_cards_copy = copy.copy(game_state["played_cards"])
 
@@ -87,10 +91,22 @@ def test_received_deck():
 # Check game_state is reset afterwards
 def test_reset_game_state():
     game_state, players = setup_game()
-    game_state["slap_list"].extend(["rose", "david", "joseph", "eli", "daniel"])
+    # Everyone except faith
+    game_state["slap_list"].extend(players[1:])
 
     _, game_state = resolve_slap(copy.deepcopy(game_state), players)
 
     assert not game_state["played_cards"]
     assert not game_state["slap_list"]
     assert game_state["slap_in_progress"] is False
+
+# Test the winner's NAME (not Player object) is returned
+def test_win_check():
+    game_state, players = setup_game()
+    players[0].set_hand([])
+
+    game_state["slap_list"].extend(players)
+
+    winner, _ = resolve_slap(copy.deepcopy(game_state), players)
+
+    assert winner == "faith"

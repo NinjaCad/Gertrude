@@ -100,10 +100,10 @@ def slap():
         GAME_STATE["slap_in_progress"] = True
     
     # Append the player name to the slap list
-    player_name = session.get("name")
+    player = next(player for player in player_list if player.get_name() == session.get("name"))
     # Just in case someone slaps again faster than the POST request to disable their slap button
-    if player_name not in GAME_STATE["slap_list"]:
-        GAME_STATE["slap_list"].append(player_name)
+    if player not in GAME_STATE["slap_list"]:
+        GAME_STATE["slap_list"].append(player)
 
     # UNCOMMENT FOR FINAL SUBMISSION
     # GAME_STATE = resolve_slap(GAME_STATE, player_list)

@@ -66,14 +66,17 @@ def resolve_slap(game_state, player_list: "list[Player]"):
     valid_slap = (current_card_value == current_count)
 
     if valid_slap:
-        if len(slap_list) < len(player_list) - 1:
+        if win_check(game_state["slap_list"]):
+            winner = game_state["slap_list"][0].get_name()
+            return winner, game_state
+        elif len(slap_list) < len(player_list) - 1:
             # Uncomment this for final submisson
             # return 
-            return loser.get_name(), game_state # delete this for final submission
+            return loser, game_state # delete this for final submission
         else:
-            loser = next(player for player in player_list if player.get_name() not in slap_list)
+            loser = next(player for player in player_list if player not in slap_list)
     else:
-        loser = next(player for player in player_list if player.get_name() == slap_list[0])
+        loser = slap_list[0]
 
     for card in game_state["played_cards"]:
         loser.add_card(card)
@@ -87,6 +90,6 @@ def resolve_slap(game_state, player_list: "list[Player]"):
     # return game_state
 
     # Return statement for tests, to be deleted in final submission - but keep game_state
-    return loser.get_name(), game_state
+    return loser, game_state
 
     
