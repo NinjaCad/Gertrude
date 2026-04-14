@@ -19,9 +19,8 @@ GAME_STATE = {
     "current_card": None,
     "current_player": None,
     "played_cards": [],
-    "slap_dict": {},
+    "slap_list": [],
     "slap_in_progress": False,
-    "slap_start_time": None,
     "counter": 0
 }
 last_player_joined = None
@@ -95,35 +94,23 @@ def player_stream():
 @app.route("/slap", methods=["POST"])
 def slap():
     global GAME_STATE
-    player_name = session.get("name")
-    timestamp = float(request.form.get("timestamp", 0))
 
     # Start slap phase if first slap
     if not GAME_STATE["slap_in_progress"]:
         GAME_STATE["slap_in_progress"] = True
-        GAME_STATE["slap_start_time"] = time.time()
+    
+    # Append the player name to the slap list
+    player = next(player for player in player_list if player.get_name() == session.get("name"))
+    # Just in case someone slaps again faster than the POST request to disable their slap button
+    if player not in GAME_STATE["slap_list"]:
+        GAME_STATE["slap_list"].append(player)
 
-    # Record slap
-    GAME_STATE["slap_dict"][player_name] = {"time": timestamp}
+    # UNCOMMENT FOR FINAL SUBMISSION
+    # GAME_STATE = resolve_slap(GAME_STATE, player_list)
 
     # Don't redirect yet
     return ("", 204)  
 
-# CHECK IF ENOUGH TIME HAS PASSED TO RESOLVE SLAPS (2 seconds)
-@app.route("/check_slap")
-def check_slap():
-    global GAME_STATE
-    if GAME_STATE["slap_in_progress"]:
-        elapsed = time.time() - GAME_STATE["slap_start_time"]
-
-        if elapsed >= 2:
-            new_state, _, _ = resolve_slap(GAME_STATE, player_list)
-            GAME_STATE = new_state
-            return {"status": "resolved"}
-
-        return {"status": "waiting"}
-
-    return {"status": "idle"}
 
 @app.route("/start_game", methods=["GET", "POST"])
 def start_game():
