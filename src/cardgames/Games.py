@@ -68,7 +68,7 @@ class Games:
                     player.clearHand()
                 self.deck.reset()
         
-        # End game
+        #begin finish summary functionality
         results_list = []
         print("Total money made or lost by each player:")
         for player in self.playerList:
@@ -94,6 +94,7 @@ class Games:
             print(f"{player + 1}: {sorted_results_list[player][0]}..........${sorted_results_list[player][1]}")
         
         print(f"\nGertrude rolls her eyes: 'Congrats to {store} for winning... I guess...'")
+        #special gertrude dialogue
         if sorted_results_list[0][1] < starting_money:
             print(f"Gertrude looks away: 'Although now that I think about it, {store} didn't actually make any money...", end='')
             print("You know what they say, the house ALWAYS wins...'")
@@ -101,6 +102,7 @@ class Games:
         print("Gertrude laughs: 'Losers... better luck next time!'")
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
+        #end of finish summary, and program
     
     def startGame(self):
 

@@ -289,10 +289,11 @@ TIPS:
         
         for bet in bet_results.keys():
             if bet_results[bet]:
-                self.money += self.bets[bet]
-                print(f"You made ${self.bets[bet]} on your {bet} bet!")
-                print(f"Your new total is ${self.money}\n")
-                self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
+                if self.bets[bet] != 0:
+                    self.money += self.bets[bet]
+                    print(f"You made ${self.bets[bet]} on your {bet} bet!")
+                    print(f"Your new total is ${self.money}\n")
+                    self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
                 if self.bets[bet] != 0:
