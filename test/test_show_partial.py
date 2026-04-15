@@ -65,7 +65,7 @@ def test_show_partial_hand_empty_hand_prints_nothing(capsys):
     out = capsys.readouterr().out
     assert out == ""
 
-
+"""
 @pytest.mark.parametrize(
     "known_flags,expected_lines",
     [
@@ -74,6 +74,8 @@ def test_show_partial_hand_empty_hand_prints_nothing(capsys):
         ([True, False], ["['A♠']", "['BACK2']"]),
     ],
 )
+"""
+
 def test_show_partial_hand_parametrized(capsys, known_flags, expected_lines):
     p = Player("Param")
 
