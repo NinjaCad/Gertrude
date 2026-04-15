@@ -133,6 +133,45 @@ def start_game():
     card = ""
     return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
+# TESTING WIN SCREEN
+@app.route("/test_win")
+def test_win():
+    class FakePlayer:
+        def __init__(self, name):
+            self.name = name
+
+    fake_winner = FakePlayer("Test Player")
+
+    return render_template("page_4.html", winner=fake_winner)
+
+# TESTING GAME SCREEN
+@app.route("/test_game")
+def test_game():
+    class FakePlayer:
+        def __init__(self, name):
+            self.name = name
+
+    fake_players = [
+        FakePlayer("Eli"),
+        FakePlayer("Joseph"),
+        FakePlayer("Faith"),
+        FakePlayer("Rose")
+    ]
+
+    fake_card = """┌─────────┐
+│A        │
+│    ♠    │
+│        A│
+└─────────┘"""
+
+    return render_template(
+        "page_3.html",
+        rank="Ace",
+        current_player="Joseph",
+        player_list=fake_players,
+        session_player_name="David",
+        card=fake_card
+    )
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)

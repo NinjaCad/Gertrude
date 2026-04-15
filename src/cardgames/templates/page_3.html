@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Waiting Room</title>
+        <title>Heart Attack - Game</title>
 
         <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
         <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
@@ -14,7 +14,7 @@
 
     </head>
 
-    <body>
+    <body class="game-page">
         <header>
             <h1>Heart Attack</h1>
             <p class="site-subtitle">by Scrumptious Bytes</p>
@@ -36,13 +36,23 @@
                     <h2>Current Round</h2>
                     <p><strong>Card to Match:</strong> {{ rank }}</p>
                     <p><strong>Current Player:</strong> {{ current_player }}</p>
+                        <div class="player-strip" id="player-strip">
+                            {% for player in player_list %}
+                                <span
+                                    class="player-chip{% if player.name == current_player %} current-turn{% endif %}{% if player.name == session_player_name %} self-player{% endif %}"
+                                    data-player-name="{{ player.name }}"
+                                >
+                                    {{ player.name }}
+                                </span>
+                            {% endfor %}
+                        </div>
                 </section>
 
                 <section class="panel game-table-panel">
                     <h2>Center Pile</h2>
 
                     <div class="card-container">
-                        <pre>{{ card }}</pre>
+                        <pre>{{ card  or " " }}</pre>
                         <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
                             <!-- Later: change Class name for slap-button -->
                             <button id="slap-button" class="slap-button" type="submit" aria-label="Slap card"></button>
@@ -82,21 +92,50 @@
             <small>E-mail: <a href="mailto:ScrumptiousBytes2026@gmail.com">ScrumptiousBytes2026@gmail.com</a></small>
             <small>&copy; ScrumptiousBytes 2026</small>
         </footer>
-    </body>
 
-    <script>
-        const play_card_button = document.getElementById("play-card-button");
+        <script>
+            const play_card_button = document.getElementById("play-card-button");
 
-        function handleSlap(form) {
-            // Disable this player's slap button immediately
-            const slap_button = document.getElementById("slap-button");
-            slap_button.disabled = true;
+            function handleSlap(form) {
+                // Disable this player's slap button immediately
+                const slap_button = document.getElementById("slap-button");
+                slap_button.disabled = true;
 
-            // Disable this player's play_card button immediately too
-            play_card_button.disabled = true;
+                // Disable this player's play_card button immediately too
+                play_card_button.disabled = true;
 
-            return true;
-        }
-    </script>
-    
+                return true;
+            }
+
+            // Safer version (for future dynamic updates)
+            // const play_card_button_safe = document.getElementById("play-card-button");
+            // const slap_button_safe = document.getElementById("slap-button");
+
+            // function handleSlapSafe(form) {
+            //     if (slap_button_safe) slap_button_safe.disabled = true;
+            //     if (play_card_button_safe) play_card_button_safe.disabled = true;
+
+            //     return true;
+            // }
+
+
+            function centerCurrentPlayer() {
+                const strip = document.getElementById("player-strip");
+                const currentChip = document.querySelector(".player-chip.current-turn");
+
+                if (!strip || !currentChip) return;
+
+                const stripCenter = strip.clientWidth / 2;
+                const chipCenter = currentChip.offsetLeft + (currentChip.offsetWidth / 2);
+                const targetScroll = chipCenter - stripCenter;
+
+                strip.scrollTo({
+                    left: Math.max(0, targetScroll),
+                    behavior: "smooth"
+                });
+            }
+
+            window.addEventListener("load", () => {setTimeout(centerCurrentPlayer, 100);});
+        </script>
+    </body>    
 </html> 
