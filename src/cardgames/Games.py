@@ -128,8 +128,8 @@ def start_game():
 def win_page():
     global player_list
     global GAME_STATE
-    winner, GAME_STATE = resolve_slap(GAME_STATE, player_list)
-    return render_template("page_4.html", winner=winner)
+    winner_name, GAME_STATE = resolve_slap(GAME_STATE, player_list)
+    return render_template("page_4.html", winner=winner_name)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000)
