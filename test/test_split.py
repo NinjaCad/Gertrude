@@ -76,6 +76,7 @@ def test_split():
     
     # start a game round with proper conditions to split
     game.round()
+    gertrude.showHand()
     game.calculateWinner(game.playerList)
     
     # make sure print statement makes sense with player/dealer hand totals

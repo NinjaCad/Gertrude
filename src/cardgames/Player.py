@@ -372,7 +372,7 @@ TIPS:
         rightHand.addCard(self.hand.pop(), True)
         
         self.name = f"{self.name}'s left hand"
-        right.bets["standard"] = self.bets["standard"]
+        rightHand.bets["standard"] = self.bets["standard"]
         
         playerIndex = game.playerList.index(self)
         game.playerList.insert(playerIndex + 1, rightHand)
