@@ -1,5 +1,10 @@
 from cardgames.Deck import Deck
 <<<<<<< HEAD
+from cardgames.Dealer import Dealer
+from cardgames.Player import Player
+from Time_limit import player_choose_card_timed
+=======
+<<<<<<< HEAD
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 from cardgames.Card_Compare import Card
@@ -87,12 +92,52 @@ def declare_winner(player1, player2):
                 return "It's a tie!"
         except TypeError: # tie
             print("Error: Both players must have chosen a card to declare a winner.")
+>>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
 
 class Games:
-
     def __init__(self):
         self.deck = Deck()
+        self.dealer = Dealer(self.deck)
+        self.players = [Player("Player 1"), Player("Player 2")]
 
+<<<<<<< HEAD
+    def main(self):
+        print('Welcome to High Card Draw!')
+        
+        # 1. SHUFFLE AND DEAL
+        self.deck.shuffle()
+        for p in self.players:
+            # Clear any old data and deal 3 fresh cards
+            p.clearHand() 
+            self.dealer.dealCards(3, [p])
+            # Ensure cards are revealed so the player can see them to choose
+            p.setHand(p.hand, isKnown=True) 
+
+        # 2. SELECTION PHASE (TIMED)
+        for p in self.players:
+            player_choose_card_timed(p, 10)
+            # Optional: Clear the screen after each player's turn 
+            # so the next player doesn't see the previous choice
+            # print("\n" * 30) 
+
+        # 3. WINNER LOGIC
+        self.declare_winner()
+
+    def declare_winner(self):
+        p1, p2 = self.players[0], self.players[1]
+        
+        print("\n" + "="*30)
+        print("       FINAL RESULTS")
+        print("="*30)
+        
+        # Check for Timeouts first
+        if p1.chosen_card is None and p2.chosen_card is None:
+            print("Both players timed out! No one wins.")
+        elif p1.chosen_card is None:
+            print(f"{p1.name} timed out. {p2.name} wins by default!")
+        elif p2.chosen_card is None:
+            print(f"{p2.name} timed out. {p1.name} wins by default!")
+=======
     def select_card(self, player):
         # Denotes the change of turn 
         print(f"\n--- {player.name}'s Card Options ---")
@@ -269,9 +314,25 @@ class Games:
             #Every player loses their win streak if it's a tie
             for player in players:
                 game_stats[player]["Win Streak"] = 0
+>>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
         else:
-            game_stats[winner]["Wins"] += 1
+            # Using the Card's __str__ method to show the card nicely
+            print(f"{p1.name} played:\n{p1.chosen_card}")
+            print(f"{p2.name} played:\n{p2.chosen_card}")
+            
+            # Compare the actual card values
+            if p1.chosen_card.value > p2.chosen_card.value:
+                print(f"*** Winner: {p1.name}! ***")
+            elif p2.chosen_card.value > p1.chosen_card.value:
+                print(f"*** Winner: {p2.name}! ***")
+            else:
+                print("It's a tie!")
 
+<<<<<<< HEAD
+        # 4. CLEANUP for next round
+        for p in self.players:
+            p.clearHand()
+=======
             #Update winner's win streak and highest win streak
             game_stats[winner]["Win Streak"] += 1
             if game_stats[winner]["Win Streak"] > game_stats[winner]["Highest Win Streak"]:
@@ -295,8 +356,8 @@ class Games:
             game_stats[player]["Win-Rate"] = value
 
         return game_stats
+>>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
 
 if __name__ == "__main__":
     game = Games()
-    game.main(test_mode=False)
-
+    game.main()

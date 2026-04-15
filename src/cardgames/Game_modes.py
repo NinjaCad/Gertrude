@@ -45,7 +45,7 @@ class Games:
         for card in self.deck.cards[:5]:
             print(card)
 
-    def play_game(self):
+    def run_game(self):
         print("Welcome to the Card Game Application!")
 
         # Keep your original simple feature
@@ -74,10 +74,10 @@ class Games:
         print("\nGame Over! Thanks for playing.")
 
     def main(self):
-        self.play_game()
+        self.run_game()
         self.input_func("Press [Enter] to exit.")
 
 
 if __name__ == "__main__":
-    game = Games()
-    game.main()
+        game = Games()
+        game.main()
