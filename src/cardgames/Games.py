@@ -28,7 +28,7 @@ class Games:
         self.playerList = self.startGame()
 
         while True:
-            # Each player places bets
+            # Each player places side bets
             for player in self.playerList[1:]:
                 player.bet("standard")
                 player.bet("pairs")
@@ -206,7 +206,7 @@ class Games:
             player.resolve_bet({
                 "standard": standard_result,
                 "pairs": player.perfectPairs(),
-                "21+3": player.twentyone(),
+                "21+3": player.twentyone(dealer.hand[0]),
                 "insurance": player.insurance(self.playerList[0])
             })
 
