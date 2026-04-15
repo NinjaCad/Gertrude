@@ -1,3 +1,5 @@
+import random
+
 """
 GERTRUDE'S BLACKJACK TIPS
 
@@ -9,6 +11,7 @@ To run game:
 from cardgames.Deck import Deck
 from cardgames.Player import Player, Gertrude
 from cardgames.Dealer import Dealer
+
 
 class Games:
 
@@ -155,10 +158,20 @@ class Games:
                 if choice in enabled_moves or choice in aliases:
                     if choice in ["hit", "h"]:
                         player.hit(self.dealer)
+                        if player.check_cards() > 21:
+                            print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
+                        else:
+                            if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
+                                print(self.playerList[0].trashTalk("hit"))
                     elif choice in ["stand", "s"]:
                         player.stand()
+                        if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("stand"))
+
                     elif choice in ["split", "sp"]:
                         player.split(self.dealer)
+                        if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("split"))
                     # elif choice in ["double down", "dd"]:
                     #    player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
