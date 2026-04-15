@@ -1,3 +1,13 @@
+<<<<<<< HEAD
 {
     "python-envs.defaultEnvManager": "ms-python.python:system"
+=======
+{
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python.testing.pytestArgs": [
+        "test"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
+>>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
 }
