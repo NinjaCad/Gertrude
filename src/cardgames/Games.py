@@ -6,6 +6,7 @@ from cardgames.page_1 import *
 from cardgames.page_2 import *
 from cardgames.page_3 import *
 
+
 import json
 import random
 import time
@@ -48,27 +49,6 @@ def lobby():
         return redirect(url_for('home'))
     return render_template("page_2.html", name=session['name'], player_list=player_list)
 
-# @app.route("/game", methods=["GET", "POST"])
-# def game():
-#     global GAME_STATE
-#     card = ""
-#     #global GAME_STATE
-#     global player_list
-#     #player_list = [Player('Prof Lee')]          #this line to make testing the play_card() route more straightfoward; can be deleted when we merge
-#     # if request.method == "POST":
-#     #     card = global_card_change(GAME_STATE)
-#     # rank, player_turn = increase_counter(GAME_STATE, player_list)
-    
-#     #return render_template("page_3.html", card=card, counter=(rank, player_turn))              #return rank and person who turn it is
-#     if request.method == "POST":
-#         # Don't let them play a card when a slap has happened
-#         if GAME_STATE["slap_in_progress"]:
-#             return
-#         card, new_state = global_card_change(GAME_STATE)
-#         GAME_STATE = new_state
-
-#     return render_template("page_3.html", card=card)
-
 @app.route("/game", methods=["GET", "POST"])
 def game():
     global GAME_STATE, player_list
@@ -98,7 +78,6 @@ def game():
         is_match = (GAME_STATE["current_card"] is not None and 
                     str(GAME_STATE["current_card"].value) == str(GAME_STATE["match_rank"]))
         #stop players from playing when slap possible
-        # is_match = GAME_STATE["current_card"] and str(GAME_STATE["current_card"].rank) == str(GAME_STATE["match_rank"])
         if is_match or GAME_STATE["slap_in_progress"]: # check naming if issues
             return redirect(url_for('game'))
 
@@ -114,7 +93,6 @@ def game():
                         card=GAME_STATE.get("current_art", ""),
                         rank=GAME_STATE.get("match_rank", 1),
                         current_player=GAME_STATE["current_player"].get_name(),
-                        # current_turn_name=GAME_STATE[current_player].get_name())
                         current_turn_name=current_turn_player.get_name())
      
 @app.route("/game-start-stream")
@@ -176,12 +154,6 @@ def player_stream():
     return Response(player_list_stream(), mimetype="text/event-stream", direct_passthrough=True) # RETURNING THE GENERATOR
 
 
-# @app.route("/play_card", methods=["GET", "POST"])
-# def play_card():
-#     card = ""
-#     if request.method == "POST":
-#         card = global_card_change(GAME_STATE)
-
 # COLLECT SLAPS
 
 # Route to check if page_3 needs to be changed
@@ -206,10 +178,6 @@ def slap():
         GAME_STATE["current_card"] = None
         GAME_STATE["current_art"] = ""
 
-        # current_idx = player_list.index(GAME_STATE["current_player"])
-        # next_idx = (current_idx + 1) % len (player_list)
-        # GAME_STATE["current_player"] = player_list[next_idx]
-
         return ("", 204)
 
     # Start slap phase if first slap
@@ -218,11 +186,6 @@ def slap():
         GAME_STATE["slap_list"] = []
     
     # Append the player name to the slap list
-    # player = next(player for player in player_list if player.get_name() == player_name)
-    # # Just in case someone slaps again faster than the POST request to disable their slap button
-    # if player not in GAME_STATE["slap_list"]:
-    #     GAME_STATE["slap_list"].append(player)
-
     if slapper not in GAME_STATE["slap_list"]:
         GAME_STATE["slap_list"].append(slapper)
 
@@ -234,17 +197,7 @@ def slap():
             GAME_STATE["current_player"] = player_list[next_idx]
             GAME_STATE["match_rank"] = rank_to_match
 
-    # Don't redirect yet
     return ("", 204)  
-
-# @app.route("slap", methods=["POST"])
-# def slap():
-#     global GAME_STATE, player_list
-#     player_name = session.get("name")
-
-
-
-
 
 @app.route("/start_game", methods=["GET", "POST"])
 def start_game():
@@ -260,4 +213,5 @@ def start_game():
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000, threaded=True, debug = True)
+    #remove the debug before merge
 
