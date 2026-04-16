@@ -79,7 +79,7 @@
             matchRankDisplay.innerText = data.match_rank;
             currentPlayerDisplay.innerText = data.current_turn_name;
 
-            // Logic for Buttons
+            // logic for buttons
             if (data.slap_in_progress) {
                 playCardBtn.disabled = true;
                 playCardBtn.innerText = "SLAPPING...";
@@ -128,58 +128,6 @@
             return false;
 
         }
-    // 
-    
-
-    //     }
-
-    //     function handleSlap(form) {    
-    //         // Set timestamp
-    //         document.getElementById("ts").value = Date.now();
-
-    //         
-    //         form.querySelector(".slap-button").disabled = true;
-
-    //         // Disable this player's play_card button immediately too
-    //         playCardBtn.disabled = true;
-
-    //         return true;
-    //     }
-
-    //     // Every 20 ms check if the play_card button should be disabled
-    //     setInterval(async () => {
-
-    //         try{
-    //             const res = await fetch("/check_slap");
-    //             const data = await res.json();
-
-    //             if (data.status === "waiting") {
-    //                 // Disable play card for everyone
-    //                 playCardBtn.disabled = true;
-    //                 playCardBtn.innerText = "Time to Slap";
-    //             }
-    //             else{
-    //                 if (playCardBtn.innerText === "Time to Slap" ||
-    //                    (playCardBtn.disabled && "{{ session['name'] }}" === "{{ current_turn_name }}")) {
-    //                    location.reload();
-    //                 }
-    //            }
-    //        }
-    //           catch (errors) {
-    //             console.log("Sync error")
-    //           }
-    //         //   changed to 100ms to make sure it is still a smooth experience
-    //     }, 100);
-
-    //     const gameStatusSource = new EventSource("/game-update-stream");
-
-    //     gameStatusSource.onmessage = function(event){
-    //         if (event.data === "update"){
-    //             location.reload();
-    //         }
-    //  
-        
-    
     </script>
             
 
@@ -187,3 +135,4 @@
 </html>
 
 <!-- Check if its current_turn_name or something else -->
+ 

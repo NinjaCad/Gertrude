@@ -58,7 +58,7 @@ def card_art(rank, suit):
 def resolve_slap(game_state, player_list: "list[Player]"):
     slap_list = game_state["slap_list"]
     
-    # Card value check with match_rank from GAME_STATE
+    # card value check with match_rank from GAME_STATE
     current_match_value = str(game_state['match_rank'])
     actual_card_value = str(game_state["current_card"].get_value())
     valid_slap = (actual_card_value == current_match_value)
@@ -67,7 +67,7 @@ def resolve_slap(game_state, player_list: "list[Player]"):
         if len(slap_list) >= len(player_list) - 1:
             loser = next((p for p in player_list if p not in slap_list), slap_list[-1])
         else:
-            return game_state, None # Don't resolve until enough people slap
+            return game_state, None # don't finish until enough people slap
     else:
         loser = slap_list[0]
 
@@ -77,7 +77,7 @@ def resolve_slap(game_state, player_list: "list[Player]"):
     # clear the deck and re-enable the play button
     game_state["played_cards"].clear()
     game_state["slap_list"].clear()
-    game_state["slap_in_progress"] = False # This is what makes the buttons work again
+    game_state["slap_in_progress"] = False # make the buttons work again
     game_state["current_card"] = None
 
     # always return just the state so the route updates
