@@ -38,40 +38,152 @@
 <body>
 
     <!-- display the current rank of the global card counter -->
-    <p>Card to Match: {{ rank }}</p>
+    <p>Card to Match: <span id ="match-rank-val">{{ rank }}</span></p>
 
     <!-- display current player's name -->
-    <p>Current Player: {{ current_player }}</p>
+    <p>Current Player: <span id="current-player-val">{{ current_player }}</span></p>
 
     <div class="card-container">
-        <pre>{{ card }}</pre>
+        <pre id="ascii-display">{{ card }}</pre>
 
 
         <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
-            <button id="slap-button" type="submit"></button>
+            <input type="hidden" name="timestamp" id="ts">
+            <button id = "slap-btn" class="slap-button" type="submit" disabled></button>
         </form>
     </div>
 
     <form method="POST" action="/game">
-        <button id="play-card-button" type="submit">
-            Play Card
+
+        <!-- Logic to disable to play card button if it's not the player's turn -->
+        <button id="play-card-btn" type="submit"
+            {% if session['name'] != current_turn_name %} disabled title ="Not Yet" {% endif %}>
+            {% if session['name'] == current_turn_name %} Play Card {% else %} Wait {% endif %}
         </button>
     </form>
 
     <script>
-        const play_card_button = document.getElementById("play-card-button");
+        const playCardBtn = document.getElementById("play-card-btn");
+        const slapBtn = document.getElementById("slap-btn");
+        const asciiDisplay = document.getElementById("ascii-display");
+        const matchRankDisplay = document.getElementById("match-rank-val");
+        const currentPlayerDisplay = document.getElementById("current-player-val");
+        const myName = "{{ session['name'] }}";
+
+        const source = new EventSource("/game-sync-stream");
+
+        source.onmessage = function(passes) {
+            const data = JSON.parse(passes.data);
+            
+            asciiDisplay.innerText = data.last_card_art;
+            matchRankDisplay.innerText = data.match_rank;
+            currentPlayerDisplay.innerText = data.current_turn_name;
+
+            // Logic for Buttons
+            if (data.slap_in_progress) {
+                playCardBtn.disabled = true;
+                playCardBtn.innerText = "SLAPPING...";
+                slapBtn.disabled = false;
+            } else {
+                if (data.current_card_value){
+                    slapBtn.disabled = false;
+                }
+                else{
+                    slapBtn.disabled = true;
+                }
+                if (data.current_turn_name === myName) {
+                    playCardBtn.disabled = false;
+                    playCardBtn.innerText = "Play Card";
+                } else {
+                    playCardBtn.disabled = true;
+                    playCardBtn.innerText = "Wait";
+                }
+            }
+        };
+
+        source.onerror = function(){
+            console.error("EventSource error");
+            source.close();
+        };
 
         function handleSlap(form) {
+
+            event.preventDefault();
+
+            // Set timestamp
+            document.getElementById("ts").value = Date.now();
             // Disable this player's slap button immediately
-            const slap_button = document.getElementById("slap-button");
-            slap_button.disabled = true;
-
+            slapBtn.disabled = true;
             // Disable this player's play_card button immediately too
-            play_card_button.disabled = true;
+            playCardBtn.disabled = true;
 
-            return true;
+            fetch("/slap", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: "timestamp=" + document.getElementById("ts").value
+            }).catch(err => console.error("Slap error:", err));
+
+            return false;
+
         }
+    // 
+    
+
+    //     }
+
+    //     function handleSlap(form) {    
+    //         // Set timestamp
+    //         document.getElementById("ts").value = Date.now();
+
+    //         
+    //         form.querySelector(".slap-button").disabled = true;
+
+    //         // Disable this player's play_card button immediately too
+    //         playCardBtn.disabled = true;
+
+    //         return true;
+    //     }
+
+    //     // Every 20 ms check if the play_card button should be disabled
+    //     setInterval(async () => {
+
+    //         try{
+    //             const res = await fetch("/check_slap");
+    //             const data = await res.json();
+
+    //             if (data.status === "waiting") {
+    //                 // Disable play card for everyone
+    //                 playCardBtn.disabled = true;
+    //                 playCardBtn.innerText = "Time to Slap";
+    //             }
+    //             else{
+    //                 if (playCardBtn.innerText === "Time to Slap" ||
+    //                    (playCardBtn.disabled && "{{ session['name'] }}" === "{{ current_turn_name }}")) {
+    //                    location.reload();
+    //                 }
+    //            }
+    //        }
+    //           catch (errors) {
+    //             console.log("Sync error")
+    //           }
+    //         //   changed to 100ms to make sure it is still a smooth experience
+    //     }, 100);
+
+    //     const gameStatusSource = new EventSource("/game-update-stream");
+
+    //     gameStatusSource.onmessage = function(event){
+    //         if (event.data === "update"){
+    //             location.reload();
+    //         }
+    //  
+        
+    
     </script>
+            
 
 </body>
 </html>
+
+<!-- Check if its current_turn_name or something else -->
