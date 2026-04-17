@@ -4,13 +4,14 @@ import flask
 
 #referenced test_game_initialization.py and test_play_card.py to help build test cases
 
+# client() fixture for use to test getting the route
 @pytest.fixture
 def client():
     app.config["TESTING"] = True
     with app.test_client() as client:
         yield client
 
-#@pytest.fixture(autouse=True)
+# simulate_game() fixture for use to set up a game to test that the winner (in these tests, Faith) is displayed properly
 @pytest.fixture
 def simulate_game():
     # Initiate players
