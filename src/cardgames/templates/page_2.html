@@ -62,7 +62,7 @@
         };
 
         function play_sound(effect) {
-            player = document.getElementById("sfx");
+            const player = document.getElementById("sfx");
             player.src = `/static/sfx/${effect}`;
             player.play();
         };

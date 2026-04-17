@@ -53,12 +53,10 @@
     </div>
 
     <form method="POST" action="/game">
-        <button id="play-card-button" type="submit" onclick="play_sound('Slurp.mp3')">
+        <button id="play-card-button" type="submit" onclick="play_sound('slurp.mp3')">
             Play Card
         </button>
     </form>
-
-    <audio id="sfx" preload="auto"></audio>
 
     <script>
         const play_card_button = document.getElementById("play-card-button");
@@ -75,14 +73,14 @@
         };
 
         const sound_effects = [
-            "Slurp.mp3",
-            "slap_effects/Bonk.mp3",
-            "slap_effects/Goat.mp3",
-            "slap_effects/Slap.mp3",
-            "slap_effects/Vine_boom.mp3"
-        ]
+            "slurp.mp3",
+            "slap_effects/bonk.mp3",
+            "slap_effects/goat.mp3",
+            "slap_effects/slap.mp3",
+            "slap_effects/vine_boom.mp3"
+        ];
 
-        const sounds = {}
+        const sounds = {};
 
         sound_effects.forEach(file => {
             const audio = new Audio(`/static/sfx/${file}`);
