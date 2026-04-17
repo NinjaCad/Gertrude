@@ -34,7 +34,7 @@
             <article>
                 <section class="panel">
                     <h2>Players:</h2>
-                        <div id="waiting_list">
+                        <div id="waiting-list">
                             {% block body %}
                             {% endblock body %}
                         </div> <!-- Dynamic section of List to be replaced on player joining -->
@@ -75,7 +75,7 @@
             const source = new EventSource("/player-list-stream");
 
             source.onmessage = (event) => {
-                document.getElementById("waiting_list").innerHTML = event.data;
+                document.getElementById("waiting-list").innerHTML = event.data;
             };
         </script>
     </body>

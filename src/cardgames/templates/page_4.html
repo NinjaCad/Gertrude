@@ -1,41 +1,3 @@
-<!-- 
-@app.route("/results_page") 
- def results():
-    winner = None
-    if player_list and win_check(player_list):
-            winner = player_list[0]
-    return render_template("page_4.html", winner=winner)
- -->
-
- <!-- 
-@app.route("/play_card", methods=["GET", "POST"])
-def play_card():
-    card = ""
-    if request.method == "POST":
-        card = global_card_change()
-
-    if player_list and win_check(player_list):
-        winner = player_list[0]
-        return render_template("page_4.html", winner=winner)
-        
-    return render_template("page_3.html", card=card)                            #return rank and person whose turn it is
-
-Old style stuff:
-            #invisible_button{
-                opacity: 0;
-            }
-
-            #invisible_button:hover{
-                opacity: 1;
-            }
-
-            a {
-                text-decoration: none;
-            }
-
-    -->
-
- 
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -76,7 +38,7 @@ Old style stuff:
                     </div>
 
                     <div class="action-zone secret-home-zone">
-                        <a id="invisible_button" href="{{ url_for('home') }}" class="button button-secondary button-large">
+                        <a id="invisible-button" href="{{ url_for('home') }}" class="button button-secondary button-large">
                             Real Home Page
                         </a>
                     </div>

@@ -66,12 +66,12 @@ a:hover {
 }
 
 /* ===== LAYOUT (ARTICLE, HEADER, MAIN, FOOTER, ETC) ===== */
-#Quotation {
+#quotation {
     padding: 1%;
     display: none;
     text-align: center;
 }
-#Quotation * {
+#quotation * {
     padding: 1% .1% .1% 1%; /* top right bottom left */
     display: block;
 }
@@ -220,7 +220,7 @@ nav li a:hover {
 
 
 /* ===== PAGE 2 (WAITING ROOM) ===== */
-#waiting_list {
+#waiting-list {
     min-height: 4rem;
     max-height: 18rem;
     overflow-y: auto;
@@ -228,20 +228,20 @@ nav li a:hover {
     scrollbar-width: thin;
     scrollbar-color: rgba(220, 221, 224, 0.25) transparent;
 }
-#waiting_list::-webkit-scrollbar {
+#waiting-list::-webkit-scrollbar {
     width: 6px;
 }
-#waiting_list::-webkit-scrollbar-track {
+#waiting-list::-webkit-scrollbar-track {
     background: transparent;
 }
-#waiting_list::-webkit-scrollbar-thumb {
+#waiting-list::-webkit-scrollbar-thumb {
     background: rgba(220, 221, 224, 0.25);
     border-radius: 4px;
 }
-#waiting_list::-webkit-scrollbar-thumb:hover {
+#waiting-list::-webkit-scrollbar-thumb:hover {
     background: rgba(220, 221, 224, 0.4);
 }
-#waiting_list ul {
+#waiting-list ul {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -250,7 +250,7 @@ nav li a:hover {
     padding-left: 0;
     margin: 0;
 }
-#waiting_list li {
+#waiting-list li {
     padding: 0.55rem 0.9rem;
     background: rgba(220, 221, 224, 0.08);
     border: 1px solid rgba(220, 221, 224, 0.12);
@@ -382,12 +382,12 @@ nav li a:hover {
     margin-top: 2.5rem;
     position: relative;
 }
-#invisible_button {
+#invisible-button {
     opacity: 0;
     transition: opacity 0.2s ease;
     pointer-events: none;
 }
-.secret-home-zone:hover #invisible_button {
+.secret-home-zone:hover #invisible-button {
     opacity: 1;
     pointer-events: auto;
 }

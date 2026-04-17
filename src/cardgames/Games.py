@@ -136,26 +136,26 @@ def start_game():
 # TESTING WIN SCREEN
 @app.route("/test_win")
 def test_win():
-    class FakePlayer:
+    class fake_player:
         def __init__(self, name):
             self.name = name
 
-    fake_winner = FakePlayer("Test Player")
+    fake_winner = fake_player("Test Player")
 
     return render_template("page_4.html", winner=fake_winner)
 
 # TESTING GAME SCREEN
 @app.route("/test_game")
 def test_game():
-    class FakePlayer:
+    class fake_player:
         def __init__(self, name):
             self.name = name
 
     fake_players = [
-        FakePlayer("Eli"),
-        FakePlayer("Joseph"),
-        FakePlayer("Faith"),
-        FakePlayer("Rose")
+        fake_player("Eli"),
+        fake_player("Joseph"),
+        fake_player("Faith"),
+        fake_player("Rose")
     ]
 
     fake_card = """┌─────────┐
