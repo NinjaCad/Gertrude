@@ -68,7 +68,7 @@ class Games:
 
         return selected_track
 
-    def clear():
+    def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def slow_Print(text, delay=0.03):
@@ -78,7 +78,7 @@ class Games:
             time.sleep(delay)
         print()
 
-    def show_Title():
+    def show_Title(self):
         print(r"""
     ========================================
     ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄ 
@@ -98,8 +98,8 @@ class Games:
     ========================================
     """)
 
-    def opening_Sequence():
-        show_Title()
+    def opening_Sequence(self):
+        self.show_Title()
 
         lines = [
             "The cards are shuffled...",
@@ -108,12 +108,12 @@ class Games:
         ]
 
         for line in lines:
-            slow_Print(line, 0.04)
+            self.slow_Print(line, 0.04)
             time.sleep(0.3)
 
-        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+        self.slow_Print("\nWelcome to Let's Fish!\n", 0.05)
 
-    def show_Rules():
+    def show_Rules(self):
         print("\n========== HOW TO PLAY ==========")
         print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
         print("- If the chosen player has the requested card, they must give ALL of them.")
@@ -122,7 +122,7 @@ class Games:
         print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
 
-    def main_Menu():
+    def main_Menu(self):
         while True:
             print("\n1. Start Game")
             print("2. How to Play")
@@ -133,17 +133,17 @@ class Games:
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                show_Rules()
+                self.show_Rules()
             elif choice == "3":
                 print("Bye bye!")
                 exit()
             else:
                 print("Please enter '1', '2', or '3'.\n")
 
-    def run_Game():
-        clear()
-        opening_Sequence()
-        choice = main_Menu()
+    def run_Game(self):
+        self.clear()
+        self.opening_Sequence()
+        choice = self.main_Menu()
         
         if choice == "Starting game...":
             print("\nStarting game...\n")
@@ -210,47 +210,7 @@ class Games:
         self.turn_list = turn_list
         return turn_list
 
-<<<<<<< HEAD
-    #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
-    def endGameState(self, players):
-        nameScorePairs = {p.name: p.numBooks for p in players}
-        mostBooks = max(nameScorePairs.values())
-        mostBooksHolders = [name for name, score in nameScorePairs.items() if score == mostBooks]
-        #in case of tie:
-        if len(mostBooksHolders) > 1:
-            print(f"It's a tie between {' and '.join(mostBooksHolders)} with {mostBooks} books each!")
-        #single winner:
-        else:
-            winner = mostBooksHolders[0]
-            print(f"{winner} wins with {mostBooks} books!")
-        #scoreboard/lists all player's scores
-        print("\nFinal scores:")
-        for player in players:
-            if player.numBooks == 0:
-                print(f"{player.name} has 0 books.")
-            elif player.numBooks == 1:
-                print(f"{player.name}: {player.numBooks} book.\nThey have the following book: {player.books}")
-                player.showBooks()
-            else:
-                print(f"{player.name}: {player.numBooks} books.\nThey have the following books: {player.books}")
-                player.showBooks()
-        print()
-
-            
-    def card_thievery(self, turn_list, host_player):
-        stepper = 1
-        player_number = []
-        player_dict = {}
-        for players in turn_list:
-            if players != host_player and len(players.hand) != 0:
-                print("player "+str(stepper)+": "+str(players.name)+" cards: "+str(len(players.hand))) #Prints players and amount of cards
-                player_number.append(str(stepper))
-                player_dict[(str(players.name)).lower()] = stepper      
-                
-            stepper += 1
-=======
     def goFishing(self, player):
->>>>>>> b20335d8501700c8ea24158854e4c4329bd202a3
 
         print("\n"+"Go Fishing!") #Maybe replace with Prettier Font?
         card = self.deck.getCard()
@@ -259,16 +219,6 @@ class Games:
 
         return(card)
 
-<<<<<<< HEAD
-        thief_choice = 0
-        value_dict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
-        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
-
-        while thief_choice not in value_dict:
-            thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
-            if thief_choice not in value_dict:
-                print("Invalid Choice! Choose Card Type, eg: aces.")
-=======
     #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
     def endGameState(self, players):
         nameScorePairs = {p.name: p.numBooks for p in players}
@@ -326,25 +276,11 @@ class Games:
             if thief_choice not in self.valueDict:
                 print("Invalid Choice! Choose Card Type, eg: aces, twos, ones, etc.\n")
 
->>>>>>> b20335d8501700c8ea24158854e4c4329bd202a3
 
         stolen_cards = 0
         card_counter = 0
         target_list = target_player.hand[:]
         for card in target_list:
-<<<<<<< HEAD
-            if card.value == value_dict[thief_choice]:
-                host_player.addCard(card)
-                target_player.removeCard(card)
-                stolen_cards += 1
-            card_counter += 1
-        
-        if stolen_cards == 0:
-            print("Go Fish!") #Place Go Fish Here
-
-        return target_player
-
-=======
             if card.value == self.valueDict[thief_choice]:
                 host_player.addCard(card)
                 target_player.removeCard(card)
@@ -355,7 +291,6 @@ class Games:
             return False
         else:
             return True
->>>>>>> b20335d8501700c8ea24158854e4c4329bd202a3
         
 
     def main(self):
@@ -369,7 +304,7 @@ class Games:
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
         
-        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        game_running = True #game runs until broken out of by game_running = false when all 13 books are formed
         while game_running:
             for player in turn_list:
 
@@ -377,9 +312,15 @@ class Games:
                 input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                 player.isTurn = True
                 player.takeTurn(turn_list, self)
-
                 player.isTurn = False
-    
+
+                #Checks to see if game is over; there is also a check in the takeTurn function that breaks out of the turn loop when this has been met so that the game ends propperly.
+                if self.dealer.checkFor13Books(players) == True:
+                    game_running = False
+        
+        #Once main game is over, prints winner(s) & scoreboard + who made what books
+        self.endGameState(players)
+
         input('Press [Enter] to exit.')
         
 
