@@ -8,7 +8,15 @@ from cardgames.Deck import Deck
 from cardgames.Card import Card
 
 
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    with app.test_client() as client:
+        yield client
+
+@pytest.fixture
 def setup_game():
+    global GAME_STATE, player_list
     GAME_STATE.clear()
 
     GAME_STATE.update({
@@ -29,12 +37,9 @@ def setup_game():
         Player("test_player_2"),
         Player("test_player_3"),
     ])
+    
 
-
-def test_bad_slap():
-    setup_game()
-    app.config["TESTING"] = True
-    client = app.test_client()
+def test_bad_slap(client, setup_game):
 
     card = Card("Hearts", 5, [], [])
     GAME_STATE["current_card"] = card
@@ -48,13 +53,9 @@ def test_bad_slap():
     response = client.post("/slap", data={"timestamp": "0"})
 
     assert response.status_code == 204
-
     assert len(player_list[0].hand) > 0
 
-def test_good_slap():
-    setup_game()
-    app.config["TESTING"] = True
-    client = app.test_client()
+def test_good_slap(client, setup_game):
 
     card = Card("Hearts", 5, [], [])
     GAME_STATE["current_card"] = card
@@ -68,27 +69,20 @@ def test_good_slap():
     response = client.post("/slap", data={"timestamp": "0"})
 
     assert response.status_code == 204
+    assert GAME_STATE["slap_in_progress"] is True
 
-    assert GAME_STATE["slap_in_progress"] == True
 
-
-def test_game_route_initializes_game():
-    setup_game()
-    app.config["TESTING"] = True
-    client = app.test_client()
+def test_game_route_initializes_game(client, setup_game):
     
     with client.session_transaction() as game_session:
         game_session["name"] = "test_player_1"
         
-        response = client.get("/game")
+    response = client.get("/game")
 
-        assert response.status_code == 200
-        assert GAME_STATE["game_started"] == True
+    assert response.status_code == 200
+    assert GAME_STATE["game_started"] is True
 
-def test_lock_play_button_for_others():
-    setup_game()
-    app.config["TESTING"] = True
-    client = app.test_client()
+def test_lock_play_button_for_others(client, setup_game):
     
     with client.session_transaction() as game_session:
         game_session["name"] = "test_player_2"

@@ -64,6 +64,10 @@ def resolve_slap(game_state, player_list: "list[Player]"):
     valid_slap = (actual_card_value == current_match_value)
 
     if valid_slap:
+        if win_check(game_state["slap_list"]):
+            winner = game_state["slap_list"][0].get_name()
+            return game_state, winner
+        
         if len(slap_list) >= len(player_list) - 1:
             loser = next((p for p in player_list if p not in slap_list), slap_list[-1])
         else:
