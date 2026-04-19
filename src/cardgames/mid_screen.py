@@ -26,4 +26,7 @@ def start_transition_screen(num1, num2):
     time.sleep(2)
 
     wait_for_player(num2)
-start_transition_screen(4,5)
+
+
+if __name__ == "__main__":
+    start_transition_screen(4, 5)

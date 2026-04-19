@@ -1,19 +1,39 @@
-<<<<<<< HEAD
-from cardgames.Card import Card
-=======
 from cardgames.Card_Compare import *
->>>>>>> db21b8c5a013bc397b4233adf9963264716c5db1
 import os
 
 
 class Player:
-    def __init__(self, name):
+    def __init__(self, name, nickname=None, level="Beginner"):
         self.name = name
+        self.nickname = nickname.strip() if isinstance(nickname, str) and nickname.strip() else name
+        self.level = self._normalize_level(level)
+        self.xp = 0
         self.hand = []
         self.knownCards = []
         self.redraw_tokens = 0
         self.chosen_card = None
         self.chosen_card = Card("", 0, [], [])
+
+    def _normalize_level(self, level):
+        if not isinstance(level, str):
+            return "Beginner"
+        cleaned = level.strip().title()
+        if cleaned in ["Beginner", "Intermediate", "Advanced"]:
+            return cleaned
+        return "Beginner"
+
+    def profile_display_name(self):
+        if self.nickname and self.nickname != self.name:
+            return f"{self.name} ({self.nickname})"
+        return self.name
+
+    def add_xp(self, amount: int = 1):
+        if amount < 0:
+            raise ValueError("XP amount cannot be negative.")
+        self.xp += amount
+
+    def get_xp(self) -> int:
+        return self.xp
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
