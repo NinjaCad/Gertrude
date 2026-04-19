@@ -80,18 +80,21 @@ class Games:
 
     def show_Title():
         print(r"""
-        ========================================
     
-██╗     ███████╗████████╗███████╗    ███████╗██╗███████╗██╗  ██╗██╗
-██║     ██╔════╝╚══██╔══╝██╔════╝    ██╔════╝██║██╔════╝██║  ██║██║
-██║     █████╗     ██║   ███████╗    █████╗  ██║███████╗███████║██║
-██║     ██╔══╝     ██║   ╚════██║    ██╔══╝  ██║╚════██║██╔══██║╚═╝
-███████╗███████╗   ██║   ███████║    ██║     ██║███████║██║  ██║██╗
-╚══════╝╚══════╝   ╚═╝   ╚══════╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝
+__| |___________________________________________________________________| |__
+__   ___________________________________________________________________   __
+  | |                                                                   | |  
+  | |██╗     ███████╗████████╗███████╗    ███████╗██╗███████╗██╗  ██╗██╗| |  
+  | |██║     ██╔════╝╚══██╔══╝██╔════╝    ██╔════╝██║██╔════╝██║  ██║██║| |  
+  | |██║     █████╗     ██║   ███████╗    █████╗  ██║███████╗███████║██║| |  
+  | |██║     ██╔══╝     ██║   ╚════██║    ██╔══╝  ██║╚════██║██╔══██║╚═╝| |  
+  | |███████╗███████╗   ██║   ███████║    ██║     ██║███████║██║  ██║██╗| |  
+  | |╚══════╝╚══════╝   ╚═╝   ╚══════╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝| |  
+__| |___________________________________________________________________| |__
+__   ___________________________________________________________________   __
+  | |                                                                   | |  
                                                                                                                                                  
-        ========================================
-    A Card Game of Chance, Choice, & Everything Inbetween
-        ========================================
+            A Card Game of Chance, Choice, & Everything Inbetween
     """)
 
     def opening_Sequence():
@@ -117,6 +120,12 @@ class Games:
         print("- The player who has the most matching sets at the end of the game wins!")
         print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
+    
+    def choose_Game_mode(self):
+        print("\nSelect Game Mode:")
+        print("1. Regular (standard dealing)")
+        print("2. Speedy (10 cards each)")
+        print("3. hyper mode (13 card dealt)")
 
     def main_Menu():
         while True:
@@ -136,13 +145,6 @@ class Games:
             else:
                 print("Please enter '1', '2', or '3'.\n")
 
-    def run_Game():
-        clear()
-        opening_Sequence()
-        choice = main_Menu()
-        
-        if choice == "Starting game...":
-            print("\nStarting game...\n")
 
     def create_players(self):
         players = []
@@ -190,16 +192,20 @@ class Games:
 
             player.knownCards = knownCardsStore # Reverses cards to be visible
     
-    def start_game(self, players):
+    def start_game(self, players, mode="regular"):
         self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         playerlist = players[:]
         random.shuffle(playerlist)
         turn_list = playerlist
-
-        if len(players) < 4:
-            cardsdealt = 7
+        
+        if mode == "speedy":
+            cardsdealt = 10
+        elif mode == "hyper":
+            cardsdealt = 13
         else:
-            cardsdealt = 5
+            cardsdealt = 7 if len(players) < 4 else 5
+
+        print(f" {mode.capitalize()} Mode: Dealing {cardsdealt} cards each")
         self.dealer.dealCards(cardsdealt, turn_list)
         list.reverse(turn_list) #last dealt goes first
 
@@ -208,7 +214,14 @@ class Games:
 
     def goFishing(self, player):
 
-        print("\n"+"Go Fishing!") #Maybe replace with Prettier Font?
+        print("\n"+r"""
+ ██████╗  ██████╗     ███████╗██╗███████╗██╗  ██╗██╗███╗   ██╗ ██████╗ ██╗
+██╔════╝ ██╔═══██╗    ██╔════╝██║██╔════╝██║  ██║██║████╗  ██║██╔════╝ ██║
+██║  ███╗██║   ██║    █████╗  ██║███████╗███████║██║██╔██╗ ██║██║  ███╗██║
+██║   ██║██║   ██║    ██╔══╝  ██║╚════██║██╔══██║██║██║╚██╗██║██║   ██║╚═╝
+╚██████╔╝╚██████╔╝    ██║     ██║███████║██║  ██║██║██║ ╚████║╚██████╔╝██╗
+ ╚═════╝  ╚═════╝     ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝
+              """) #Maybe replace with Prettier Font?
         card = self.deck.getCard()
         print(str(card))
         player.addCard(card)
@@ -292,25 +305,26 @@ class Games:
     def main(self):
         print('Welcome to the Games application!')
         print('This games application is under development.')
-
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         
-        # Access each player by "for player in players" loop OR by using indexing (player[0].name)
-        players = self.create_players()
-        turn_list = self.start_game(players)
-        print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
+        Games.clear()
+        Games.opening_Sequence()
+        menu_choice = Games.main_Menu()
+        if menu_choice == "Starting game...":
+            selected_mode = self.choose_Game_mode()
+            self.deck.shuffle()
+            players = self.create_players()
+            turn_list = self.start_game(players)
+            print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
+            
+            game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+            while game_running:
+                for player in turn_list:
+                    input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
+                    player.isTurn = True
+                    player.takeTurn(turn_list, self)
+
+                    player.isTurn = False
         
-        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
-        while game_running:
-            for player in turn_list:
-
-                # Else
-                input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
-                player.isTurn = True
-                player.takeTurn(turn_list, self)
-
-                player.isTurn = False
-    
         input('Press [Enter] to exit.')
         
 
