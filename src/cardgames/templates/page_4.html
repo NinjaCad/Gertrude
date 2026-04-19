@@ -60,6 +60,14 @@ def play_card():
 
         <button id="invisible_button"><a href="{{url_for('home')}}">Real Home Page</a></button>                 <!--Real Button-->
 
+        <audio id="sfx" preload="auto" src="/static/sfx/weeeee.mp3"></audio>
+
+        <script>
+            window.addEventListener("load", () => {
+                const effect = document.getElementById('sfx');
+                effect.play();
+            });
+        </script>
     </body>
 </html>
 
