@@ -85,17 +85,17 @@ class Games:
         except Exception:
             return False
 
-    def clear():
+    def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def slow_Print(text, delay=0.03):
+    def slow_Print(self, text, delay=0.03):
         for char in text:
             print(char, end="")
             sys.stdout.flush()
             time.sleep(delay)
         print()
 
-    def show_Title():
+    def show_Title(self):
         print(r"""
     ========================================
     ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄ 
@@ -115,8 +115,8 @@ class Games:
     ========================================
     """)
 
-    def opening_Sequence():
-        show_Title()
+    def opening_Sequence(self):
+        self.show_Title()
 
         lines = [
             "The cards are shuffled...",
@@ -125,12 +125,12 @@ class Games:
         ]
 
         for line in lines:
-            slow_Print(line, 0.04)
+            self.slow_Print(line, 0.04)
             time.sleep(0.3)
 
-        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+        self.slow_Print("\nWelcome to Let's Fish!\n", 0.05)
 
-    def show_Rules():
+    def show_Rules(self):
         print("\n========== HOW TO PLAY ==========")
         print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
         print("- If the chosen player has the requested card, they must give ALL of them.")
@@ -139,7 +139,7 @@ class Games:
         print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
 
-    def main_Menu():
+    def main_Menu(self):
         while True:
             print("\n1. Start Game")
             print("2. How to Play")
@@ -150,17 +150,17 @@ class Games:
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                show_Rules()
+                self.show_Rules()
             elif choice == "3":
                 print("Bye bye!")
                 exit()
             else:
                 print("Please enter '1', '2', or '3'.\n")
 
-    def run_Game():
-        clear()
-        opening_Sequence()
-        choice = main_Menu()
+    def run_Game(self):
+        self.clear()
+        self.opening_Sequence()
+        choice = self.main_Menu()
         
         if choice == "Starting game...":
             print("\nStarting game...\n")
