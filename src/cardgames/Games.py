@@ -69,33 +69,38 @@ class Games:
                 self.deck.reset()
         
         #begin finish summary functionality
-        results_list = []
+        results_list = [] #create new results list that will be added in from the for loop below, then sorted based on money
         print("Total money made or lost by each player:")
         for player in self.playerList:
             if player.name == "GERTRUDE":
-                continue
+                continue #skip gert, she isn't technically a player
             print(f"{player.name}: ", end='')
-            if player.money < starting_money:
+            if player.money < starting_money: #if the player lost money overall, throughout the whole game
                 print(f"-${starting_money - player.money}")
-            elif player.money > starting_money:
+            elif player.money > starting_money: #if the player won money overall, throughout the whole game
                 print(f"+${player.money - starting_money}")
             else:
-                print("No change in money!")
-            results_list.append([player.name, player.money])
+                print("No change in money!") #edge case where player didn't make or lose any money
+            results_list.append([player.name, player.money]) #player gets added regardless of their monetary status
         print("\nFinal Standings:")
-        sorted_results_list = sorted(results_list, key=lambda item: item[1],reverse=True)
+        sorted_results_list = sorted(results_list, key=lambda item: item[1],reverse=True) #lambda essentially makes it so that sorted uses item 
+                                                                                            #which uses item[1] which is money which can be sorted
+
         
-        store = ""
-        for player in range(len(sorted_results_list)):
-            if player == 0 or sorted_results_list[0][1] == sorted_results_list[player][1]:
-                if player != 0:
-                    store += ", "
-                store += sorted_results_list[player][0]
+        store = "" #will be used in congratulation msg
+        for player in range(len(sorted_results_list)): #iterate through the players that just got sorted above
+            if player == 0 or sorted_results_list[0][1] == sorted_results_list[player][1]: 
+                #if a player is sorted to index 0, that means they made the most money
+                #other part of or statement checks if the current player iterated has the same amount of money as player at index 0 (which definitely won)
+                if player != 0: #if the player fulfills second half of or statement, then that means number of winners > 1, thus a comma and space is needed
+                    store += ", " 
+                store += sorted_results_list[player][0] #regardless of which condition == True, store concats the name of the player
             print(f"{player + 1}: {sorted_results_list[player][0]}..........${sorted_results_list[player][1]}")
+            #prints the players place, name, and final money
         
-        print(f"\nGertrude rolls her eyes: 'Congrats to {store} for winning... I guess...'")
+        print(f"\nGertrude rolls her eyes: 'Congrats to {store} for winning... I guess...'") 
         #special gertrude dialogue
-        if sorted_results_list[0][1] < starting_money:
+        if sorted_results_list[0][1] < starting_money: #if NO player made any money, only lost money to varying degrees, this returns True
             print(f"Gertrude looks away: 'Although now that I think about it, {store} didn't actually make any money...", end='')
             print("You know what they say, the house ALWAYS wins...'")
             print("Gertrude smiles eerily...")
