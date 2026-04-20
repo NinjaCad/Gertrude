@@ -68,7 +68,7 @@ class Games:
 
         return selected_track
 
-    def clear():
+    def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
     def slow_Print(text, delay=0.03):
@@ -78,7 +78,7 @@ class Games:
             time.sleep(delay)
         print()
 
-    def show_Title():
+    def show_Title(self):
         print(r"""
     ========================================
     ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄ 
@@ -98,8 +98,8 @@ class Games:
     ========================================
     """)
 
-    def opening_Sequence():
-        show_Title()
+    def opening_Sequence(self):
+        self.show_Title()
 
         lines = [
             "The cards are shuffled...",
@@ -108,12 +108,12 @@ class Games:
         ]
 
         for line in lines:
-            slow_Print(line, 0.04)
+            self.slow_Print(line, 0.04)
             time.sleep(0.3)
 
-        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
+        self.slow_Print("\nWelcome to Let's Fish!\n", 0.05)
 
-    def show_Rules():
+    def show_Rules(self):
         print("\n========== HOW TO PLAY ==========")
         print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
         print("- If the chosen player has the requested card, they must give ALL of them.")
@@ -122,7 +122,7 @@ class Games:
         print("(The game draws to a close as the deck empties and every card set finds their pairs).")
         print("================================\n")
 
-    def main_Menu():
+    def main_Menu(self):
         while True:
             print("\n1. Start Game")
             print("2. How to Play")
@@ -133,17 +133,17 @@ class Games:
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                show_Rules()
+                self.show_Rules()
             elif choice == "3":
                 print("Bye bye!")
                 exit()
             else:
                 print("Please enter '1', '2', or '3'.\n")
 
-    def run_Game():
-        clear()
-        opening_Sequence()
-        choice = main_Menu()
+    def run_Game(self):
+        self.clear()
+        self.opening_Sequence()
+        choice = self.main_Menu()
         
         if choice == "Starting game...":
             print("\nStarting game...\n")
@@ -304,7 +304,7 @@ class Games:
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
         
-        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        game_running = True #game runs until broken out of by game_running = false when all 13 books are formed
         while game_running:
             for player in turn_list:
 
@@ -312,9 +312,15 @@ class Games:
                 input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                 player.isTurn = True
                 player.takeTurn(turn_list, self)
-
                 player.isTurn = False
-    
+
+                #Checks to see if game is over; there is also a check in the takeTurn function that breaks out of the turn loop when this has been met so that the game ends propperly.
+                if self.dealer.checkFor13Books(players) == True:
+                    game_running = False
+        
+        #Once main game is over, prints winner(s) & scoreboard + who made what books
+        self.endGameState(players)
+
         input('Press [Enter] to exit.')
         
 
