@@ -34,8 +34,6 @@ class Player:
 
     def hideHand(self):
         if self.hand:
-            hidden = self.name
-
             #Clears the terminal
             print("\x1b[2J\033[H")
 
