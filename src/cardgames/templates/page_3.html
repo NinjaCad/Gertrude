@@ -47,18 +47,28 @@
         <pre id="ascii-display">{{ card }}</pre>
 
 
+<<<<<<< HEAD
         <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
             <input type="hidden" name="timestamp" id="ts">
             <button id = "slap-btn" class="slap-button" type="submit" disabled></button>
+=======
+        <form method="POST" action="/slap" onsubmit="return handleSlap(this);" onclick="play_random_sound()">
+            <button id="slap-button" type="submit"></button>
+>>>>>>> origin/dev_scrumptious_bytes
         </form>
     </div>
 
     <form method="POST" action="/game">
+<<<<<<< HEAD
 
         <!-- Logic to disable to play card button if it's not the player's turn -->
         <button id="play-card-btn" type="submit"
             {% if session['name'] != current_turn_name %} disabled title ="Not Yet" {% endif %}>
             {% if session['name'] == current_turn_name %} Play Card {% else %} Wait {% endif %}
+=======
+        <button id="play-card-button" type="submit" onclick="play_sound('slurp.mp3')">
+            Play Card
+>>>>>>> origin/dev_scrumptious_bytes
         </button>
     </form>
 
@@ -127,7 +137,42 @@
 
             return false;
 
+<<<<<<< HEAD
         }
+=======
+            return true;
+        };
+
+        const sound_effects = [
+            "slurp.mp3",
+            "slap_effects/bonk.mp3",
+            "slap_effects/goat.mp3",
+            "slap_effects/slap.mp3",
+            "slap_effects/vine_boom.mp3"
+        ];
+
+        const sounds = {};
+
+        sound_effects.forEach(file => {
+            const audio = new Audio(`/static/sfx/${file}`);
+            audio.preload = "auto";
+            audio.load();
+            sounds[file] = audio;
+        });
+
+        function play_sound(name) {
+            const audio = sounds[name];
+            if (!audio) return;
+            audio.currentTime = 0;
+            audio.play();
+        };
+
+        function play_random_sound() {
+            const keys = Object.keys(sounds);
+            const random = keys[Math.floor(Math.random() * keys.length)];
+            play_sound(random);
+        };
+>>>>>>> origin/dev_scrumptious_bytes
     </script>
             
 

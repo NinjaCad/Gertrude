@@ -46,13 +46,18 @@
             <br><br><br>
 
             <h1>
+<<<<<<< HEAD
                 <a href="{{ url_for('game') }}" id="start-btn"><button>Start Game</button></a>
+=======
+                <button onclick="start_game()">Start Game</button>
+>>>>>>> origin/dev_scrumptious_bytes
                 <!--<button type="button" title="Start game once all players are in">
                     <strong>Start Game</strong>
                 </button> -->
             </h1>
     </body>
 
+    <audio id="sfx" preload="auto" src="/static/sfx/wii_sports.mp3"></audio>
 
     <script>
         const playerListSource = new EventSource("/player-list-stream");
@@ -61,6 +66,7 @@
             document.getElementById("list").innerHTML = event.data;
         };
 
+<<<<<<< HEAD
         const gameStartSource = new EventSource("/game-start-stream");
 
         gameStartSource.onmessage = (event) => {
@@ -72,6 +78,19 @@
         gameStartSource.onerror = function() {
             console.error("Game start stream error");
             gameStartSource.close();
+=======
+        function play_sound(effect) {
+            const player = document.getElementById("sfx");
+            player.src = `/static/sfx/${effect}`;
+            player.play();
+        };
+
+        function start_game() {
+            play_sound('wii_sports.mp3');
+                setTimeout(() => { //DELAY SO SOUND CAN PLAY
+                    window.location.href = "{{ url_for('game') }}";
+                }, 4000);
+>>>>>>> origin/dev_scrumptious_bytes
         };
     </script>
 

@@ -10,6 +10,7 @@ from cardgames.page_3 import *
 import json
 import random
 import time
+from typing import Dict, Any
 from flask import Flask, render_template, url_for, Response, request, session, redirect
 
 app = Flask(__name__)
@@ -17,7 +18,7 @@ app.config['SECRET_KEY'] = "c78w93q2byaVYV9feab9dha7892vbgdsaooOGVDUGGIafd70Bhn1
 
 #The player objects will be appended to this list. 
 player_list = []
-GAME_STATE = {
+GAME_STATE: Dict[str, Any] = {
     "current_card": None,
     "current_art": "",
     "match_rank": 1,
@@ -210,6 +211,12 @@ def start_game():
     card = ""
     return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
+@app.route("/win_page")
+def win_page():
+    global player_list
+    global GAME_STATE
+    winner_name, GAME_STATE = resolve_slap(GAME_STATE, player_list)
+    return render_template("page_4.html", winner=winner_name)
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000, threaded=True, debug = True)
