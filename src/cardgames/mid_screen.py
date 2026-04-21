@@ -11,7 +11,7 @@ def wait_for_player(num):
     # Clear before next player sees anything
     clear_screen()
 
-def start_transition_screen(num1, num2):
+def start_transition_screen(num1=1, num2=2):
     # End current player's turn
     input(f"\nPlayer {num1}: Press ENTER to end your turn...")
 
@@ -26,4 +26,7 @@ def start_transition_screen(num1, num2):
     time.sleep(2)
 
     wait_for_player(num2)
-start_transition_screen(4,5)
+
+
+if __name__ == "__main__":
+    start_transition_screen(4, 5)
