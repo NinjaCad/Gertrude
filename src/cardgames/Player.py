@@ -160,7 +160,7 @@ SETUP:
 PLAYER ACTIONS:
   - Hit: Take another card
   - Stand: Keep your hand
-  - Double Down: Double bet but take 1 additionaly card and end your turn
+  - Double Down: Double bet but take 1 additionally card and end your turn
   - Split: If you have 2 matching cards at the start of your turn, split into 2 hands
 
 BUST:
@@ -184,13 +184,13 @@ BLACKJACK:
 
 SIDE BETS:
   - Insurance:
-      - You can bet up to half your orginal bet that the dealers face card will be an Ace
+      - You can bet up to half your original bet that the dealers face down card will be worth 10 if their face up card is an Ace
   - Perfect Pairs:
       - You can bet on what your starting hand will be and will get payed extra
         - Colored Pairs -> 10:1
         - Mixed Pairs -> 5:1
   - 21+3:
-      - You can bet on what your starting hand and the face card of the dealer will be and will get payed extra
+      - You can bet on what your starting hand and the face card of the dealer will be and will get paid extra
         - Flush -> 5:1
         - Straight -> 10:1
         - Three of a Kind -> 30:1
@@ -282,7 +282,7 @@ HELPFUL TIPS:
                 print(f"Insurance bet cannot be more than half of your original bet (${self.bets['standard']}). Please enter a valid amount")
                 continue
             
-            elif self.money - bet < 0: # guarantee player doesn't go more than $0 in debt
+            elif self.money - self.bet_totals() - bet < 0: # guarantee player doesn't go more than $0 in debt
                 print(f"You cannot go in debt. Be responsible!")
                 continue
             
@@ -358,8 +358,10 @@ HELPFUL TIPS:
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
     def insurance(self, gert):
         if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+            print(f'{self.name}, you won ${self.bets["insurance"]} from your bet because gertrude got a blackjack!')
             return True  
         else:
+            print(f'{self.name}, you lost ${self.bets["insurance"]} from your bet because gertrude did not get a blackjack!')
             return False  
     
     # GERT-40 perfectPairs()
@@ -375,9 +377,12 @@ HELPFUL TIPS:
                 # Check if it's the same color ((spades and clubs == black) and (hearts and diamonds == red)
                 if (self.hand[0].suit in ["S", "C"] and self.hand[1].suit in ["S", "C"]) or (self.hand[0].suit in ["H", "D"] and self.hand[1].suit in ["H", "D"]):
                     self.bets["pairs"] *= 10
+                    print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 10} bet because you got a colored pair!')
                 else:
                     self.bets["pairs"] *= 5
+                    print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 5} bet because you got a mixed pair!')
                 return True
+        print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matches!')
         return False
     
     # GERT-41 twentyone()
@@ -421,13 +426,18 @@ HELPFUL TIPS:
             # Payouts
             if is_straight_flush:
                 self.bets["21+3"] *= 40
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 40} bet because you got a straight flush!')
             elif is_three_kind:
                 self.bets["21+3"] *= 30
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 30} bet because you got a three of a kind!')
             elif is_straight:
                 self.bets["21+3"] *= 10
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 10} bet because you got a straight!')
             elif is_flush:
                 self.bets["21+3"] *= 5
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 5} bet because you got a flush!')
             else:
+                print(f'{self.name}, you lost ${self.bets["21+3"]} from your bet because you got no matches!')
                 return False
             return True
         else:
