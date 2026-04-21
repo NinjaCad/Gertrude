@@ -5,7 +5,8 @@ from cardgames.Card_Compare import Card
 from cardgames.turns import switch_turn
 import copy
 
-def select_card(self, player): # Function by Tyson
+
+def select_card(self, player):  # Function by Tyson
     # Denotes the change of turn
     print(f"\n--- {player.name}'s Turn ---")
 
@@ -35,9 +36,11 @@ def select_card(self, player): # Function by Tyson
         except ValueError:
             print("Invalid input. Please enter a valid number.")
 
+
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
 # ==========================================================
+
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game.
@@ -87,19 +90,21 @@ class HighCardDrawInstructions:
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
-    
+
+
 def declare_winner(player1, player2):
     card1 = player1.chosen_card
     card2 = player2.chosen_card
     try:
-        if card1.compare(card2) == 1: # player1 wins
+        if card1.compare(card2) == 1:  # player1 wins
             return player1.name
-        elif card1.compare(card2) == -1: # player2 wins
+        elif card1.compare(card2) == -1:  # player2 wins
             return player2.name
         elif card1.compare(card2) == 0:
             return "It's a tie!"
-    except TypeError: # tie
+    except TypeError:  # tie
         print("Error: Both players must have chosen a card.")
+
 
 def show_cards(card: Card):
     face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
@@ -112,8 +117,8 @@ def show_cards(card: Card):
 
     return display_text
 
-class Games:
 
+class Games:
     def __init__(self):
         self.deck = Deck()
 
@@ -147,7 +152,9 @@ class Games:
         if chosen_indices is not None:
             if len(chosen_indices) != 2:
                 raise ValueError("chosen_indices must contain exactly two values")
+
             p1_choice_idx, p2_choice_idx = chosen_indices
+
             if not (0 <= p1_choice_idx < len(player1.hand)):
                 raise ValueError("Player 1 chosen index out of range")
             if not (0 <= p2_choice_idx < len(player2.hand)):
@@ -160,7 +167,9 @@ class Games:
             select_card(self, player1)
             if player1.chosen_card is None:
                 raise ValueError("Player 1 did not choose a card")
+
             p1_choice_idx = player1.hand.index(player1.chosen_card)
+
             next_idx, p2_choice_idx = switch_turn(
                 players=players,
                 current_player_index=0,
@@ -187,22 +196,22 @@ class Games:
         if not test_mode:
             input('Press [Enter] to exit.')
 
-    # Example usage of New Feature: instructions display.
-    # This is the demo only - the rules system itself is tested through pytest.
+        # Example usage of New Feature: instructions display.
+        # This is the demo only - the rules system itself is tested through pytest.
         print("\nHigh Card Draw Instructions (overview):")
         print(HighCardDrawInstructions.get("overview"))
 
         if not test_mode:
             input('Press [Enter] to start.')
 
-    # Initiate variables
+        # Initiate variables
         player1 = Player("Player 1")
         player2 = Player("Player 2")
         deck = Deck()
         deck.shuffle()
         dealer = Dealer(deck)
 
-    # Deal cards to players
+        # Deal cards to players
         dealer.dealCards(3, [player1, player2])
 
         if test_mode:
@@ -249,20 +258,19 @@ class Games:
 
         return player1, player2, deck
 
-
     def get_game_stats(self, winner: str, players: list, game_stats=None):
-        #Below is for every time a game has been ran
+        # Below is for every time a game has been ran
 
-        #Set up game_stats dict if it is empty
-        if game_stats == None:
+        # Set up game_stats dict if it is empty
+        if game_stats is None:
             game_stats = {}
             for player in players:
                 game_stats[player] = {}
                 game_stats[player]["Wins"] = 0
                 game_stats[player]["Win-Rate"] = ""
             game_stats["Ties"] = 0
-        
-        #Error handling
+
+        # Error handling
         game_stats = copy.deepcopy(game_stats)
         keys = list(game_stats.keys())
         if winner not in keys and winner != "It's a tie!":
@@ -271,19 +279,19 @@ class Games:
             if player not in keys:
                 raise ValueError("Player not found")
 
-        #Increment the number of wins or ties
+        # Increment the number of wins or ties
         if winner == "It's a tie!":
             game_stats["Ties"] += 1
         else:
             game_stats[winner]["Wins"] += 1
 
-        #Total games is the sum of Player1 wins, Player2 wins, and ties
+        # Total games is the sum of Player1 wins, Player2 wins, and ties
         total_games = 0
         for player in players:
             total_games += game_stats[player]["Wins"]
         total_games += game_stats["Ties"]
 
-        #Calculate and update the win rate for both players
+        # Calculate and update the win rate for both players
         for player in players:
             win_rate = game_stats[player]["Wins"] / total_games * 100
             value = f"{win_rate:.1f}" + "%"
@@ -291,7 +299,7 @@ class Games:
 
         return game_stats
 
+
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
-

@@ -28,21 +28,17 @@ class Player:
                     image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
-                    image = card.image if self.knownCards[i] else card.cardBack[idx]
+                    image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
 
     def hideHand(self):
         if self.hand:
-            #Clears the terminal
             print("\x1b[2J\033[H")
-
-            #Print the card backs of all cards in the player's hand
             for idx in range(6):
                 for card in self.hand:
                     print(card.cardBack[idx], end="")
                 print()
-            
             print(f"{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
@@ -56,6 +52,7 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        self.chosen_card = None
 
     def add_redraw_token(self, tokens: int = 1):
         if tokens < 0:
