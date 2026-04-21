@@ -21,8 +21,9 @@
         </p>
         
         <div id="list">
-            {% block body %}
-            {% endblock body %}
+            {% for player in player_list %}
+                <li>{{ player.name}}</li>
+            {% endfor %}
         </div> <!-- Dynamic section of List to be replaced on player joining -->
         <p>
   
@@ -45,7 +46,11 @@
             <br><br><br>
 
             <h1>
+<<<<<<< HEAD
+                <a href="{{ url_for('game') }}" id="start-btn"><button>Start Game</button></a>
+=======
                 <button onclick="start_game()">Start Game</button>
+>>>>>>> origin/dev_scrumptious_bytes
                 <!--<button type="button" title="Start game once all players are in">
                     <strong>Start Game</strong>
                 </button> -->
@@ -55,12 +60,25 @@
     <audio id="sfx" preload="auto" src="/static/sfx/wii_sports.mp3"></audio>
 
     <script>
-        const source = new EventSource("/player-list-stream");
+        const playerListSource = new EventSource("/player-list-stream");
 
-        source.onmessage = (event) => {
+        playerListSource.onmessage = (event) => {
             document.getElementById("list").innerHTML = event.data;
         };
 
+<<<<<<< HEAD
+        const gameStartSource = new EventSource("/game-start-stream");
+
+        gameStartSource.onmessage = (event) => {
+            if (event.data === "start"){
+                window.location.href = "{{ url_for('game') }}";
+            }
+        };
+
+        gameStartSource.onerror = function() {
+            console.error("Game start stream error");
+            gameStartSource.close();
+=======
         function play_sound(effect) {
             const player = document.getElementById("sfx");
             player.src = `/static/sfx/${effect}`;
@@ -72,6 +90,7 @@
                 setTimeout(() => { //DELAY SO SOUND CAN PLAY
                     window.location.href = "{{ url_for('game') }}";
                 }, 4000);
+>>>>>>> origin/dev_scrumptious_bytes
         };
     </script>
 
