@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 from cardgames.Card import Card
-=======
 from cardgames.Card_Compare import *
->>>>>>> db21b8c5a013bc397b4233adf9963264716c5db1
 import os
 
 

@@ -289,7 +289,7 @@ class Games:
         #Calculate and update the win rate for both players
         for player in players:
             win_rate = game_stats[player]["Wins"] / total_games * 100
-            value = f"{win_rate:.1f}" + "%"
+            value = f"{win_rate:.2f}" + "%"
             game_stats[player]["Win-Rate"] = value
 
         return game_stats
@@ -298,8 +298,8 @@ class Games:
         print("-"*30)
         print("Game Statistics")
         print("-"*30)
-        print("Total Games Played: ", game_stats["Total Games"], "\n")
-        print("          | Wins | Win Rate | Current Win Streak | Highest Win Streak")
+        print(f"Total Games Played: {game_stats['Total Games']}\n")
+        print("          | Wins | Win Rate | Current Win Streak | Highest Win Streak |")
         for player, stats in game_stats.items():
             if not isinstance(stats, dict):
                 continue
@@ -309,7 +309,7 @@ class Games:
             winrate = stats['Win-Rate']
             win_streak = stats['Win Streak']
             high_win_streak = stats['Highest Win Streak']
-            print(f"{player:9} | {wins:4} | {winrate:8} | {win_streak:19} | {high_win_streak:18}")
+            print(f"{player:9} | {wins:4} | {winrate:8} | {win_streak:18} | {high_win_streak:18} |")
         ties = game_stats['Ties']
         print(f"\nTies: {ties}")
 
