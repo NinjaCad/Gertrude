@@ -36,8 +36,18 @@ last_player_joined = None
 def home():
     if request.method == 'GET':
         return render_template("page_1.html")
+    
     elif request.method == 'POST':
-        name = request.form.get("player_name")
+        name = request.form.get("player_name", "").strip()
+
+        # length check
+        if not (1 <= len(name) <= 12):
+            return render_template("page_1.html", error="Name must be 1 to 12 characters.")
+        
+        # uniqueness check (case-insensitive)
+        if any(p.name.lower() == name.lower() for p in player_list):
+            return render_template("page_1.html", error="Name is already taken.")
+
         session['name'] = name
         player_list.append(Player(name))
         global last_player_joined
@@ -211,6 +221,45 @@ def start_game():
     card = ""
     return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
+# TESTING WIN SCREEN
+@app.route("/test_win")
+def test_win():
+    class fake_player:
+        def __init__(self, name):
+            self.name = name
+
+    fake_winner = fake_player("Test Player")
+
+    return render_template("page_4.html", winner=fake_winner)
+
+# TESTING GAME SCREEN
+@app.route("/test_game")
+def test_game():
+    class fake_player:
+        def __init__(self, name):
+            self.name = name
+
+    fake_players = [
+        fake_player("Eli"),
+        fake_player("Joseph"),
+        fake_player("Faith"),
+        fake_player("Rose")
+    ]
+
+    fake_card = """┌─────────┐
+│A        │
+│    ♠    │
+│        A│
+└─────────┘"""
+
+    return render_template(
+        "page_3.html",
+        rank="Ace",
+        current_player="Joseph",
+        player_list=fake_players,
+        session_player_name="David",
+        card=fake_card
+    )
 @app.route("/win_page")
 def win_page():
     global player_list

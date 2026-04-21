@@ -1,183 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Attack</title>
-        
-    <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
-    <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
+    
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Heart Attack - Game</title>
 
-    <style>
-        .card-container {
-            position: relative;
-            display: inline-block;
-        }
+        <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
 
-        .card-container pre {
-            margin: 0;
-        }
+        <!-- <link rel="stylesheet" href="card_styles.css"> -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='card_styles.css') }}">
 
-        .slap-button {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: transparent;
-            border: none;
-            cursor: pointer;
-        }
+    </head>
 
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
-</head>
-<body>
+    <body class="game-page">
+        <header>
+            <h1>Heart Attack</h1>
+            <p class="site-subtitle">by Scrumptious Bytes</p>
+        </header>
 
-    <!-- display the current rank of the global card counter -->
-    <p>Card to Match: <span id ="match-rank-val">{{ rank }}</span></p>
+        <!-- Removed nav section because it is not needed on the home page since there are no useful pages to navigate to at this time.
+        <nav>
+            <ul>
+                <li><a href="page_1.html">Home</a></li>
+                <li><a href="page_3.html">Walkthroughs</a></li> page_3.html reserved for game, chage if used in future change
+                <li><a href="#footer">Contact</a></li>
+            </ul>
+        </nav> 
+        -->
 
-    <!-- display current player's name -->
-    <p>Current Player: <span id="current-player-val">{{ current_player }}</span></p>
+        <main>
+            <article>
+                <section class="panel game-status-panel">
+                    <h2>Current Round</h2>
+                    <p><strong>Card to Match:</strong> <span id="match-rank-val">{{ rank }}</span></p>
+                    <p><strong>Current Player:</strong> <span id="current-player-val">{{ current_player }}</span></p>
+                        <!-- Removed this for simplicity and because we haven't passed the data for it through games.py
+                        <div class="player-strip" id="player-strip">
+                            {% for player in player_list %}
+                                <span
+                                    class="player-chip{% if player.name == current_player %} current-turn{% endif %}{% if player.name == session_player_name %} self-player{% endif %}"
+                                    data-player-name="{{ player.name }}"
+                                >
+                                    {{ player.name }}
+                                </span>
+                            {% endfor %}
+                        </div> -->
+                </section>
 
-    <div class="card-container">
-        <pre id="ascii-display">{{ card }}</pre>
+                <section class="panel game-table-panel">
+                    <h2>Center Pile</h2>
 
+                    <div class="card-container">
+                        <pre id="ascii-display">{{ card or " " }}</pre>
+                        <form method="POST" action="/slap" onsubmit="return handleSlap(event);" onclick="play_random_sound()">
+                            <button id="slap-button" class="slap-button" type="submit" aria-label="Slap card" disabled></button>
+                        </form>
+                    </div>
 
-<<<<<<< HEAD
-        <form method="POST" action="/slap" onsubmit="return handleSlap(this);">
-            <input type="hidden" name="timestamp" id="ts">
-            <button id = "slap-btn" class="slap-button" type="submit" disabled></button>
-=======
-        <form method="POST" action="/slap" onsubmit="return handleSlap(this);" onclick="play_random_sound()">
-            <button id="slap-button" type="submit"></button>
->>>>>>> origin/dev_scrumptious_bytes
-        </form>
-    </div>
+                    <div class="action-zone">
+                        <!-- <form method="POST" action="/game">
+                            <button id="play-card-button" class="button button-primary button-large" type="submit">
+                                Play Card
+                            </button>
+                        </form> -->
+                        <form method="POST" action="/game">
+                            <button id="play-card-button" class="button button-primary button-large" type="submit" onclick="play_sound('slurp.mp3')"
+                                {% if session['name'] != current_turn_name %}disabled title="Not Yet"{% endif %}>
+                                {% if session['name'] == current_turn_name %}Play Card{% else %}Wait{% endif %}
+                            </button>
+                        </form>
+                    </div>
+                </section>
 
-    <form method="POST" action="/game">
-<<<<<<< HEAD
+            </article>
 
-        <!-- Logic to disable to play card button if it's not the player's turn -->
-        <button id="play-card-btn" type="submit"
-            {% if session['name'] != current_turn_name %} disabled title ="Not Yet" {% endif %}>
-            {% if session['name'] == current_turn_name %} Play Card {% else %} Wait {% endif %}
-=======
-        <button id="play-card-button" type="submit" onclick="play_sound('slurp.mp3')">
-            Play Card
->>>>>>> origin/dev_scrumptious_bytes
-        </button>
-    </form>
+            <aside>
+                <div class="tab">Rules</div>
 
-    <script>
-        const playCardBtn = document.getElementById("play-card-btn");
-        const slapBtn = document.getElementById("slap-btn");
-        const asciiDisplay = document.getElementById("ascii-display");
-        const matchRankDisplay = document.getElementById("match-rank-val");
-        const currentPlayerDisplay = document.getElementById("current-player-val");
-        const myName = "{{ session['name'] }}";
+                <div class="aside-content">
+                    <h3>How to Play:</h3>
+                    <ol>
+                        <li>On their turn a player will play a card by pressing the "play card" button</li>
+                        <li>If the card played matches the card rank displayed slap the card using the "slap card" button as quickly as possible</li>
+                        <li>The player who slaps the card last adds the entire stack to their hand</li>
+                        <li>If a player slaps the card when the card played and the displayed rank do not match they take the entire stack</li>
+                    </ol>
+                    <h3>How to Win:</h3>
+                        <p>Once your hand is empty be the first to slap the deck when appropriate to win the game.</p>
+                </div>
+            </aside>
 
-        const source = new EventSource("/game-sync-stream");
+        </main>
 
-        source.onmessage = function(passes) {
-            const data = JSON.parse(passes.data);
-            
-            asciiDisplay.innerText = data.last_card_art;
-            matchRankDisplay.innerText = data.match_rank;
-            currentPlayerDisplay.innerText = data.current_turn_name;
+        <footer id="footer">
+            <small>E-mail: <a href="mailto:ScrumptiousBytes2026@gmail.com">ScrumptiousBytes2026@gmail.com</a></small>
+            <small>&copy; ScrumptiousBytes 2026</small>
+        </footer>
 
-            // logic for buttons
-            if (data.slap_in_progress) {
-                playCardBtn.disabled = true;
-                playCardBtn.innerText = "SLAPPING...";
-                slapBtn.disabled = false;
-            } else {
-                if (data.current_card_value){
-                    slapBtn.disabled = false;
-                }
-                else{
-                    slapBtn.disabled = true;
-                }
-                if (data.current_turn_name === myName) {
-                    playCardBtn.disabled = false;
-                    playCardBtn.innerText = "Play Card";
-                } else {
+        <script>
+            const playCardBtn = document.getElementById("play-card-button");
+            const slapBtn = document.getElementById("slap-button");
+            const asciiDisplay = document.getElementById("ascii-display");
+            const matchRankDisplay = document.getElementById("match-rank-val");
+            const currentPlayerDisplay = document.getElementById("current-player-val");
+            const myName = "{{ session['name'] }}";
+            // const play_card_button = document.getElementById("play-card-button");
+
+            const source = new EventSource("/game-sync-stream");
+
+            source.onmessage = function(passes) {
+                const data = JSON.parse(passes.data);
+                
+                asciiDisplay.innerText = data.last_card_art;
+                matchRankDisplay.innerText = data.match_rank;
+                currentPlayerDisplay.innerText = data.current_turn_name;
+
+                // logic for buttons
+                if (data.slap_in_progress) {
                     playCardBtn.disabled = true;
-                    playCardBtn.innerText = "Wait";
+                    playCardBtn.innerText = "SLAPPING...";
+                    slapBtn.disabled = false;
+                } else {
+                    if (data.current_card_value){
+                        slapBtn.disabled = false;
+                    }
+                    else{
+                        slapBtn.disabled = true;
+                    }
+                    if (data.current_turn_name === myName) {
+                        playCardBtn.disabled = false;
+                        playCardBtn.innerText = "Play Card";
+                    } else {
+                        playCardBtn.disabled = true;
+                        playCardBtn.innerText = "Wait";
+                    }
                 }
+            };
+
+            source.onerror = function(){
+                console.error("EventSource error");
+                source.close();
+            };
+
+            const sound_effects = [
+                "slurp.mp3",
+                "slap_effects/bonk.mp3",
+                "slap_effects/goat.mp3",
+                "slap_effects/slap.mp3",
+                "slap_effects/vine_boom.mp3"
+            ];
+
+            const sounds = {};
+
+            sound_effects.forEach(file => {
+                const audio = new Audio(`/static/sfx/${file}`);
+                audio.preload = "auto";
+                audio.load();
+                sounds[file] = audio;
+            });
+
+            function play_sound(name) {
+                const audio = sounds[name];
+                if (!audio) return;
+                audio.currentTime = 0;
+                audio.play();
+            };
+
+            function play_random_sound() {
+                const keys = Object.keys(sounds);
+                const random = keys[Math.floor(Math.random() * keys.length)];
+                play_sound(random);
+            };
+
+            // Removed for simplicity for now (David)
+            // function centerCurrentPlayer() {
+            //     const strip = document.getElementById("player-strip");
+            //     const currentChip = document.querySelector(".player-chip.current-turn");
+
+            //     if (!strip || !currentChip) return;
+
+            //     const stripCenter = strip.clientWidth / 2;
+            //     const chipCenter = currentChip.offsetLeft + (currentChip.offsetWidth / 2);
+            //     const targetScroll = chipCenter - stripCenter;
+
+            //     strip.scrollTo({
+            //         left: Math.max(0, targetScroll),
+            //         behavior: "smooth"
+            //     });
+            // }
+            // window.addEventListener("load", () => {setTimeout(centerCurrentPlayer, 100);});
+
+            function handleSlap(event) {
+                event.preventDefault();
+
+                // Set timestamp
+                // document.getElementById("ts").value = Date.now();
+                // Disable this player's slap button immediately
+                slapBtn.disabled = true;
+                // Disable this player's play_card button immediately too
+                playCardBtn.disabled = true;
+
+                fetch("/slap", {
+                    method: "POST",
+                    // headers: {
+                    //     "Content-Type": "application/x-www-form-urlencoded"
+                    // },
+                    // body: "timestamp=" + document.getElementById("ts").value
+                }).catch(err => console.error("Slap error:", err));
+
+                return false;
             }
-        };
-
-        source.onerror = function(){
-            console.error("EventSource error");
-            source.close();
-        };
-
-        function handleSlap(form) {
-
-            event.preventDefault();
-
-            // Set timestamp
-            document.getElementById("ts").value = Date.now();
-            // Disable this player's slap button immediately
-            slapBtn.disabled = true;
-            // Disable this player's play_card button immediately too
-            playCardBtn.disabled = true;
-
-            fetch("/slap", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: "timestamp=" + document.getElementById("ts").value
-            }).catch(err => console.error("Slap error:", err));
-
-            return false;
-
-<<<<<<< HEAD
-        }
-=======
-            return true;
-        };
-
-        const sound_effects = [
-            "slurp.mp3",
-            "slap_effects/bonk.mp3",
-            "slap_effects/goat.mp3",
-            "slap_effects/slap.mp3",
-            "slap_effects/vine_boom.mp3"
-        ];
-
-        const sounds = {};
-
-        sound_effects.forEach(file => {
-            const audio = new Audio(`/static/sfx/${file}`);
-            audio.preload = "auto";
-            audio.load();
-            sounds[file] = audio;
-        });
-
-        function play_sound(name) {
-            const audio = sounds[name];
-            if (!audio) return;
-            audio.currentTime = 0;
-            audio.play();
-        };
-
-        function play_random_sound() {
-            const keys = Object.keys(sounds);
-            const random = keys[Math.floor(Math.random() * keys.length)];
-            play_sound(random);
-        };
->>>>>>> origin/dev_scrumptious_bytes
-    </script>
-            
-
-</body>
+        </script>
+    </body>    
 </html>
-
-<!-- Check if its current_turn_name or something else -->
- 

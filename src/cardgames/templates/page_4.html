@@ -1,74 +1,60 @@
-
-
-<!-- 
-@app.route("/results_page") 
- def results():
-    winner = None
-    if player_list and win_check(player_list):
-            winner = player_list[0]
-    return render_template("page_4.html", winner=winner)
- -->
-
- <!-- 
-@app.route("/play_card", methods=["GET", "POST"])
-def play_card():
-    card = ""
-    if request.method == "POST":
-        card = global_card_change()
-
-    if player_list and win_check(player_list):
-        winner = player_list[0]
-        return render_template("page_4.html", winner=winner)
-        
-    return render_template("page_3.html", card=card)                            #return rank and person whose turn it is
- -->
-
- 
 <!DOCTYPE html>
-<html lang="en">                                            
-    <head>                                                                    <!-- Styling to make the home page button invisible -->
-        <style>                                                                         
-
-            #invisible_button{
-                opacity: 0;
-            }
-
-            #invisible_button:hover{
-                opacity: 1;
-            }
-
-            a {
-                text-decoration: none;
-            }
-
-        </style>
-
-        <meta charset="UTF-8">
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
         <title>Winner</title>
         
+        <!-- <link rel="icon" type="image/png" sizes="32x32" href="./card.png"> -->
+        <link rel="icon" type="image/png" href="{{ url_for('static', filename='card.png') }}">
+
+        <!-- <link rel="stylesheet" href="card_styles.css"> -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='card_styles.css') }}">
     </head>
 
     <body>
+        <header>
+            <h1>Heart Attack</h1>
+        </header>
 
-        <h1>Congratulations {{winner}}</h1>
-        <p>{{winner}} has won</p>
-        <button><a href="https://youtu.be/dQw4w9WgXcQ" target="_blank">Home Page</a></button>                   <!--Fun Button-->
+        <main>
+            <article>
+                <section class="panel form-panel win-panel">
+                    <h2>Winner</h2>
 
-        <br><br><br><br><br>
+                    <div class="win-announcement">
+                        <p>Congratulations!</p>
+                        <h1>{{ winner.name }}</h1>
+                    </div>
 
-        <button id="invisible_button"><a href="{{url_for('home')}}">Real Home Page</a></button>                 <!--Real Button-->
+                    <p class="panel-content win-result">
+                        {{ winner.name }} has won the game.
+                    </p>
 
-        <audio id="sfx" preload="auto" src="/static/sfx/weeeee.mp3"></audio>
+                    <div class="action-zone">
+                        <a href="https://youtu.be/dQw4w9WgXcQ" target="_blank" class="button button-primary button-large">
+                            Home Page
+                        </a>
+                    </div>
+
+                    <div class="action-zone secret-home-zone">
+                        <a id="invisible-button" href="{{ url_for('home') }}" class="button button-secondary button-large">
+                            Real Home Page
+                        </a>
+                    </div>
+                </section>
+            </article>
+        </main>
+
+        <audio id="sfx" preload="auto" src="{{ url_for('static', filename='sfx/weeeee.mp3') }}"></audio>
 
         <script>
             window.addEventListener("load", () => {
                 const effect = document.getElementById('sfx');
-                effect.play();
+                // effect.play();
+                effect.play().catch(err => console.log("Audio blocked:", err));
             });
         </script>
+
     </body>
 </html>
-
-
