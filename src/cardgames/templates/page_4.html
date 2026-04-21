@@ -45,7 +45,16 @@
                 </section>
             </article>
         </main>
+
+        <audio id="sfx" preload="auto" src="{{ url_for('static', filename='sfx/weeeee.mp3') }}"></audio>
+
+        <script>
+            window.addEventListener("load", () => {
+                const effect = document.getElementById('sfx');
+                // effect.play();
+                effect.play().catch(err => console.log("Audio blocked:", err));
+            });
+        </script>
+
     </body>
 </html>
-
-

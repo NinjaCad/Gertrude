@@ -35,8 +35,11 @@
                 <section class="panel">
                     <h2>Players:</h2>
                         <div id="waiting-list">
-                            {% block body %}
-                            {% endblock body %}
+                            <ul>
+                                {% for player in player_list %}
+                                    <li>{{ player.name}}</li>
+                                {% endfor %}
+                            </ul>
                         </div> <!-- Dynamic section of List to be replaced on player joining -->
                 </section>
 
@@ -44,7 +47,9 @@
                     <h2>Starting the Game:</h2>
                         <p class="panel-content">Once all players have joined the waiting room, the "Start Game" button will become active. The first player to click the "Start Game" button will start the game for all players.</p>
                     <div class="action-zone">
-                        <a href="{{ url_for('start_game') }}" class="button button-primary button-large">Start Game</a>
+                        <button type="button" id="start-btn" class="button button-primary button-large" onclick="start_game()">Start Game</button>
+                        <!-- <a href="{{ url_for('start_game') }}" class="button button-primary button-large">Start Game</a> -->
+                        <!-- <a href="{{ url_for('game') }}" id="start-btn"><button>Start Game</button></a> -->
                     </div>
                 </section>
             </article>
@@ -64,19 +69,48 @@
                         <p>Once your hand is empty be the first to slap the deck when appropriate to win the game.</p>
                 </div>
             </aside>
-
+            
         </main>
 
         <footer id="footer">
             <small>E-mail: <a href="mailto:ScrumptiousBytes2026@gmail.com">ScrumptiousBytes2026@gmail.com</a></small>
             <small>&copy; ScrumptiousBytes 2026</small>
         </footer>
+
         <script>
             const source = new EventSource("/player-list-stream");
-
+            const gameStartSource = new EventSource("/game-start-stream");
+            
             source.onmessage = (event) => {
                 document.getElementById("waiting-list").innerHTML = event.data;
             };
+
+            gameStartSource.onmessage = (event) => {
+                if (event.data === "start"){
+                    window.location.href = "{{ url_for('game') }}";
+                }
+            };
+
+            gameStartSource.onerror = function() {
+                console.error("Game start stream error");
+                gameStartSource.close();
+            };
+
+            function play_sound(effect) {
+                const player = document.getElementById("sfx");
+                player.src = `/static/sfx/${effect}`
+                player.currentTime = 0;
+                player.play();
+            }
+
+            function start_game() {
+                play_sound('wii_sports.mp3');
+                setTimeout(() => { //DELAY SO SOUND CAN PLAY
+                    window.location.href = "{{ url_for('game') }}";
+                }, 4000);
+            }
         </script>
+
+        <audio id="sfx" preload="auto" src="{{ url_for('static', filename='sfx/wii_sports.mp3') }}"></audio>
     </body>
-</html> 
+</html>
