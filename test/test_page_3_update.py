@@ -15,6 +15,12 @@ def client():
         yield client
 
 @pytest.fixture
+def auth_client(client):
+    with client.session_transaction() as game_session:
+        game_session["name"] = "test_player_1"
+    return client
+
+@pytest.fixture
 def setup_game():
     global GAME_STATE, player_list
     GAME_STATE.clear()
@@ -39,23 +45,20 @@ def setup_game():
     ])
     
 
-def test_bad_slap(client, setup_game):
+def test_bad_slap(auth_client, setup_game):
 
     card = Card("Hearts", 5, [], [])
     GAME_STATE["current_card"] = card
     GAME_STATE["match_rank"] = 3
     GAME_STATE["played_cards"] = [card]
     GAME_STATE["current_player"] = player_list[0]
-
-    with client.session_transaction() as game_session:
-        game_session["name"] = "test_player_1"
     
-    response = client.post("/slap", data={"timestamp": "0"})
+    response = auth_client.post("/slap", data={"timestamp": "0"})
 
     assert response.status_code == 204
     assert len(player_list[0].hand) > 0
 
-def test_good_slap(client, setup_game):
+def test_good_slap(auth_client, setup_game):
 
     card = Card("Hearts", 5, [], [])
     GAME_STATE["current_card"] = card
@@ -63,21 +66,15 @@ def test_good_slap(client, setup_game):
     GAME_STATE["played_cards"] = [card]
     GAME_STATE["current_player"] = player_list[0]
 
-    with client.session_transaction() as game_session:
-        game_session["name"] = "test_player_1"
-
-    response = client.post("/slap", data={"timestamp": "0"})
+    response = auth_client.post("/slap", data={"timestamp": "0"})
 
     assert response.status_code == 204
     assert GAME_STATE["slap_in_progress"] is True
 
 
-def test_game_route_initializes_game(client, setup_game):
-    
-    with client.session_transaction() as game_session:
-        game_session["name"] = "test_player_1"
-        
-    response = client.get("/game")
+def test_game_route_initializes_game(auth_client, setup_game):
+            
+    response = auth_client.get("/game")
 
     assert response.status_code == 200
     assert GAME_STATE["game_started"] is True
