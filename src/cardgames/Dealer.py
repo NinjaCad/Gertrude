@@ -18,7 +18,16 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
+    def dealCards(self, numCards_or_players, players: "list[Player]" = None):
+        # Backward compatibility:
+        # - dealCards(3, players)
+        # - dealCards(players)  -> defaults to 3 cards/player
+        if players is None:
+            players = numCards_or_players
+            numCards = 3
+        else:
+            numCards = numCards_or_players
+
         if numCards * len(players) > self.deck.size:
             return False
         for player in players:
