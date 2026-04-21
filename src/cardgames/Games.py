@@ -99,7 +99,7 @@ def declare_winner(player1, player2):
         elif card1.compare(card2) == 0:
             return "It's a tie!"
     except TypeError: # tie
-        print("Error: Both players must have chosen a card to declare a winner.")
+        print("Error: Both players must have chosen a card.")
 
 def show_cards(card: Card):
     face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
