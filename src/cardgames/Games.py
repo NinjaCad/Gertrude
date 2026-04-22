@@ -93,6 +93,7 @@ class HighCardDrawInstructions:
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
 
+
 def declare_winner(player1, player2):
     card1 = player1.chosen_card
     card2 = player2.chosen_card
@@ -125,14 +126,9 @@ class Games:
         self._game_stats = None
 
     def handle_ties(self, players: list[Player]):
-        """Legacy compatibility helper used by older tie-handling tests.
-
-        Keeps chosen cards sourced from each player's current hand without
-        altering the newer playthrough-driven flow.
-        """
+        """Legacy compatibility helper for tie-handling tests."""
         if len(players) < 2:
             return
-
         player1, player2 = players[0], players[1]
         player1.chosen_card = player1.hand[0] if player1.hand else None
         player2.chosen_card = player2.hand[0] if player2.hand else None
@@ -355,6 +351,7 @@ class Games:
         if not (used_external_stats and winner == "It's a tie!"):
             self._game_stats = copy.deepcopy(game_stats)
         return game_stats
+
 
 if __name__ == "__main__":
     game = Games()
