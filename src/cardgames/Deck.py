@@ -1,6 +1,5 @@
 import os
 import random
-
 from cardgames.Card_Compare import Card
 
 cardImages = []

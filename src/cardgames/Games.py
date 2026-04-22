@@ -96,6 +96,7 @@ class Games:
     # =====================================================
     # ONLY CHANGE: setup_gamemode UPDATED (BEST OF SYSTEM)
     # =====================================================
+    """
     def setup_gamemode(self):
         """Game setup locked to High Card Draw rules."""
 
@@ -131,7 +132,9 @@ class Games:
             f"- Cards per turn: {self.cards_per_turn}\n"
             f"- Match format: Best of {self.num_rounds}\n"
         )
+    """
 
+    """
     def main_num2(self):
         print('Welcome to High Card Draw!')
 
@@ -165,7 +168,8 @@ class Games:
                 self.print_stats(game_stats)
 
         print("\nGame Over! Thanks for playing.")
-
+    """
+    """
     def declare_winner(self, player1, player2):
         p1, p2 = self.players[0], self.players[1]
 
@@ -201,7 +205,7 @@ class Games:
             else:
                 return "It's a tie!"
         self._game_stats = None
-
+    """
     def select_card(self, player):
         # Denotes the change of turn 
         print(f"\n--- {player.name}'s Card Options ---")
@@ -248,6 +252,7 @@ class Games:
         print(f"[BETTING POP-UP] {message}")
         return message
 
+    """
     def playthrough(
         self,
         *,
@@ -257,9 +262,9 @@ class Games:
         input_fn=input,
         print_fn=print,
     ) -> dict:
-        """Run one high-card-draw round using existing game components.
+        """#Run one high-card-draw round using existing game components.
 
-        Returns a summary dict with players, winner, deck, and chosen indices.
+       # Returns a summary dict with players, winner, deck, and chosen indices.
         """
         if players is None:
             players = [Player("Player 1"), Player("Player 2")]
@@ -312,7 +317,7 @@ class Games:
             "deck": deck,
             "chosen_indices": [p1_choice_idx, p2_choice_idx],
         }
-
+    """
     def main(self, test_mode=False):
         print('Welcome to High Card Draw!')
         print(HighCardDrawInstructions.get("overview"))
