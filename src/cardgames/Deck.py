@@ -1,5 +1,9 @@
 import os
 import random
+<<<<<<< HEAD
+from cardgames.Card import Card
+=======
+>>>>>>> origin/dev_backrow_buggers
 from cardgames.Card_Compare import Card
 
 cardImages = []
