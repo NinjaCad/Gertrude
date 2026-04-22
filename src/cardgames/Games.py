@@ -25,10 +25,12 @@ class Games:
         Main game loop
         """
 
-        print('\nWelcome to the Gertrude\'s BlackJack!')
+        print("""=====================================
+Welcome to the Gertrude\'s BlackJack!
+=====================================""")
 
         # Sets up game and player list, which will be used for rounds
-        self.playerList, starting_money = self.startGame()
+        self.playerList, starting_money, self.side_bets_included = self.startGame()
 
         while True:
             # Each player places side bets
@@ -38,15 +40,17 @@ class Games:
                     continue
 
                 player.bet("standard")
-                player.bet("pairs")
-                player.bet("21+3")
+                if self.side_bets_included["perfect pairs"]:
+                    player.bet("pairs")
+                if self.side_bets_included["21+3"]:
+                    player.bet("21+3")
 
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
-            if self.playerList[0].hand[0].value == 1:
+            if self.playerList[0].hand[0].value == 1 and self.side_bets_included["insurance"]:
                 print(f"--- Gertrude's hand ---")
                 self.playerList[0].showHand()
                 for player in self.playerList[1:]:
@@ -75,13 +79,22 @@ class Games:
                 break
             else:
                 # resetting player active status, hands, and the deck after each round
-                for player in self.playerList:
                     #GERT-54 check for player money to be above 5 dollars
+                for i in range(len(self.playerList)-1, -1, -1):
+                    
+                    player = self.playerList[i]
+                    
+                    # only reset active if the player has enough money remaining
                     if player.money < 5:
                         player.active = False
                     else:
                         player.active = True
                     player.clearHand()
+                    
+                    # remove any "right hand" fake player's if a split happened
+                    if "right hand" in player.name:
+                        del self.playerList[i]
+                        
 
                 self.deck.reset()
                 self.deck.shuffle()
@@ -133,7 +146,7 @@ class Games:
 
         while True:
             try:
-                self.amtPlayers = int(input("How many people are playing? (7 players max.): ").strip())
+                self.amtPlayers = int(input("\nHow many people are playing? (7 players max): ").strip())
                 
                 if self.amtPlayers > 7:
                     print("That's too many players! Try again.")
@@ -147,7 +160,7 @@ class Games:
 
         while True:
             try:
-                starting_money = int(input("Enter the amount of starting Money: $").strip())
+                starting_money = int(input("\nEnter the amount of starting Money: $").strip())
                 if starting_money <= 5:
                     print("Starting money must be more than 5.")
                     continue
@@ -155,7 +168,7 @@ class Games:
             except ValueError:
                 print("Please enter a valid  amount.")
 
-        print('This round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))
+        print('\nThis round of blackjack will be played with {:d} players, against the dealer, GERTRUDE'.format(self.amtPlayers))
 
         self.pl_list = []
         self.pl_list.append(Gertrude("GERTRUDE")) 
@@ -171,8 +184,20 @@ class Games:
             new_player.money = starting_money
 
             self.pl_list.append(new_player)
+        
+        # User can decide which bets to include in this game
+        print("")
+        side_bets_included = { }
+        for type in ["insurance", "perfect pairs", "21+3"]:
+            
+            include = input(f"Do you want to include the {type} side bet in this game? (y/n): ")
+            while include.strip().lower() not in ["y", "n"]:
+                include = input("Not a valid input. Please input 'y' for Yes or 'n' for no: ")
+            
+            include = include.strip().lower()
+            side_bets_included[type] = True if include == "y" else False
 
-        return self.pl_list, starting_money
+        return self.pl_list, starting_money, side_bets_included
 
     # Loop through all the players and there actions
     def round(self):
@@ -187,64 +212,82 @@ class Games:
                 if i == len(self.playerList):
                     break
                 continue
-
+            
             # show everyone's current hand for convenience
             for playerH in self.playerList:
                 playerH.showHand()
             
             print(f"\n=== {player.name}'s turn ===")
             player.showHand()
+            
+            if "right hand" in player.name:
 
-            # refresh availability each loop because the commands change
-            enabled_moves = ["hit", "stand"]
-            aliases = ["h", "s"]
-            if (player.can_split()):
-                enabled_moves.append("split")
-                aliases.append("sp")
-            if (player.can_double()):
-                enabled_moves.append("double down")
-                aliases.append("dd")
-            enabled_moves.append("help")
-            aliases.append("?")
-
-            # Print what moves are available based on enabled key in moves dictionary
-            print("Choose:", ", ".join(enabled_moves))
-
-            choice = input("> ").strip().lower()
-
-            if choice in enabled_moves or choice in aliases:
-                if choice in ["hit", "h"]:
-                    player.hit(self.dealer)
-                    if player.check_cards() > 21:
-                        print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
-                    else:
-                        if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
-                            print(self.playerList[0].trashTalk("hit"))
-                elif choice in ["stand", "s"]:
-                    player.stand()
-                    if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
-                        print(self.playerList[0].trashTalk("stand"))
-
-                elif choice in ["split", "sp"]:
-                    player.split(self)
-                elif choice in ["double down", "dd"]:
-                    player.double_down(self.dealer)
-                    if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
-                        print(self.playerList[0].trashTalk("split"))
-
-                elif choice in ["help", "?"]:
-                    print(player.help(enabled_moves + aliases))
-                    continue
-                else:
-                    print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
-                    continue
-
+                player.hit(self.dealer)
                 player.check_cards()
                 player.showHand()
-            else:
-                print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
-        
-        # iterate to next player and check if we are at the end of the list
+                
+            while True:
+                # Check if the player's turn has ended, and if so, end their turn and print their hand value
+                if player.active == False:
+                    print(f"{player.name} ends with a hand value of {player.check_cards()}.\n")
+                    break
+                
+                # refresh availability each loop because the commands change
+                enabled_moves = ["hit", "stand"]
+                aliases = ["h", "s"]
+                if (player.can_split()):
+                    enabled_moves.append("split")
+                    aliases.append("sp")
+                if (player.can_double()):
+                    enabled_moves.append("double down")
+                    aliases.append("dd")
+                enabled_moves.append("help")
+                aliases.append("?")
+
+                # Print what moves are available based on enabled key in moves dictionary
+                print("Choose:", ", ".join(enabled_moves))
+
+                choice = input("> ").strip().lower()
+
+                if choice in enabled_moves or choice in aliases:
+                    if choice in ["hit", "h"]:
+                        player.hit(self.dealer)
+                        if player.check_cards() > 21:
+                            print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
+                        else:
+                            if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
+                                print(self.playerList[0].trashTalk("hit"))
+                    elif choice in ["stand", "s"]:
+                        player.stand()
+                        if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("stand"))
+
+                    elif choice in ["split", "sp"]:
+                        player.split(self)
+                        
+                        print(f"playerList: {[p.name for p in self.playerList]}")
+                        print(f"i: {i}")
+                        for p in self.playerList:
+                            print(f"{p.name}.active = {p.active}")
+                        
+                    elif choice in ["double down", "dd"]:
+                        player.double_down(self.dealer)
+                        if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("split"))
+
+                    elif choice in ["help", "?"]:
+                        print(player.help(enabled_moves + aliases))
+                        continue
+                    else:
+                        print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
+                        continue
+
+                    player.check_cards()
+                    player.showHand()
+                else:
+                    print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
+            
+                # iterate to next player and check if we are at the end of the list
             i += 1
             if i == len(self.playerList):
                 break
@@ -258,7 +301,7 @@ class Games:
     def calculateWinner(self, playerList):
         dealer = playerList[0]
         dealerScore = dealer.check_cards()
-        print(f"{dealer.name} ends with a hand value of {dealerScore}.") #this prints the value of Gertrude's hand too! 
+        print(f"{dealer.name} ends with a hand value of {dealerScore}.\n") #this prints the value of Gertrude's hand too! 
 
         for player in playerList[1:]:
             playerScore = player.check_cards()

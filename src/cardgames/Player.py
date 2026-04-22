@@ -33,7 +33,7 @@ class Player:
     
     # GERT-16
     def showHand(self, printShort: bool = False):
-        print(f"--- {self.name}'s hand ---")
+        print(f"\n--- {self.name}'s hand ---")
         for idx in range(6):
             for i, card in enumerate(self.hand):
                 if printShort and i < len(self.hand)-1:
@@ -305,13 +305,13 @@ HELPFUL TIPS:
         while True: # while loop guarantees valid input
             # Getting players money
             if (type == "pairs"):
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ").strip()
+                bet = input(f"\n{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ").strip()
             elif (type == "21+3"):
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for 21+3? ").strip()
+                bet = input(f"\n{self.name}, you have ${self.money}. How much do you want to bet for 21+3? ").strip()
             elif (type == "insurance"):
-                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ").strip()
+                bet = input(f"\n{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ").strip()
             else:
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ").strip()
+                bet = input(f"\n{self.name}, you have ${self.money}. How much do you want to bet? ").strip()
             
             # guarantee that bet is an integer
             try:
@@ -421,12 +421,13 @@ HELPFUL TIPS:
     # outputs: none
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
     def insurance(self, gert):
-        if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
-            print(f'{self.name}, you won ${self.bets["insurance"]} from your bet because gertrude got a blackjack!')
-            return True  
-        else:
-            print(f'{self.name}, you lost ${self.bets["insurance"]} from your bet because gertrude did not get a blackjack!')
-            return False  
+        if self.bets["insurance"] != 0:
+            if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+                print(f'{self.name}, you won ${self.bets["insurance"]} from your bet because gertrude got a blackjack!')
+                return True  
+            else:
+                print(f'{self.name}, you lost ${self.bets["insurance"]} from your bet because gertrude did not get a blackjack!')
+                return False  
     
     # GERT-40 perfectPairs()
     # inputs: none
@@ -435,8 +436,8 @@ HELPFUL TIPS:
         # Mixed pair -> 5:1
     # goals: check self.hand for mixed or colored pair
     def perfectPairs(self):
-        # Requirements
-        if len(self.hand) == 2:
+        # Minimum requirements
+        if len(self.hand) == 2 and self.bets["pairs"] != 0:
             if self.hand[0].value == self.hand[1].value:
                 # Check if it's the same color ((spades and clubs == black) and (hearts and diamonds == red)
                 if (self.hand[0].suit in ["S", "C"] and self.hand[1].suit in ["S", "C"]) or (self.hand[0].suit in ["H", "D"] and self.hand[1].suit in ["H", "D"]):
@@ -446,7 +447,10 @@ HELPFUL TIPS:
                     self.bets["pairs"] *= 5
                     print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 5} bet because you got a mixed pair!')
                 return True
-        print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matches!')
+        
+        if self.bets["pairs"] != 0:
+            print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matches!')
+            
         return False
     
     # GERT-41 twentyone()
