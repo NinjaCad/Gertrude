@@ -22,12 +22,15 @@ class Dealer:
         If there aren't enough cards return False.
         'GERTRUDE' receives their second card face-down
         (known=False)."""
-        if numCards * len(players) > self.deck.size:
+        active_players = [player for player in players if player.active]
+
+        if numCards * len(active_players) > self.deck.size:
             return False
 
         for deal_pass in range(numCards):
-            for player in players:
+            for player in active_players:
                 # 1. Default to True (most cards are face-up)
+                # No inactive player will be dealth cards
                 isKnown = True
                 
                 # We check isinstance to prevent AttributeErrors without needing try/except.

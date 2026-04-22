@@ -33,6 +33,10 @@ class Games:
         while True:
             # Each player places side bets
             for player in self.playerList[1:]:
+                #GERT-54 checks broke players before allowing to bet
+                if not player.active:
+                    continue
+
                 player.bet("standard")
                 player.bet("pairs")
                 player.bet("21+3")
@@ -71,15 +75,14 @@ class Games:
                 break
             else:
                 # resetting player active status, hands, and the deck after each round
-                for i in range(len(self.playerList)-1, -1, -1):
-                    
-                    player = self.playerList[i]
-                    player.active = True
+                for player in self.playerList:
+                    #GERT-54 check for player money to be above 5 dollars
+                    if player.money < 5:
+                        player.active = False
+                    else:
+                        player.active = True
                     player.clearHand()
-                    
-                    if "right hand" in player.name:
-                        del self.playerList[i]
-                        
+
                 self.deck.reset()
                 self.deck.shuffle()
         
@@ -173,29 +176,24 @@ class Games:
 
     # Loop through all the players and there actions
     def round(self):
-        # Repeat length of players minus gertrude
+        # Repeat length of players minus gertrude    
         i = 1
         while True:
             player = self.playerList[i]
-            
+
+            # GERT-54 skip bankrupt/inactive players
+            if not player.active:
+                i += 1
+                if i == len(self.playerList):
+                    break
+                continue
+
             # show everyone's current hand for convenience
             for playerH in self.playerList:
                 playerH.showHand()
             
             print(f"\n=== {player.name}'s turn ===")
             player.showHand()
-            
-            # hit if first turn for right hand after split
-            if "right hand" in player.name:
-                player.hit(self.dealer)
-                player.check_cards()
-                player.showHand()
-
-            while True:
-                # Check if the player's turn has ended, and if so, end their turn and print their hand value
-                if player.active == False:
-                    print(f"{player.name} ends with a hand value of {player.check_cards()}.")
-                    break
 
                 # refresh availability each loop because the commands change
                 enabled_moves = ["hit", "stand"]

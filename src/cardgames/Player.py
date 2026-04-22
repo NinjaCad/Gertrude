@@ -325,6 +325,12 @@ HELPFUL TIPS:
                 break
             
         return
+    
+    #Gert-54 checkBankrupt()
+    def checkBankrupt(self):
+        if self.money < 5:
+            print(f"{self.name}, you are so broke that we had to remove you from the game hahahaha")
+            self.active = False
 
     # helper method to check if enough money is leftover to make new bets
     def bet_totals(self):
@@ -361,7 +367,9 @@ HELPFUL TIPS:
                     print(f"Your new total is ${self.money}\n")
                 
             self.bets[bet] = 0
-            
+        
+        #GERT-54 putting bankrupt checker into resolve_bet()
+        self.checkBankrupt 
         return
     
     def tipDealer(self):
