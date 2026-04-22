@@ -221,7 +221,6 @@ class Games:
             else:
                 print(player.name, ", push! You Tied with the dealer.")
                 player.bets["standard"] = 0
-                continue
             
             # unique resolve_bet run if there was a split
             if "right hand" in player.name:
