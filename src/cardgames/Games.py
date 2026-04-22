@@ -84,6 +84,7 @@ class Games:
             return True
         except Exception:
             return False
+        
     def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -225,6 +226,13 @@ class Games:
 
         self.turn_list = turn_list
         return turn_list
+    
+    def initialBookCheck(self, players):
+        for player in players:
+            player.bookHandling()
+            if player.books != []:
+                print(f"\n{player.name} started the following books:")
+                player.showBooks()
 
     def goFishing(self, player):
 
@@ -286,9 +294,6 @@ class Games:
         target_player = turn_list[int(target_choice)]
         print("")
 
-        #print("Put Card Names Here /n") #Place types of cards here
-        #print(host_player.hand) #Put Function for showing cards in hand here
-
         thief_choice = 0
 
         while thief_choice not in self.valueDict:
@@ -307,10 +312,10 @@ class Games:
                 stolen_cards += 1
         
         if stolen_cards == 0:
-            self.goFishing(host_player)
-            return False
+            pickedCard = self.goFishing(host_player)
+            return False, thief_choice, pickedCard
         else:
-            return True
+            return True, None, None
         
 
     def main(self):
@@ -330,6 +335,10 @@ class Games:
         players = self.create_players()
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
+
+        # Checks to see if books are made when players were initialized
+        self.initialBookCheck(turn_list)
+                
         
         game_running = True #game runs until broken out of by game_running = false when all 13 books are formed
         while game_running:
@@ -339,6 +348,7 @@ class Games:
                 input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                 player.isTurn = True
                 player.takeTurn(turn_list, self)
+                print('\n' * 50)
                 player.isTurn = False
 
                 #Checks to see if game is over; there is also a check in the takeTurn function that breaks out of the turn loop when this has been met so that the game ends propperly.
