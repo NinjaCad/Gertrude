@@ -6,6 +6,7 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+<<<<<<< HEAD
         # Keeping the most common initialization
         self.chosen_card: "Card | None" = None
         self.redraw_tokens = 0
@@ -15,6 +16,11 @@ class Player:
             self.redraw_tokens -= 1
             return True
         return False
+=======
+        self.redraw_tokens = 0
+        self.chosen_card = None
+        self.chosen_card = Card("", 0, [], [])
+>>>>>>> origin/dev_backrow_buggers
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -34,7 +40,10 @@ class Player:
                     image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
+<<<<<<< HEAD
                     image = card.image if self.knownCards[i] else card.cardBack[idx]
+=======
+>>>>>>> origin/dev_backrow_buggers
                     image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
@@ -46,10 +55,43 @@ class Player:
                 for card in self.hand:
                     print(card.cardBack[idx], end="")
                 print()
+<<<<<<< HEAD
             
+=======
+>>>>>>> origin/dev_backrow_buggers
             print(f"{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
 
+<<<<<<< HEAD
     def clearHand(self):
         self.hand = []
+=======
+    def hide_card(self, index: int):
+        if not (0 <= index < len(self.hand)):
+            raise IndexError(f"Card index out of range: {index}")
+        self.knownCards[index] = False
+        return self.hand[index]
+
+    def clearHand(self):
+        self.hand = []
+        self.knownCards = []
+        self.chosen_card = None
+
+    def add_redraw_token(self, tokens: int = 1):
+        if tokens < 0:
+            raise ValueError("Cannot add a negative number of redraw tokens.")
+        self.redraw_tokens += tokens
+
+    def record_round_win(self):
+        self.add_redraw_token()
+
+    def can_redraw(self) -> bool:
+        return self.redraw_tokens > 0
+
+    def consume_redraw_token(self) -> bool:
+        if not self.can_redraw():
+            return False
+        self.redraw_tokens -= 1
+        return True
+>>>>>>> origin/dev_backrow_buggers
