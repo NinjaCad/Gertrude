@@ -156,9 +156,13 @@ class Games:
         self.show_betting_popup(player1.name)
 
         # swap turn function
-        end_turn = input("\nPress [Enter] to end your turn: ")
-        if end_turn == "":
-            player1.clear_screen()
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player1.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
         
         while True:
             begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
@@ -172,9 +176,13 @@ class Games:
 
         self.show_betting_popup(player2.name)
 
-        end_turn = input("\nPress [Enter] to end your turn: ")
-        if end_turn == "":
-            player2.clear_screen()
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player2.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
 
         while True:
             display_winner = input("\nPress [Enter] to display the winner: ")
