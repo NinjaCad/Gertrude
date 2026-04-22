@@ -7,17 +7,17 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+        
         # When True, contributes to main game loop asking the player if they want to stand/hit/etc
         # When False, that player will no longer be targeted in the game loop (when all players are False, round ends) 
         self.active = True
         
         # GERT-18 initialize money and bet attributes for player
         self.money = 100
-        self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0}
+        self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0, "split": 0}
+        
         self.niceGert = False
 
-        # GERT-15 for recording split() functionality
-        self.split_hands_score = { }
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -33,6 +33,7 @@ class Player:
     
     # GERT-16
     def showHand(self, printShort: bool = False):
+        print(f"--- {self.name}'s hand ---")
         for idx in range(6):
             for i, card in enumerate(self.hand):
                 if printShort and i < len(self.hand)-1:
@@ -52,13 +53,12 @@ class Player:
     # outputs: none
     # goal: change self.active to false when player stands so they can no longer make moves
     def stand(self):
-        self.active = False if self.active == True else True
+        self.active = False
     
     # bust()
     # inputs: none
     # outputs: none
     # goal: change self.active to false when player busts so they can no longer make moves
-    
     # called when check_hand returns > 21, takes player out of turn rotation
     # assumption is that gameplay loop or check_cards() will call bust() when appropriate, so no additional logic is needed in this function
     def bust(self):
@@ -320,18 +320,21 @@ HELPFUL TIPS:
                 continue
             
             else: # if all checks are passed, set bet and break loop
-                if (type == "pairs"):
-                    self.bets["pairs"] = bet
-                elif (type == "21+3"):
-                    self.bets["21+3"] = bet
-                elif (type == "insurance"):
-                    self.bets["insurance"] = bet
-                else:
-                    self.bets["standard"] = bet
+                    
+                self.bets[type] = bet
                 break
             
         return
 
+    # helper method to check if enough money is leftover to make new bets
+    def bet_totals(self):
+        
+        total = 0
+        for key in self.bets.keys():
+            total += self.bets[key]
+            
+        return total
+            
     
     # GERT-18 resolve_bet()
     # inputs: win (dictionary where keys are the type of bet ("standard", "insurance", etc., and values are True or False based on whether or not bet was won)
@@ -352,6 +355,7 @@ HELPFUL TIPS:
                     self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
+             
                 if self.bets[bet] != 0:
                     print(f"You lost ${self.bets[bet]} on your {bet} bet")
                     print(f"Your new total is ${self.money}\n")
@@ -483,129 +487,53 @@ HELPFUL TIPS:
             return False
 
     # GERT-15 split()
-    # inputs: none
+    # inputs: dealer (Dealer object), gertrude (Gertrude object)
     # outputs: none (may change)
     # goals: create two subhands that can each play in any order, by splitting the current hand
     #        play each hand until completion (aka stand or bust)
     #        set self.active to false
     #        to avoid messing with round() or main() structure in Games.py, all split functionality
     #        will be completely handled here
-    def split(self, dealer):
+    def split(self, game):
         
-        hands = {"L": Player("L"), "R": Player("R")}
-        hands["L"].addCard(self.hand[0], True)
-        hands["R"].addCard(self.hand[1], True)
+        rightHand = Player(f"{self.name}'s right hand")
+        rightHand.addCard(self.hand.pop(), True)
         
-        hand = None
-        while hands["L"].active or hands["R"].active: # mini game loop to complete split
-            
-            if hand:
-                if hand == "L":
-                    print(f"\n--- R's hand ---")
-                    hands["R"].showHand()
-                elif hand == "R":
-                    print(f"\n--- L's hand ---")
-                    hands["L"].showHand()
-            else:
-                print(f"\n--- L's hand ---")
-                hands["L"].showHand()
-                print(f"\n--- R's hand ---")
-                hands["R"].showHand()
-            
-            # get which hand we are playing
-            hand = input("Which hand do you want to take an action? Please input Left or Right: ")
-            if hand.lower().strip() not in ["left", "right", "l", "r"]:
-                print("Invalid entry.")
-                continue
-            
-            # verify it is still active
-            hand = hand[0].upper()
-            player = hands[hand]
-            if not player.active:
-                print("That hand is no longer active.")
-                continue
-            
-            
-            while True:
-                # NOTE: for now, we will not allow players to split if they are already split
-                # refresh availability each loop because the commands change
-                enabled_moves = ["hit", "stand", "help"]
-                aliases = ["h", "s", "?"]
-                # if (player.can_split()):
-                #     enabled_moves.append("split")
-                #     aliases.append("sp")
-                # if (player.can_double()):
-                #     enabled_moves.append("double down")
-                #     aliases.insert("dd", -2)
-
-                # Print what moves are available based on enabled key in moves dictionary
-                print("Choose:", ", ".join(enabled_moves))
-                choice = input("> ").strip().lower()
-
-                if (choice in enabled_moves or choice in aliases):
-                    if choice in ["hit", "h"]:
-                        player.hit(dealer)
-                    elif choice in ["stand", "s"]:
-                        player.stand()
-                    # elif choice in ["split", "sp"]: SEE ABOVE NOTE on Line 312
-                    #     player.split(self.dealer)
-                    #     break
-                    # elif choice in ["double down", "dd"]:
-                    #    player.double_down(self.dealer)
-                    #    break
-                    elif choice in ["help", "?"]:
-                        print(player.help(enabled_moves + aliases))
-                        continue
-                    else:
-                        print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
-                        continue
-
-                    print(f"\n--- {player.name}'s hand ---")
-                    player.check_cards()
-                    player.showHand()
-                    break
-                else:
-                    print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
+        self.name = f"{self.name}'s left hand"
+        rightHand.bets["standard"] = self.bets["standard"]
         
-        # split turns have all been played out
-        self.active = False
-        self.split_hands_score = {"L": hands["L"].check_cards(), "R": hands["R"].check_cards()}
-                      
+        playerIndex = game.playerList.index(self)
+        game.playerList.insert(playerIndex + 1, rightHand)
+        
+        self.hit(game.dealer)
+        
     
     # can_split()
     # inputs: none
     # outputs: can_split (boolean)
     # goals: return True if both cards in self.hand are same value
     def can_split(self):
-        return len(self.hand) == 2 and self.hand[0].value == self.hand[1].value and self.money - (2 * self.bets["standard"]) > -100 
-        #      ^^^only have two cards  ^^^two cards of equal value                  ^^^can't split to go below -$100
+        return len(self.hand) == 2 and self.hand[0].value == self.hand[1].value and self.money - self.bet_totals() - self.bets["standard"] >= 0 and "hand" not in self.name
+        #      ^^^only have two cards  ^^^two cards of equal value                  ^^^can't split to go below -$100                                  ^^^can't split if already split
     
-    # resolve_bets_split()
+    
+    # can_double()
     # inputs: none
+    # outputs: boolean
+    # goals: return true if player can double (if they are on their first turn and have enough money)
+    def can_double(self):
+        return len(self.hand) == 2 and self.money - self.bet_totals() - self.bets["standard"] >= 0
+        #      ^^^first turn           ^^^have enough money to double bet w/out going negative
+    
+    # double_down()
+    # inputs: dealer (Dealer object)
     # outputs: none
-    # goals: special bet resolve functionality for split()
-    def resolve_bet_split(self, dealerScore):
+    # goals: double the bet, hit, and stand
+    def double_down(self, dealer):
         
-        for hand in ["Left", "Right"]:
-            score = self.split_hands_score[hand[0]]
-            
-            if score > 21:
-                print(f"{hand} hand busts!")
-                self.money -= self.bets["standard"]
-            elif dealerScore > 21:
-                print(f"Dealer busts. {hand} wins!")
-                self.money += self.bets["standard"]
-            elif score > dealerScore:
-                print(f"{hand} hand beat dealer.")
-                self.money += self.bets["standard"]
-            elif dealerScore > score:
-                print(f"Dealer beats {hand} hand.")
-                self.money -= self.bets["standard"]
-            else:
-                print(f"{hand} hand ties with dealer.")
-            
-        self.bets["standard"] = 0
-        self.split_hands_score = { }
+        self.bets["standard"] *= 2
+        self.hit(dealer)
+        self.stand()
         
         return
         

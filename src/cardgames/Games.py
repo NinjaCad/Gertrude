@@ -17,13 +17,13 @@ class Games:
 
     def __init__(self):
         self.deck = Deck()
+        self.dealer = Dealer(self.deck)
+        self.playerList = [ ]
 
     def main(self):
         """
         Main game loop
         """
-
-        self.dealer = Dealer(self.deck)
 
         print('\nWelcome to the Gertrude\'s BlackJack!')
 
@@ -71,9 +71,15 @@ class Games:
                 break
             else:
                 # resetting player active status, hands, and the deck after each round
-                for player in self.playerList:
+                for i in range(len(self.playerList)-1, -1, -1):
+                    
+                    player = self.playerList[i]
                     player.active = True
                     player.clearHand()
+                    
+                    if "right hand" in player.name:
+                        del self.playerList[i]
+                        
                 self.deck.reset()
                 self.deck.shuffle()
         
@@ -139,8 +145,8 @@ class Games:
         while True:
             try:
                 starting_money = int(input("Enter the amount of starting Money: $").strip())
-                if starting_money <= 0:
-                    print("Starting money must be more than 0.")
+                if starting_money <= 5:
+                    print("Starting money must be more than 5.")
                     continue
                 break
             except ValueError:
@@ -152,8 +158,12 @@ class Games:
         self.pl_list.append(Gertrude("GERTRUDE")) 
 
         for i in range(self.amtPlayers):
-
-            new_player = Player(str(input("Player {:d}'s name is: ".format(i+1))))
+            
+            name = str(input("Player {:d}'s name is: ".format(i+1)))
+            # to avoid conflicts with checks when dealing with player.split() and Games.round() when split
+            while "hand" in name:
+                name = str(input("Your name cannot contain the word 'hand'. Please put in a new name: "))
+            new_player = Player(name)
 
             new_player.money = starting_money
 
@@ -164,14 +174,22 @@ class Games:
     # Loop through all the players and there actions
     def round(self):
         # Repeat length of players minus gertrude
-        
-        print(f"--- Gertrude's hand ---")
-        self.playerList[0].showHand()
-        
-        for player in self.playerList[1:]:
-            print(f"\n--- {player.name}'s turn ---")
-            print(f"--- {player.name}'s hand ---")
+        i = 1
+        while True:
+            player = self.playerList[i]
+            
+            # show everyone's current hand for convenience
+            for playerH in self.playerList:
+                playerH.showHand()
+            
+            print(f"\n=== {player.name}'s turn ===")
             player.showHand()
+            
+            # hit if first turn for right hand after split
+            if "right hand" in player.name:
+                player.hit(self.dealer)
+                player.check_cards()
+                player.showHand()
 
             while True:
                 # Check if the player's turn has ended, and if so, end their turn and print their hand value
@@ -185,9 +203,9 @@ class Games:
                 if (player.can_split()):
                     enabled_moves.append("split")
                     aliases.append("sp")
-                # if (player.can_double()):
-                #     enabled_moves.append("double down")
-                #     aliases.append("dd")
+                if (player.can_double()):
+                    enabled_moves.append("double down")
+                    aliases.append("dd")
                 enabled_moves.append("help")
                 aliases.append("?")
 
@@ -210,11 +228,12 @@ class Games:
                             print(self.playerList[0].trashTalk("stand"))
 
                     elif choice in ["split", "sp"]:
-                        player.split(self.dealer)
+                        player.split(self)
+                    elif choice in ["double down", "dd"]:
+                        player.double_down(self.dealer)
                         if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
                             print(self.playerList[0].trashTalk("split"))
-                    # elif choice in ["double down", "dd"]:
-                    #    player.double_down(self.dealer)
+
                     elif choice in ["help", "?"]:
                         print(player.help(enabled_moves + aliases))
                         continue
@@ -222,11 +241,15 @@ class Games:
                         print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
                         continue
 
-                    print(f"\n--- {player.name}'s hand ---")
                     player.check_cards()
                     player.showHand()
                 else:
                     print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
+            
+            # iterate to next player and check if we are at the end of the list
+            i += 1
+            if i == len(self.playerList):
+                break
                     
     # GERT-31 calculateWinner()
     # inputs: none
@@ -242,6 +265,7 @@ class Games:
         for player in playerList[1:]:
             playerScore = player.check_cards()
 
+            standard_result = False
             if playerScore > 21:
                 standard_result = False
                 print(f"{player.name}, you bust!")
@@ -257,15 +281,26 @@ class Games:
             else:
                 print(f"{player.name}, you push! You Tied with the dealer.")
                 player.bets["standard"] = 0
-                continue
             
-            # Calculate results and give money for perfect pairs
-            player.resolve_bet({
-                "standard": standard_result,
-                "pairs": player.perfectPairs(),
-                "21+3": player.twentyone(dealer.hand[0]),
-                "insurance": player.insurance(self.playerList[0])
-            })
+            # unique resolve_bet run if there was a split
+            if "right hand" in player.name:
+                split_bet = player.bets["standard"]
+                
+                player = playerList[playerList.index(player) - 1]
+                player.bets["split"] = split_bet
+                player.resolve_bet( { "split": standard_result } )
+            else:
+                # Calculate results and give money for perfect pairs
+                player.resolve_bet({
+                    "standard": standard_result,
+                    "pairs": player.perfectPairs(),
+                    "insurance": player.insurance(self.playerList[0]),
+                    "21+3": player.twentyone(dealer.hand[0])
+                })
+            
+            # reset player name to original name (without 'left hand'/'right hand') (for split only)
+            if "left hand" in player.name:
+                player.name = player.name[:-12]
 
 
 if __name__ == "__main__":

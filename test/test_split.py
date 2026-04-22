@@ -52,9 +52,10 @@ def test_can_split():
 
 def test_split():
     
+    game = Games()
     player = Player("test")
-    deck = Deck()
-    dealer = Dealer(deck)
+    deck = game.deck
+    dealer = game.dealer
     
     # add two cards of equal value
     for card in deck.cards:
@@ -64,19 +65,22 @@ def test_split():
         if card.value == 7 and card.suit == "D":
             player.addCard(card, True)
        
-    # guarantee split() call has appropriate results recorded     
-    player.bets["standard"] = 5
-    player.split(dealer)
-    assert player.split_hands_score
+    # set up an example gertrude object to simulate game   
+    gertrude = Player("gertrude")
+    for i in range(3):
+        gertrude.addCard(deck.getCard(), True)
     
-    # guarantee resolve_bet_split() resolves unique split() bets correctly and resets properly
-    print(f"Hand scores: {player.split_hands_score}")
-    print(f"Dealer score: 17")
-    print(f"Player originally as $100. Bet is $5, so players final money should be from 90-110 based on whether or not each hand wins.")
-    player.resolve_bet_split(17) # test w/ dealerScore of 17
-    print(f"Final money {player.money}")
-    assert player.bets["standard"] == 0
-    assert player.split_hands_score == None
+    game.playerList = [ gertrude, player ]
+     
+    player.bets["standard"] = 5
+    
+    # start a game round with proper conditions to split
+    game.round()
+    gertrude.showHand()
+    game.calculateWinner(game.playerList)
+    
+    # make sure print statement makes sense with player/dealer hand totals
+    print(f"Final money: {player.money}")
 
     return
 
@@ -84,6 +88,8 @@ def test_split():
 def main():
     
     test_can_split()
+    
+    test_split()
     
     
 if __name__ == "__main__":
