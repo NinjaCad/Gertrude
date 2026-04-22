@@ -1,8 +1,6 @@
 import random
 
 from cardgames.Card import Card
-#from cardgames.Deck import Deck
-#from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -160,8 +158,8 @@ SETUP:
 PLAYER ACTIONS:
   - Hit: Take another card
   - Stand: Keep your hand
-  - Double Down: Double bet, take 1 card only
-  - Split: If you have 2 matching cards, split into 2 hands
+  - Double Down: Double bet but take 1 additionally card and end your turn
+  - Split: If you have 2 matching cards at the start of your turn, split into 2 hands
 
 BUST:
   - If your total goes over 21, you lose immediately
@@ -180,13 +178,32 @@ WINNING:
 BLACKJACK:
   - Ace + 10-value card
   - Best possible hand
-  - Pays extra (usually 3:2)
+  - Pays extra -> 3:2
 
-TIPS:
+SIDE BETS:
+  - Insurance:
+      - You can bet up to half your original bet that the dealers face down card will be worth 10 if their face up card is an Ace
+  - Perfect Pairs:
+      - You can bet on what your starting hand will be and will get payed extra
+        - Colored Pairs -> 10:1
+        - Mixed Pairs -> 5:1
+  - 21+3:
+      - You can bet on what your starting hand and the face card of the dealer will be and will get paid extra
+        - Flush -> 5:1
+        - Straight -> 10:1
+        - Three of a Kind -> 30:1
+        - Straight Flush -> 40:1
+
+TIPPING THE DEALER:
+  - It is proper etiquette to give some of your earnings to the dealer
+
+HELPFUL TIPS:
   - Hit if under 12
   - Stand on 17+
   - Play aggressive if dealer has 7 or higher
   - Be cautious if dealer has 4–6
+  - Double down on a hand value of 10
+  - Split whenever possible but not at hand value 20
 """)
 
         # Print all the commands, their alternate name(s), and if they they can use it
@@ -205,46 +222,83 @@ TIPS:
     # inputs: player (player object)
     # outputs: none
     # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )
-    def trashTalk(self):
-        if self.niceGert == False:
-            lines = [
-                "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
-                "Gertrude nods at your cards: 'Ah yes, the classic strategy: ignore the number 21.'",
-                "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
-                "Gertrude leans in: 'You were so close… to making a smarter decision.'",
-                "Gertrude grins: 'You hit like 21 is just a suggestion.'",
-                "Gertrude laughs: 'Don’t worry—lots of people panic-hit. Not *winners*, but people.'",
-                "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
-                "Gertrude shrugs: 'I’ve seen better decisions at a roulette table.'",
-                "Gertrude politely: 'Next time, try stopping before your hand catches fire.'",
-                "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
-                "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
-                "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'"
-            ]
+    # Add/replace Gertrude.trashTalk with this version.
+# Assumes you already have: import random
+# (If you don't, add `import random` at the top of the file.)
+
+    def trashTalk(self, event="hit"):
+        """
+        event: "hit", "stand", "split", "bust"
+        Returns a formatted string (with newlines) to print.
+        """
+        if self.niceGert is False:
+            lines_by_event = {
+                "hit": [
+                    "Gertrude watches closely: 'Another hit? Bold. Questionable, but bold.'",
+                    "Gertrude smirks: 'Ah yes, the classic strategy: ignore the number 21.'",
+                    "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
+                    "Gertrude grins: 'You hit like 21 is just a suggestion.'",
+                ],
+                "stand": [
+                    "Gertrude nods slowly: 'Standing… finally. Self-control is a skill.'",
+                    "Gertrude raises an eyebrow: 'You’re done? I was just starting to worry you could count.'",
+                    "Gertrude shrugs: 'Standing is fine. Fear is a valid strategy.'",
+                    "Gertrude smiles: 'Stopping early—how responsible. I’m almost proud.'",
+                ],
+                "split": [
+                    "Gertrude’s eyes narrow: 'A split? Now you’re either clever… or about to lose twice.'",
+                    "Gertrude chuckles: 'Splitting—because losing once wasn’t exciting enough.'",
+                    "Gertrude leans in: 'Two hands, double the decisions. This should be entertaining.'",
+                ],
+                "bust": [
+                    "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
+                    "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
+                    "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
+                    "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
+                    "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'",
+                ],
+            }
         else:
-            lines = [
-                "Gertrude sees your cards: 'Oh that happens sometimes honey, you'll get 'em next time.'",
-                "Gertrude laughs: 'You've got some bravery hitting on that hand. I like it!'",
-                "Gertrude sees your cards: 'Well that is pretty lucky... If only I had that type of luck...'"
-            ] #add more nice dialogue lines in a future sprint
-    
+            lines_by_event = {
+                "hit": [
+                    "Gertrude laughs: 'You've got some bravery hitting on that hand. I like it!'",
+                    "Gertrude smiles: 'Alright honey, let’s see what the next card brings.'",
+                    "Gertrude nods: 'Sometimes you have to take the chance—respect.'",
+                ],
+                "stand": [
+                    "Gertrude nods warmly: 'Standing there is totally reasonable.'",
+                    "Gertrude smiles: 'Good call. No need to force it.'",
+                ],
+                "split": [
+                    "Gertrude grins: 'A split? I love the confidence—let’s do it!'",
+                    "Gertrude nods: 'Okay! Two hands gives you more chances.'",
+                ],
+                "bust": [
+                    "Gertrude sees your cards: 'Oh that happens sometimes honey, you'll get 'em next time.'",
+                    "Gertrude pats the table: 'Aw, unlucky. Shake it off—we go again next round.'",
+                    "Gertrude sighs kindly: 'Oof. That one hurt. You were close though.'",
+                ],
+            }
+
+        # fallback if an unknown event comes in
+        lines = lines_by_event.get(event) or lines_by_event["hit"]
         return "\n" + random.choice(lines) + "\n"
-    # GERT-18 bet()
-    # inputs: none
-    # ouputs: none
-    # goal: a) create new self.money and self.bet_money attributes
-    #       b) set self.bet_money based on user input
+        
+    
+    
     def bet(self, type):
         # GERT-30 call trashtalk when player makes a bet
         
         while True: # while loop guarantees valid input
             # Getting players money
             if (type == "pairs"):
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ").strip()
+            elif (type == "21+3"):
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for 21+3? ").strip()
             elif (type == "insurance"):
-                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
+                bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ").strip()
             else:
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ")
+                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet? ").strip()
             
             # guarantee that bet is an integer
             try:
@@ -261,11 +315,12 @@ TIPS:
                 print(f"Insurance bet cannot be more than half of your original bet (${self.bets['standard']}). Please enter a valid amount")
                 continue
             
-            elif self.money - self.bet_totals() - bet < 0: # guarantee player doesn't go more than $100 in debt
-                print(f"You cannot go more than $100 in debt. Be responsible!")
+            elif self.money - self.bet_totals() - bet < 0: # guarantee player doesn't go more than $0 in debt
+                print(f"You cannot go in debt. Be responsible!")
                 continue
             
             else: # if all checks are passed, set bet and break loop
+                    
                 self.bets[type] = bet
                 break
             
@@ -293,11 +348,18 @@ TIPS:
         
         for bet in bet_results.keys():
             if bet_results[bet]:
-                self.money += self.bets[bet]
-                self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
+                if self.bets[bet] != 0:
+                    self.money += self.bets[bet]
+                    print(f"You made ${self.bets[bet]} on your {bet} bet!")
+                    print(f"Your new total is ${self.money}\n")
+                    self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
              
+                if self.bets[bet] != 0:
+                    print(f"You lost ${self.bets[bet]} on your {bet} bet")
+                    print(f"Your new total is ${self.money}\n")
+                
             self.bets[bet] = 0
             
         return
@@ -305,11 +367,11 @@ TIPS:
     def tipDealer(self):
         while True:
             print(f"{self.name}, you have ${self.money}.")
-            self.tipChoice = input("Do you want to tip the dealer? (y/n) ").lower()
+            self.tipChoice = input("Do you want to tip the dealer? (y/n) ").strip().lower()
             if self.tipChoice == "y":
                 while True:
                     try:
-                        self.tipAmt = int(input("How much do you want to tip? (integer value only) "))
+                        self.tipAmt = int(input("How much do you want to tip? (integer value only) ").strip())
                         if self.tipAmt > self.money:
                             print("You don't have that much money! Try again.")
                         elif self.tipAmt <= 0:
@@ -339,24 +401,90 @@ TIPS:
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
     def insurance(self, gert):
         if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+            print(f'{self.name}, you won ${self.bets["insurance"]} from your bet because gertrude got a blackjack!')
             return True  
         else:
+            print(f'{self.name}, you lost ${self.bets["insurance"]} from your bet because gertrude did not get a blackjack!')
             return False  
     
     # GERT-40 perfectPairs()
     # inputs: none
-    # outputs: pairType (string) based on whether or not there is a mixed pair, colored pair, or no pair
+    # outputs: True or False based on if the player won the bet
+        # Colored pair -> 10:1
+        # Mixed pair -> 5:1
     # goals: check self.hand for mixed or colored pair
     def perfectPairs(self):
+        # Requirements
         if len(self.hand) == 2:
             if self.hand[0].value == self.hand[1].value:
+                # Check if it's the same color ((spades and clubs == black) and (hearts and diamonds == red)
                 if (self.hand[0].suit in ["S", "C"] and self.hand[1].suit in ["S", "C"]) or (self.hand[0].suit in ["H", "D"] and self.hand[1].suit in ["H", "D"]):
                     self.bets["pairs"] *= 10
+                    print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 10} bet because you got a colored pair!')
                 else:
                     self.bets["pairs"] *= 5
+                    print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 5} bet because you got a mixed pair!')
                 return True
+        print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matches!')
         return False
+    
+    # GERT-41 twentyone()
+    # inputs: dealers top card
+    # outputs: True/False based on whether or not there is a flush, straight, three of a kind, and straight flush
+        # Flush -> 5:1
+        # Straight -> 10:1
+        # Three of a Kind -> 30:1
+        # Straight Flush -> 40:1
+    # goals: check self.hand for flush, straight, three of a kind, and straight flush
+    def twentyone(self, dealersCard = None):
+        # Requirements
+        if dealersCard is not None and len(self.hand) == 2:
+            # Get the three cards
+            c1, c2, c3 = self.hand[0], self.hand[1], dealersCard
 
+            # Same suit
+            is_flush = (c1.suit == c2.suit == c3.suit)
+            # Same value
+            is_three_kind = (c1.value == c2.value == c3.value)
+            
+            # List of values
+            vals = [c1.value, c2.value, c3.value]
+
+            # Sorted values list but A has a value of 1
+            def ranks_with_ace_low(vs):
+                return sorted(vs)
+
+            # Sorted value list but A(1) has a value of 14
+            def ranks_with_ace_high(vs):
+                return sorted([14 if v == 1 else v for v in vs])
+
+            # Find if it's a straight
+            def is_consecutive(rs):
+                return rs[0] + 1 == rs[1] and rs[1] + 1 == rs[2]
+
+            is_straight = is_consecutive(ranks_with_ace_low(vals)) or is_consecutive(ranks_with_ace_high(vals))
+
+            is_straight_flush = is_straight and is_flush
+
+            # Payouts
+            if is_straight_flush:
+                self.bets["21+3"] *= 40
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 40} bet because you got a straight flush!')
+            elif is_three_kind:
+                self.bets["21+3"] *= 30
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 30} bet because you got a three of a kind!')
+            elif is_straight:
+                self.bets["21+3"] *= 10
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 10} bet because you got a straight!')
+            elif is_flush:
+                self.bets["21+3"] *= 5
+                print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 5} bet because you got a flush!')
+            else:
+                print(f'{self.name}, you lost ${self.bets["21+3"]} from your bet because you got no matches!')
+                return False
+            return True
+        else:
+            return False
 
     # GERT-15 split()
     # inputs: dealer (Dealer object), gertrude (Gertrude object)

@@ -93,4 +93,4 @@ def test_main():
     test_starting_money_manually()
     test_calculate_winner_manual()
 
-test_main()
+#test_main()
