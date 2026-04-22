@@ -147,51 +147,82 @@ class Player:
                 print("\nThe deck and everyone elses' hands are empty! Nothing to do but skip...")
                 return
 
-            ### If opponents' hands are empty, draw
-            if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) != 0:
-                print("\nEveryone elses' hands are empty! Nothing to do but draw...", '')
-                self.hand.append(game.deck.getCard())
-                self.knownCards.append(True)
-                print("You picked up:")
-                self.showHand()
-                if self.bookHandling():
-                    print("\nAnd you've made a book!")
-                    self.showBooks()
-                    input("\nYou get to go again! Hit ENTER to continue...")
-                    self.takeTurn(players, game)
-                return
+        ### If opponents' hands are empty, draw
+        if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) != 0:
+            print("\nEveryone elses' hands are empty! Nothing to do but draw...", '')
+            self.hand.append(game.deck.getCard())
+            self.knownCards.append(True)
+            print("You picked up:")
+            self.showHand()
+            if self.bookHandling():
+                print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
+                self.showBooks()
+                input("\nYou get to go again! Hit ENTER to continue...")
+                self.takeTurn(players, game)
+            return
 
-            ### If hand is empty draw a card
-            if len(self.hand) == 0: 
-                print("\nYoSur hand is empty! ", '')
-                self.hand.append(game.deck.getCard())
-                self.knownCards.append(True)
-                print("You picked up:")
-                self.showHand()
-                return
+        ### If hand is empty draw a card
+        if len(self.hand) == 0: 
+            print("\nYour hand is empty! ", '')
+            self.hand.append(game.deck.getCard())
+            self.knownCards.append(True)
+            print("You picked up:")
+            self.showHand()
+            if self.bookHandling():
+                print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
+                self.showBooks()
+                input("\nYou get to go again! Hit ENTER to continue...")
+                self.takeTurn(players, game)
+                return 
 
             ### Show hand
             self.hand = self.sortHandIntoValues()
             print("\nYour hand:")
             self.showHand()
 
-            ### Stealing cards
-            pickedCard = None
-            stoleCards, requestedCard, pickedCard = game.card_thievery(players, self)
-            if stoleCards:
-                print("\nYou stole some cards!", "")
-                if self.bookHandling():
-                    print("And you've made a book!")
+        ### Stealing cards
+        if game.card_thievery(players, self):
+            print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗    ███████╗████████╗ ██████╗ ██╗     ███████╗    ███████╗ ██████╗ ███╗   ███╗███████╗     ██████╗ █████╗ ██████╗ ██████╗ ███████╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║    ██╔════╝╚══██╔══╝██╔═══██╗██║     ██╔════╝    ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
+ ╚████╔╝ ██║   ██║██║   ██║    ███████╗   ██║   ██║   ██║██║     █████╗      ███████╗██║   ██║██╔████╔██║█████╗      ██║     ███████║██████╔╝██║  ██║███████╗██║
+  ╚██╔╝  ██║   ██║██║   ██║    ╚════██║   ██║   ██║   ██║██║     ██╔══╝      ╚════██║██║   ██║██║╚██╔╝██║██╔══╝      ██║     ██╔══██║██╔══██╗██║  ██║╚════██║╚═╝
+   ██║   ╚██████╔╝╚██████╔╝    ███████║   ██║   ╚██████╔╝███████╗███████╗    ███████║╚██████╔╝██║ ╚═╝ ██║███████╗    ╚██████╗██║  ██║██║  ██║██████╔╝███████║██╗
+   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝   ╚═╝    ╚═════╝ ╚══════╝╚══════╝    ╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝                                                                                                                                                    
+      """)
+            if self.bookHandling():
+                print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
+            input("\nYou get to go again, press ENTER to continue...")
+            self.takeTurn(players, game)
+        else:
+            if self.bookHandling(): # If picked up card makes a book
+                print("\nLucky draw, you've made a book!")
+                print("\nYour books: ")
+                self.showBooks()
+            if game.valueDict[requestedCard] == pickedCard.value: # If the player picks up the card they asked another player for
+                print("\nYou picked up the same card you asked for!")
                 input("\nYou get to go again, press ENTER to continue...")
                 self.takeTurn(players, game)
             else:
-                if self.bookHandling(): # If picked up card makes a book
-                    print("\nLucky draw, you've made a book!")
-                    print("\nYour books: ")
-                    self.showBooks()
-                if game.valueDict[requestedCard] == pickedCard.value: # If the player picks up the card they asked another player for
-                    print("\nYou picked up the same card you asked for!")
-                    input("\nYou get to go again, press ENTER to continue...")
-                    self.takeTurn(players, game)
-                else:
-                    input("\nEnd of your turn! Hit enter to continue...")
+                input("\nEnd of your turn! Hit enter to continue...")
