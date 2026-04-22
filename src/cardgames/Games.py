@@ -523,9 +523,9 @@ class Games:
 
             for player in player_keys:
                 if player != effective_winner:
-                    game_stats[player]["Win Streak"] = 0"""
+                    game_stats[player]["Win Streak"] = 0
 
-        """#Total games is the sum of wins and ties
+        #Total games is the sum of wins and ties
         total_games = 0
         for player in players:
             total_games += game_stats[player]["Wins"]
