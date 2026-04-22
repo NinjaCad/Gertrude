@@ -1,5 +1,5 @@
 import random
-
+import math
 from cardgames.Card import Card
 #from cardgames.Deck import Deck
 #from cardgames.Dealer import Dealer
@@ -109,7 +109,7 @@ class Player:
         if total_score == 21:
             self.active = False
             if not self.blackjack_bonus_applied:
-                self.bets["standard"] *= 2.5
+                self.bets["standard"] = math.ceil(self.bets["standard"] * 2.5)
                 self.blackjack_bonus_applied = True
 
         return total_score
