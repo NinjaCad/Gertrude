@@ -31,5 +31,5 @@ def hit_test():
     else: 
         print("Test Failed")
 
-#hit_test()
+hit_test()
 # test for if() and test for else() by calling hit function and inputing a card value from the deck and seeing if it runs the function succesfully

@@ -195,56 +195,56 @@ class Games:
             print(f"\n=== {player.name}'s turn ===")
             player.showHand()
 
-                # refresh availability each loop because the commands change
-                enabled_moves = ["hit", "stand"]
-                aliases = ["h", "s"]
-                if (player.can_split()):
-                    enabled_moves.append("split")
-                    aliases.append("sp")
-                if (player.can_double()):
-                    enabled_moves.append("double down")
-                    aliases.append("dd")
-                enabled_moves.append("help")
-                aliases.append("?")
+            # refresh availability each loop because the commands change
+            enabled_moves = ["hit", "stand"]
+            aliases = ["h", "s"]
+            if (player.can_split()):
+                enabled_moves.append("split")
+                aliases.append("sp")
+            if (player.can_double()):
+                enabled_moves.append("double down")
+                aliases.append("dd")
+            enabled_moves.append("help")
+            aliases.append("?")
 
-                # Print what moves are available based on enabled key in moves dictionary
-                print("Choose:", ", ".join(enabled_moves))
+            # Print what moves are available based on enabled key in moves dictionary
+            print("Choose:", ", ".join(enabled_moves))
 
-                choice = input("> ").strip().lower()
+            choice = input("> ").strip().lower()
 
-                if choice in enabled_moves or choice in aliases:
-                    if choice in ["hit", "h"]:
-                        player.hit(self.dealer)
-                        if player.check_cards() > 21:
-                            print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
-                        else:
-                            if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
-                                print(self.playerList[0].trashTalk("hit"))
-                    elif choice in ["stand", "s"]:
-                        player.stand()
-                        if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
-                            print(self.playerList[0].trashTalk("stand"))
-
-                    elif choice in ["split", "sp"]:
-                        player.split(self)
-                    elif choice in ["double down", "dd"]:
-                        player.double_down(self.dealer)
-                        if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
-                            print(self.playerList[0].trashTalk("split"))
-
-                    elif choice in ["help", "?"]:
-                        print(player.help(enabled_moves + aliases))
-                        continue
+            if choice in enabled_moves or choice in aliases:
+                if choice in ["hit", "h"]:
+                    player.hit(self.dealer)
+                    if player.check_cards() > 21:
+                        print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
                     else:
-                        print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
-                        continue
+                        if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("hit"))
+                elif choice in ["stand", "s"]:
+                    player.stand()
+                    if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                        print(self.playerList[0].trashTalk("stand"))
 
-                    player.check_cards()
-                    player.showHand()
+                elif choice in ["split", "sp"]:
+                    player.split(self)
+                elif choice in ["double down", "dd"]:
+                    player.double_down(self.dealer)
+                    if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
+                        print(self.playerList[0].trashTalk("split"))
+
+                elif choice in ["help", "?"]:
+                    print(player.help(enabled_moves + aliases))
+                    continue
                 else:
-                    print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
-            
-            # iterate to next player and check if we are at the end of the list
+                    print("Gertrude smiles menacingly: 'I don't know how you got here, but this shouldn't be possible. Try again.'")
+                    continue
+
+                player.check_cards()
+                player.showHand()
+            else:
+                print("Gertrude raises an eyebrow: 'That's not a valid move. Try again.'")
+        
+        # iterate to next player and check if we are at the end of the list
             i += 1
             if i == len(self.playerList):
                 break

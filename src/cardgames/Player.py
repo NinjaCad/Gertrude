@@ -1,5 +1,5 @@
 import random
-
+import math
 from cardgames.Card import Card
 
 class Player:
@@ -14,9 +14,9 @@ class Player:
         
         # GERT-18 initialize money and bet attributes for player
         self.money = 100
-        self.bets = {"standard": 0, "insurance": 0, "pairs": 0, "21+3": 0, "split": 0}
-        
+        self.bets = {"standard": 0.0, "insurance": 0.0, "pairs": 0.0, "21+3": 0.0}
         self.niceGert = False
+        self.blackjack_bonus_applied = False
 
 
     def addCard(self, card: Card, isKnown: bool = True):
@@ -47,6 +47,7 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        self.blackjack_bonus_applied = False
         
     # stand()
     # inputs: none
@@ -99,10 +100,16 @@ class Player:
             total_score -= 10
             num_aces -= 1
         if total_score > 21:
-            self.bust()  # Player busts if score exceeds 21 even after adjusting Aces
+            self.bust()
             return total_score
-        else:
-            return total_score
+
+        if total_score == 21:
+            self.active = False
+            if not self.blackjack_bonus_applied:
+                self.bets["standard"] = math.ceil(self.bets["standard"] * 2.5)
+                self.blackjack_bonus_applied = True
+
+        return total_score
         
     
     # show_partial_hand()
@@ -124,6 +131,11 @@ class Player:
     # goal: add a card from the game deck to the player hand
     # suggestions: none
     def hit(self, dealer, isKnown: bool = True):
+        # Player cannot hit after standing, busting, or reaching 21.
+        if not self.active or self.check_cards() >= 21:
+            self.active = False
+            return None
+
         # hit() now goes through dealer 
         deck = dealer.deck
 
@@ -133,6 +145,7 @@ class Player:
 
         card = deck.getCard()
         self.addCard(card, isKnown)
+        self.check_cards()
         return card
 
 
