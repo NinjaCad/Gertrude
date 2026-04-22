@@ -21,7 +21,7 @@ class Card:
         return '\n'.join(self.shortImage if short else self.image)
 
     def __eq__(self, other):
-        if not isinstance(other, Card):
+        if not hasattr(other, "suit") or not hasattr(other, "value"):
             return False
         return self.suit == other.suit and self.value == other.value
 

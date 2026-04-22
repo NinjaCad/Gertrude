@@ -36,3 +36,25 @@
 9. After a moment, the Docker container is up and running. (if you are on a Mac, you may have to modify the devcontainer.json file from "localEnv:USERPROFILE" to "localEnv:HOME")
 10. Open a terminal and verify the python version is 3.10.16 using `python --version`.
 11. Also verify that your ssh keys are working properly using "git fetch" (there should be no warnings or errors).
+
+## Web UI (full-stack wrapper around existing game logic)
+
+This repository now includes a lightweight web layer that keeps existing game logic in `src/cardgames/*` intact.
+
+- Backend API: `src/cardgames/webapp.py` (FastAPI)
+- Frontend page: `src/cardgames/web/index.html`
+
+Run locally with Docker:
+
+1. Build image
+   - `docker build -t cis322e_sp26:local .`
+2. Start API + UI server (port 8000)
+   - `docker run --rm -p 8000:8000 -v "$PWD":/work -w /work cis322e_sp26:local uvicorn cardgames.webapp:app --app-dir /work/src --host 0.0.0.0 --port 8000 --reload`
+3. Open in browser
+   - `http://localhost:8000`
+
+Quick API check:
+
+- `POST /api/games` creates a new game
+- `POST /api/games/{id}/player1-choice` stores Player 1 card choice
+- `POST /api/games/{id}/player2-choice` applies `switch_turn` logic, hides Player 1 card, and completes the round
