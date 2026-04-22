@@ -100,10 +100,12 @@ class Games:
         
         print(f"\nGertrude rolls her eyes: 'Congrats to {store} for winning... I guess...'") 
         #special gertrude dialogue
+        print("\n")
         if sorted_results_list[0][1] < starting_money: #if NO player made any money, only lost money to varying degrees, this returns True
             print(f"Gertrude looks away: 'Although now that I think about it, {store} didn't actually make any money...", end='')
             print("You know what they say, the house ALWAYS wins...'")
             print("Gertrude smiles eerily...")
+            print("\n")
         print("Gertrude laughs: 'Losers... better luck next time!'")
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
