@@ -12,8 +12,8 @@
     }
   },
   "mounts": [
-    "source=${localEnv:HOME}/.gitconfig,target=/root/.gitconfig,type=bind",
-    "source=${localEnv:HOME}/.ssh/id_ed25519,target=/root/.ssh/id_ed25519,type=bind"
+    "source=${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,type=bind",
+    "source=${localEnv:USERPROFILE}/.ssh/id_ed25519,target=/root/.ssh/id_ed25519,type=bind"
 ]
 ,
   "postCreateCommand": "pip install -e . && chmod 700 ~/.ssh && chmod 600 ~/.ssh/id_ed25519"
