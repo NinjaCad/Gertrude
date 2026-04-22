@@ -1,3 +1,5 @@
+import random
+
 """
 GERTRUDE'S BLACKJACK TIPS
 
@@ -9,6 +11,7 @@ To run game:
 from cardgames.Deck import Deck
 from cardgames.Player import Player, Gertrude
 from cardgames.Dealer import Dealer
+
 
 class Games:
 
@@ -25,7 +28,7 @@ class Games:
         print('\nWelcome to the Gertrude\'s BlackJack!')
 
         # Sets up game and player list, which will be used for rounds
-        self.playerList = self.startGame()
+        self.playerList, starting_money = self.startGame()
 
         while True:
             # Each player places side bets
@@ -50,7 +53,11 @@ class Games:
 
             # Gertrude takes turn
             self.playerList[0].gertTurn(self.dealer)
-            self.playerList[0].showHand()
+            #Reveal all dealer cards before showing them to players
+            dealer = self.playerList[0]
+            if getattr(dealer, "knownCards", None):
+                dealer.knownCards = [True for _ in dealer.knownCards]
+            dealer.showHand()
 
             # Calculate results
             self.calculateWinner(self.playerList)
@@ -70,9 +77,48 @@ class Games:
                 self.deck.reset()
                 self.deck.shuffle()
         
-        # End game
+        #begin finish summary functionality
+        results_list = [] #create new results list that will be added in from the for loop below, then sorted based on money
+        print("Total money made or lost by each player:")
+        for player in self.playerList:
+            if player.name == "GERTRUDE":
+                continue #skip gert, she isn't technically a player
+            print(f"{player.name}: ", end='')
+            if player.money < starting_money: #if the player lost money overall, throughout the whole game
+                print(f"-${starting_money - player.money}")
+            elif player.money > starting_money: #if the player won money overall, throughout the whole game
+                print(f"+${player.money - starting_money}")
+            else:
+                print("No change in money!") #edge case where player didn't make or lose any money
+            results_list.append([player.name, player.money]) #player gets added regardless of their monetary status
+        print("\nFinal Standings:")
+        sorted_results_list = sorted(results_list, key=lambda item: item[1],reverse=True) #lambda essentially makes it so that sorted uses item 
+                                                                                            #which uses item[1] which is money which can be sorted
+
+        
+        store = "" #will be used in congratulation msg
+        for player in range(len(sorted_results_list)): #iterate through the players that just got sorted above
+            if player == 0 or sorted_results_list[0][1] == sorted_results_list[player][1]: 
+                #if a player is sorted to index 0, that means they made the most money
+                #other part of or statement checks if the current player iterated has the same amount of money as player at index 0 (which definitely won)
+                if player != 0: #if the player fulfills second half of or statement, then that means number of winners > 1, thus a comma and space is needed
+                    store += ", " 
+                store += sorted_results_list[player][0] #regardless of which condition == True, store concats the name of the player
+            print(f"{player + 1}: {sorted_results_list[player][0]}..........${sorted_results_list[player][1]}")
+            #prints the players place, name, and final money
+        
+        print(f"\nGertrude rolls her eyes: 'Congrats to {store} for winning... I guess...'") 
+        #special gertrude dialogue
+        print("\n")
+        if sorted_results_list[0][1] < starting_money: #if NO player made any money, only lost money to varying degrees, this returns True
+            print(f"Gertrude looks away: 'Although now that I think about it, {store} didn't actually make any money...", end='')
+            print("You know what they say, the house ALWAYS wins...'")
+            print("Gertrude smiles eerily...")
+            print("\n")
+        print("Gertrude laughs: 'Losers... better luck next time!'")
         print("\nThanks for playing!")
         input('Press [Enter] to exit.')
+        #end of finish summary, and program
     
     def startGame(self):
 
@@ -113,7 +159,7 @@ class Games:
 
             self.pl_list.append(new_player)
 
-        return self.pl_list
+        return self.pl_list, starting_money
 
     # Loop through all the players and there actions
     def round(self):
@@ -153,10 +199,20 @@ class Games:
                 if choice in enabled_moves or choice in aliases:
                     if choice in ["hit", "h"]:
                         player.hit(self.dealer)
+                        if player.check_cards() > 21:
+                            print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
+                        else:
+                            if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
+                                print(self.playerList[0].trashTalk("hit"))
                     elif choice in ["stand", "s"]:
                         player.stand()
+                        if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("stand"))
+
                     elif choice in ["split", "sp"]:
                         player.split(self.dealer)
+                        if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("split"))
                     # elif choice in ["double down", "dd"]:
                     #    player.double_down(self.dealer)
                     elif choice in ["help", "?"]:
@@ -181,6 +237,7 @@ class Games:
     def calculateWinner(self, playerList):
         dealer = playerList[0]
         dealerScore = dealer.check_cards()
+        print(f"{dealer.name} ends with a hand value of {dealerScore}.") #this prints the value of Gertrude's hand too! 
 
         for player in playerList[1:]:
             playerScore = player.check_cards()

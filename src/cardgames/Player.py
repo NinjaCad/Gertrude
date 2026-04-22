@@ -1,8 +1,6 @@
 import random
 
 from cardgames.Card import Card
-#from cardgames.Deck import Deck
-#from cardgames.Dealer import Dealer
 
 class Player:
     def __init__(self, name):
@@ -224,35 +222,70 @@ HELPFUL TIPS:
     # inputs: player (player object)
     # outputs: none
     # goals: have "gertrude" trashtalk player (incorporate player name in message so target is apparent >:) )
-    def trashTalk(self):
-        if self.niceGert == False:
-            lines = [
-                "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
-                "Gertrude nods at your cards: 'Ah yes, the classic strategy: ignore the number 21.'",
-                "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
-                "Gertrude leans in: 'You were so close… to making a smarter decision.'",
-                "Gertrude grins: 'You hit like 21 is just a suggestion.'",
-                "Gertrude laughs: 'Don’t worry—lots of people panic-hit. Not *winners*, but people.'",
-                "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
-                "Gertrude shrugs: 'I’ve seen better decisions at a roulette table.'",
-                "Gertrude politely: 'Next time, try stopping before your hand catches fire.'",
-                "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
-                "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
-                "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'"
-            ]
+    # Add/replace Gertrude.trashTalk with this version.
+# Assumes you already have: import random
+# (If you don't, add `import random` at the top of the file.)
+
+    def trashTalk(self, event="hit"):
+        """
+        event: "hit", "stand", "split", "bust"
+        Returns a formatted string (with newlines) to print.
+        """
+        if self.niceGert is False:
+            lines_by_event = {
+                "hit": [
+                    "Gertrude watches closely: 'Another hit? Bold. Questionable, but bold.'",
+                    "Gertrude smirks: 'Ah yes, the classic strategy: ignore the number 21.'",
+                    "Gertrude tilts her head: 'You know “hit” isn’t a personality trait, right?'",
+                    "Gertrude grins: 'You hit like 21 is just a suggestion.'",
+                ],
+                "stand": [
+                    "Gertrude nods slowly: 'Standing… finally. Self-control is a skill.'",
+                    "Gertrude raises an eyebrow: 'You’re done? I was just starting to worry you could count.'",
+                    "Gertrude shrugs: 'Standing is fine. Fear is a valid strategy.'",
+                    "Gertrude smiles: 'Stopping early—how responsible. I’m almost proud.'",
+                ],
+                "split": [
+                    "Gertrude’s eyes narrow: 'A split? Now you’re either clever… or about to lose twice.'",
+                    "Gertrude chuckles: 'Splitting—because losing once wasn’t exciting enough.'",
+                    "Gertrude leans in: 'Two hands, double the decisions. This should be entertaining.'",
+                ],
+                "bust": [
+                    "Gertrude clicks her tongue: 'Over 21? That’s not bravery—that’s bad math.'",
+                    "Gertrude sighs: 'If you wanted to bust, you could’ve just said so.'",
+                    "Gertrude laughs softly: 'And *that* is why we don’t get greedy.'",
+                    "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
+                    "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'",
+                ],
+            }
         else:
-            lines = [
-                "Gertrude sees your cards: 'Oh that happens sometimes honey, you'll get 'em next time.'",
-                "Gertrude laughs: 'You've got some bravery hitting on that hand. I like it!'",
-                "Gertrude sees your cards: 'Well that is pretty lucky... If only I had that type of luck...'"
-            ] #add more nice dialogue lines in a future sprint
-    
+            lines_by_event = {
+                "hit": [
+                    "Gertrude laughs: 'You've got some bravery hitting on that hand. I like it!'",
+                    "Gertrude smiles: 'Alright honey, let’s see what the next card brings.'",
+                    "Gertrude nods: 'Sometimes you have to take the chance—respect.'",
+                ],
+                "stand": [
+                    "Gertrude nods warmly: 'Standing there is totally reasonable.'",
+                    "Gertrude smiles: 'Good call. No need to force it.'",
+                ],
+                "split": [
+                    "Gertrude grins: 'A split? I love the confidence—let’s do it!'",
+                    "Gertrude nods: 'Okay! Two hands gives you more chances.'",
+                ],
+                "bust": [
+                    "Gertrude sees your cards: 'Oh that happens sometimes honey, you'll get 'em next time.'",
+                    "Gertrude pats the table: 'Aw, unlucky. Shake it off—we go again next round.'",
+                    "Gertrude sighs kindly: 'Oof. That one hurt. You were close though.'",
+                ],
+            }
+
+        # fallback if an unknown event comes in
+        lines = lines_by_event.get(event) or lines_by_event["hit"]
         return "\n" + random.choice(lines) + "\n"
-    # GERT-18 bet()
-    # inputs: none
-    # ouputs: none
-    # goal: a) create new self.money and self.bet_money attributes
-    #       b) set self.bet_money based on user input
+        
+    
+    
     def bet(self, type):
         # GERT-30 call trashtalk when player makes a bet
         
@@ -312,10 +345,16 @@ HELPFUL TIPS:
         
         for bet in bet_results.keys():
             if bet_results[bet]:
-                self.money += self.bets[bet]
-                self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
+                if self.bets[bet] != 0:
+                    self.money += self.bets[bet]
+                    print(f"You made ${self.bets[bet]} on your {bet} bet!")
+                    print(f"Your new total is ${self.money}\n")
+                    self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
+                if self.bets[bet] != 0:
+                    print(f"You lost ${self.bets[bet]} on your {bet} bet")
+                    print(f"Your new total is ${self.money}\n")
                 
             self.bets[bet] = 0
             
