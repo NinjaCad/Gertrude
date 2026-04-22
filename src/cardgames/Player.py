@@ -8,6 +8,15 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
+        # Keeping the most common initialization
+        self.chosen_card: "Card | None" = None
+        self.redraw_tokens = 0
+    
+    def consume_redraw_token(self):
+        if self.redraw_tokens > 0:
+            self.redraw_tokens -= 1
+            return True
+        return False
         self.redraw_tokens = 0
         self.chosen_card = None
         self.chosen_card = Card("", 0, [], [])
@@ -30,37 +39,34 @@ class Player:
                     image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
-                    image = card.image if self.knownCards[i] else card.cardBack[idx]
+                    #image = card.image if self.knownCards[i] else card.cardBack[idx]
+                    image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
 
     def hideHand(self):
         if self.hand:
-            hidden = self.name
-
-            #Clears the terminal
             print("\x1b[2J\033[H")
-
-            #Print the card backs of all cards in the player's hand
             for idx in range(6):
                 for card in self.hand:
                     print(card.cardBack[idx], end="")
                 print()
-            
-            print(f"\n{self.name}'s hand is now hidden.")
+
+            print(f"{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
 
-    def clear_screen(self):
-        # If the OS is Windows, run 'cls', otherwise run 'clear'
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
+
+    def hide_card(self, index: int):
+        if not (0 <= index < len(self.hand)):
+            raise IndexError(f"Card index out of range: {index}")
+        self.knownCards[index] = False
+        return self.hand[index]
 
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        self.chosen_card = None
 
     def add_redraw_token(self, tokens: int = 1):
         if tokens < 0:
