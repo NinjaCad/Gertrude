@@ -1,45 +1,34 @@
-<<<<<<< HEAD
-from cardgames.Card import Card
-=======
 from cardgames.Card_Compare import *
->>>>>>> db21b8c5a013bc397b4233adf9963264716c5db1
-import os
+
 
 class Player:
     def __init__(self, name):
         self.name = name
         self.hand = []
         self.knownCards = []
-<<<<<<< HEAD
-        self.chosen_card = None
-=======
         self.redraw_tokens = 0
         self.chosen_card = None
         self.chosen_card = Card("", 0, [], [])
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
-        # We use isKnown so showHand knows whether to show the face or the back
-        self.knownCards.append(isKnown)
+        if isKnown:
+            self.knownCards.append(True)
+        else:
+            self.knownCards.append(False)
 
-    def setHand(self, cards: "list[Card]", isKnown: bool = True): # Changed default to True
+    def setHand(self, cards: "list[Card]", isKnown: bool = False):
         self.hand = cards
         self.knownCards = [isKnown for _ in self.hand]
 
     def showHand(self, printShort: bool = False):
-        # Temporarily force knownCards to True if you want the player 
-        # to ALWAYS see their own cards during their turn
         for idx in range(6):
             for i, card in enumerate(self.hand):
-                # Logic: If knownCards[i] is True, show face. Else, show back.
-                is_revealed = self.knownCards[i] 
-                
                 if printShort and i < len(self.hand)-1:
-                    image = card.shortImage[idx] if is_revealed else card.cardBack[idx]
+                    image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
-                    image = card.image[idx] if is_revealed else card.cardBack[idx]
+                    image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
 
@@ -50,29 +39,20 @@ class Player:
                 for card in self.hand:
                     print(card.cardBack[idx], end="")
                 print()
-<<<<<<< HEAD
             print(f"{self.name}'s hand is now hidden.")
-=======
-            
-            print(f"\n{self.name}'s hand is now hidden.")
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
         else:
             print(f"{self.name} has no cards to hide.")
 
-    def clear_screen(self):
-        # If the OS is Windows, run 'cls', otherwise run 'clear'
-        if os.name == 'nt':
-            os.system('cls')
-        else:
-            os.system('clear')
+    def hide_card(self, index: int):
+        if not (0 <= index < len(self.hand)):
+            raise IndexError(f"Card index out of range: {index}")
+        self.knownCards[index] = False
+        return self.hand[index]
 
     def clearHand(self):
         self.hand = []
         self.knownCards = []
-<<<<<<< HEAD
-        # CRITICAL: Reset the chosen card so the next round starts fresh
         self.chosen_card = None
-=======
 
     def add_redraw_token(self, tokens: int = 1):
         if tokens < 0:
@@ -90,4 +70,3 @@ class Player:
             return False
         self.redraw_tokens -= 1
         return True
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd

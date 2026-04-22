@@ -1,7 +1,6 @@
-from cardgames.Card import Card
-from cardgames..Card_Compare import Card
-from cardgames..Deck import Deck
-from cardgames..Player import Player
+from cardgames.Card_Compare import Card
+from cardgames.Deck import Deck
+from cardgames.Player import Player
 
 class Dealer:
     def __init__(self, deck: Deck):
@@ -19,7 +18,16 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
+    def dealCards(self, numCards_or_players, players: "list[Player]" = None):
+        # Backward compatibility:
+        # - dealCards(3, players)
+        # - dealCards(players)  -> defaults to 3 cards/player
+        if players is None:
+            players = numCards_or_players
+            numCards = 3
+        else:
+            numCards = numCards_or_players
+
         if numCards * len(players) > self.deck.size:
             return False
         for player in players:

@@ -1,13 +1,12 @@
-<<<<<<< HEAD
 {
-    "python-envs.defaultEnvManager": "ms-python.python:system"
-=======
-{
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python.testing.pytestArgs": [
-        "test"
-    ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
+    "python.testing.pytestEnabled": true,
+    "python-envs.defaultEnvManager": "ms-python.python:system",
+    "python-envs.pythonProjects": [
+        {
+            "path": "",
+            "envManager": "ms-python.python:system",
+            "packageManager": "ms-python.python:pip"
+        }
+    ]
 }
