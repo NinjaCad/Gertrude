@@ -68,19 +68,12 @@ class Games:
 
         return selected_track
 
-    def clear():
+    def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
-    def slow_Print(text, delay=0.03):
-        for char in text:
-            print(char, end="")
-            sys.stdout.flush()
-            time.sleep(delay)
-        print()
 
-    def show_Title():
-        print(r"""
-    
+    class UI:
+        TITLE = r"""
 __| |___________________________________________________________________| |__
 __   ___________________________________________________________________   __
   | |                                                                   | |  
@@ -95,31 +88,43 @@ __   ___________________________________________________________________   __
   | |                                                                   | |  
                                                                                                                                                  
             A Card Game of Chance, Choice, & Everything Inbetween
-    """)
-
-    def opening_Sequence():
-        show_Title()
-
+    """
+    
+        go_fishing = r"""
+ ██████╗  ██████╗     ███████╗██╗███████╗██╗  ██╗██╗███╗   ██╗ ██████╗ ██╗
+██╔════╝ ██╔═══██╗    ██╔════╝██║██╔════╝██║  ██║██║████╗  ██║██╔════╝ ██║
+██║  ███╗██║   ██║    █████╗  ██║███████╗███████║██║██╔██╗ ██║██║  ███╗██║
+██║   ██║██║   ██║    ██╔══╝  ██║╚════██║██╔══██║██║██║╚██╗██║██║   ██║╚═╝
+╚██████╔╝╚██████╔╝    ██║     ██║███████║██║  ██║██║██║ ╚████║╚██████╔╝██╗
+ ╚═════╝  ╚═════╝     ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝
+    """
+    
+        RULES = r"""
+\n========== HOW TO PLAY ==========")
+("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
+("- If the chosen player has the requested card, they must give ALL of them.")
+("- If not... fishing time! Draw a single card from the deck.")
+("- The player who has the most matching sets at the end of the game wins!")
+("(The game draws to a close as the deck empties and every card set finds their pairs).")
+("================================\n
+    """
+        
+    def slow_print(text, delay=0.03):
+        for char in text:
+            print(char, end="")
+            sys.stdout.flush()
+            time.sleep(delay)
+        print()
+    
+    def opening_Sequence(self):
+        print(UI.TITLE)
         lines = [
             "The cards are shuffled...",
             "Your opponents are ready...",
             "Time to test your luck..."
         ]
-
         for line in lines:
-            slow_Print(line, 0.04)
-            time.sleep(0.3)
-
-        slow_Print("\nWelcome to Let's Fish!\n", 0.05)
-
-    def show_Rules():
-        print("\n========== HOW TO PLAY ==========")
-        print("- Each player takes a turn, asking a player for a card rank (e.g., 'Aces') or drawing a card from the deck.")
-        print("- If the chosen player has the requested card, they must give ALL of them.")
-        print("- If not... fishing time! Draw a single card from the deck.")
-        print("- The player who has the most matching sets at the end of the game wins!")
-        print("(The game draws to a close as the deck empties and every card set finds their pairs).")
-        print("================================\n")
+            UI.slow_print(line, 0.04)
     
     def choose_Game_mode(self):
         print("\nSelect Game Mode:")
@@ -127,18 +132,16 @@ __   ___________________________________________________________________   __
         print("2. Speedy (10 cards each)")
         print("3. hyper mode (13 card dealt)")
 
-    def main_Menu():
+    def main_Menu(self):
         while True:
             print("\n1. Start Game")
             print("2. How to Play")
             print("3. Quit")
-
             choice = input("\nChoose an option: ")
-
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                show_Rules()
+                print(UI.RULES)
             elif choice == "3":
                 print("Bye bye!")
                 exit()
@@ -213,20 +216,11 @@ __   ___________________________________________________________________   __
         return turn_list
 
     def goFishing(self, player):
-
-        print("\n"+r"""
- ██████╗  ██████╗     ███████╗██╗███████╗██╗  ██╗██╗███╗   ██╗ ██████╗ ██╗
-██╔════╝ ██╔═══██╗    ██╔════╝██║██╔════╝██║  ██║██║████╗  ██║██╔════╝ ██║
-██║  ███╗██║   ██║    █████╗  ██║███████╗███████║██║██╔██╗ ██║██║  ███╗██║
-██║   ██║██║   ██║    ██╔══╝  ██║╚════██║██╔══██║██║██║╚██╗██║██║   ██║╚═╝
-╚██████╔╝╚██████╔╝    ██║     ██║███████║██║  ██║██║██║ ╚████║╚██████╔╝██╗
- ╚═════╝  ╚═════╝     ╚═╝     ╚═╝╚══════╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝
-              """) #Maybe replace with Prettier Font?
+        print(UI.go_fishing)
         card = self.deck.getCard()
-        print(str(card))
+        print(f"You drew: {card}")
         player.addCard(card)
-
-        return(card)
+        return card
 
     #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
     def endGameState(self, players):
@@ -306,9 +300,9 @@ __   ___________________________________________________________________   __
         print('Welcome to the Games application!')
         print('This games application is under development.')
         
-        Games.clear()
-        Games.opening_Sequence()
-        menu_choice = Games.main_Menu()
+        self.clear()
+        self.opening_Sequence()
+        menu_choice = self.main_Menu()
         if menu_choice == "Starting game...":
             selected_mode = self.choose_Game_mode()
             self.deck.shuffle()
