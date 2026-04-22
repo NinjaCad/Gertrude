@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+from cardgames.Card import Card
+=======
+>>>>>>> origin/dev_backrow_buggers
 from cardgames.Card_Compare import Card
 from cardgames.Deck import Deck
 from cardgames.Player import Player
