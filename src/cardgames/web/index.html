@@ -205,6 +205,15 @@
         font-size: 0.9rem;
       }
       .backend-stats p { margin: 5px 0; color: #dbe4ff; }
+      .betting-popup {
+        margin-top: 10px;
+        border: 1px solid rgba(255, 227, 143, 0.35);
+        background: rgba(255, 227, 143, 0.08);
+        color: #ffe9ad;
+        border-radius: 10px;
+        padding: 10px;
+        font-size: 0.9rem;
+      }
       .player {
         border: 1px solid rgba(255, 255, 255, 0.16);
         border-radius: 14px;
@@ -512,8 +521,9 @@
           </div>
           <ol id="recentResults"></ol>
           <div class="backend-stats">
-            <h4>Backend Stats (Games.get_game_stats)</h4>
+            <h4>Round Stats</h4>
             <div id="backendStatsText" class="muted">No completed round yet.</div>
+            <div id="bettingPopup" class="betting-popup hidden"></div>
           </div>
         </section>
       </aside>
@@ -591,6 +601,16 @@
 
       function renderBackendStats() {
         const el = document.getElementById('backendStatsText');
+        const popupEl = document.getElementById('bettingPopup');
+
+        if (state?.betting_popup) {
+          popupEl.textContent = `🎲 ${state.betting_popup}`;
+          popupEl.classList.remove('hidden');
+        } else {
+          popupEl.classList.add('hidden');
+          popupEl.textContent = '';
+        }
+
         if (!state || !state.backend_stats) {
           el.innerHTML = '<span class="muted">No completed round yet.</span>';
           return;
@@ -599,7 +619,13 @@
         const s = state.backend_stats;
         const playerEntries = Object.entries(s).filter(([k]) => k !== 'Ties');
         const playerLines = playerEntries
-          .map(([name, stats]) => `${escapeHtml(name)} — Wins: ${stats.Wins}, Win-Rate: ${stats['Win-Rate']}`)
+          .map(([name, stats]) => {
+            const wins = stats.Wins ?? 0;
+            const winRate = stats['Win-Rate'] ?? '0.0%';
+            const streak = stats['Win Streak'] ?? 0;
+            const highStreak = stats['Highest Win Streak'] ?? 0;
+            return `${escapeHtml(name)} — Wins: ${wins}, Win-Rate: ${winRate}, Win Streak: ${streak}, Highest Win Streak: ${highStreak}`;
+          })
           .map((line) => `<p>${line}</p>`)
           .join('');
 

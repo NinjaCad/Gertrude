@@ -36,6 +36,8 @@ def test_create_game_then_play_round_to_completion():
 
     game = create_res.json()
     assert game["phase"] == "waiting_player1"
+    assert isinstance(game.get("betting_popup"), str)
+    assert game["betting_popup"]
     assert len(game["players"]) == 2
     assert len(game["players"][0]["cards"]) == 3
     # During Player 1's turn, Player 2's hand should be hidden in the web view.
@@ -62,6 +64,12 @@ def test_create_game_then_play_round_to_completion():
     assert game["players"][0]["cards"][1]["known"] is False
     assert game["players"][0]["chosen_card"] is not None
     assert game["players"][1]["chosen_card"] is not None
+    assert game.get("backend_stats") is not None
+
+    player_names = [game["players"][0]["name"], game["players"][1]["name"]]
+    for player_name in player_names:
+        assert "Win Streak" in game["backend_stats"][player_name]
+        assert "Highest Win Streak" in game["backend_stats"][player_name]
 
 
 def test_unknown_game_returns_404():

@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 from uuid import uuid4
+import random
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
@@ -42,6 +43,7 @@ class GameSession:
     player1_choice_idx: int | None = None
     player2_choice_idx: int | None = None
     winner: str | None = None
+    betting_popup: str | None = None
 
 
 class NewGameRequest(BaseModel):
@@ -57,6 +59,7 @@ _SESSIONS: dict[str, GameSession] = {}
 _PLAYER_PROFILES: dict[str, dict[str, int]] = {}
 _GLOBAL_STATS = {"ties": 0}
 _BACKEND_GAME_STATS: dict[tuple[str, str], dict] = {}
+_GAME_ENGINE = Games()
 
 
 def _get_profile(name: str) -> dict[str, int]:
@@ -126,6 +129,7 @@ def _serialize_game(session: GameSession) -> dict:
         "current_player_index": current_player,
         "winner": session.winner,
         "winner_index": winner_index,
+        "betting_popup": session.betting_popup,
         "backend_stats": backend_stats,
         "stats": {
             "ties": _GLOBAL_STATS["ties"],
@@ -161,7 +165,15 @@ def _setup_new_session(player1_name: str, player2_name: str) -> GameSession:
     if not ok:
         raise HTTPException(status_code=500, detail="Unable to deal cards")
 
-    return GameSession(game_id=str(uuid4()), players=[player1, player2], dealer=dealer)
+    featured_player = random.choice([player1.name, player2.name])
+    betting_popup = _GAME_ENGINE.build_betting_notification(featured_player)
+
+    return GameSession(
+        game_id=str(uuid4()),
+        players=[player1, player2],
+        dealer=dealer,
+        betting_popup=betting_popup,
+    )
 
 
 @app.post("/api/games")
@@ -225,7 +237,7 @@ def player2_choice(game_id: str, request: ChooseCardRequest):
     p2_name = session.players[1].name
     pair_key = (p1_name, p2_name)
     current_backend_stats = _BACKEND_GAME_STATS.get(pair_key)
-    _BACKEND_GAME_STATS[pair_key] = Games().get_game_stats(
+    _BACKEND_GAME_STATS[pair_key] = _GAME_ENGINE.get_game_stats(
         session.winner,
         [p1_name, p2_name],
         game_stats=current_backend_stats,
