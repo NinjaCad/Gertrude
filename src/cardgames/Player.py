@@ -1,3 +1,4 @@
+from cardgames.Card import Card
 from cardgames.Card_Compare import *
 import os
 
@@ -52,8 +53,8 @@ class Player:
         else:
             print(f"{self.name} has no cards to hide.")
 
-    def clear_screen(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
+    def clearHand(self):
+        self.hand = []
 
     def hide_card(self, index: int):
         if not (0 <= index < len(self.hand)):

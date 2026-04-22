@@ -1,13 +1,11 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
-from cardgames.Card_Compare import Card
-from cardgames.turns import switch_turn
 from cardgames.mid_screen import *
 from cardgames.betting_templates import gambling_templates
-import copy
 from cardgames.declare_winner import *
 import random
+from cardgames.Card_Compare import Card
 from Time_limit import player_choose_card_timed
 
 # ==========================================================
@@ -39,12 +37,11 @@ class HighCardDrawInstructions:
             raise ValueError(f"Invalid topic: {topic}. Valid: {cls.topics()}")
 
         return f"""
-=============================
+
 {cls.GAME_KEY.upper()} - {topic.upper()}
-=============================
 {cls._TOPICS[topic]}
 """.strip()
-
+    
 def declare_winner(player1, player2):
     card1 = player1.chosen_card
     card2 = player2.chosen_card
@@ -60,8 +57,8 @@ def declare_winner(player1, player2):
         print("Error: Both players must have chosen a card to declare a winner.")
 
         Raises:
-        ValueError: if topic is unknown.
-        """
+            ValueError: if topic is unknown.
+        
         topic_key = (topic or "overview").strip().lower()
         if topic_key not in cls._TOPICS:
             valid = ", ".join(cls.topics())
@@ -70,10 +67,19 @@ def declare_winner(player1, player2):
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
-    
-        """
+
 
 def show_cards(card: Card):
+        face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+        card_name = face_names.get(card.value, card.value)
+        
+        display_text = f"--- {card_name} of {card.suit} ---\n"
+        
+        for line in card.image:
+            display_text += line + "\n"
+            
+        return display_text
+
     face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
     card_name = face_names.get(card.value, card.value)
         
@@ -83,6 +89,7 @@ def show_cards(card: Card):
         display_text += line + "\n"
             
     return display_text
+
 
 class Games:
     def __init__(self):
@@ -132,10 +139,8 @@ class Games:
             f"- Cards per turn: {self.cards_per_turn}\n"
             f"- Match format: Best of {self.num_rounds}\n"
         )
-    """
 
-    """
-    def main_num2(self):
+    def main(self):
         print('Welcome to High Card Draw!')
 
         self.setup_gamemode()
@@ -171,6 +176,7 @@ class Games:
     """
     """
     def declare_winner(self, player1, player2):
+    def declare_winner(self):
         p1, p2 = self.players[0], self.players[1]
 
         print("\n" + "="*30)
@@ -242,6 +248,7 @@ class Games:
             return
         player1, player2 = players[0], players[1]
         player1.chosen_card = player1.hand[0] if player1.hand else None
+        player2.chosen_card = player2.hand[0] if player2.hand else None
 
     def build_betting_notification(self, player: str) -> str:
         template = random.choice(gambling_templates)
@@ -395,6 +402,28 @@ class Games:
         return player1, player2, deck
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
+        #Below is for every time a game has been ran
+        #Set up game_stats dict if it is empty
+        if game_stats == None:
+            game_stats = {}
+            for player in players:
+                game_stats[player] = {}
+                game_stats[player]["Wins"] = 0
+                game_stats[player]["Win-Rate"] = ""
+                game_stats[player]["Win Streak"] = 0
+                game_stats[player]["Highest Win Streak"] = 0
+            game_stats["Ties"] = 0
+            game_stats["Total Games"] = 0
+        
+        #Error handling
+        game_stats = copy.deepcopy(game_stats)
+        keys = list(game_stats.keys())
+        if winner not in keys and winner != "It's a tie!":
+            raise ValueError("Invalid winner")
+        for player in players:
+            if player not in keys:
+                raise ValueError("Player not found")
+
         # Below is for every time a game has been ran
         used_external_stats = game_stats is not None
 
@@ -454,7 +483,6 @@ class Games:
             elif players[1].chosen_card.value > players[1].chosen_card.value:
                 print(f"*** Winner: {players[1].name}! ***")
             else:
-                print("It's a tie!")
                 return "It's a tie!"
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
@@ -495,7 +523,20 @@ class Games:
 
             for player in player_keys:
                 if player != effective_winner:
-                    game_stats[player]["Win Streak"] = 0
+                    game_stats[player]["Win Streak"] = 0"""
+
+        """#Total games is the sum of wins and ties
+        total_games = 0
+        for player in players:
+            total_games += game_stats[player]["Wins"]
+        total_games += game_stats["Ties"]
+        game_stats["Total Games"] = total_games
+
+        #Calculate and update the win rate for both players
+        for player in players:
+            win_rate = game_stats[player]["Wins"] / total_games * 100
+            value = f"{win_rate:.2f}" + "%"
+            game_stats[player]["Win-Rate"] = value
 
         # Total games is the sum of wins and ties.
         total_games = sum(game_stats[player]["Wins"] for player in player_keys) + game_stats["Ties"]
