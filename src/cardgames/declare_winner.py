@@ -1,6 +1,5 @@
 from cardgames.Player import Player
 
-
 def declare_winner(player1, player2):
     card1 = player1.chosen_card
     card2 = player2.chosen_card

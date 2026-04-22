@@ -1,55 +1,12 @@
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
+from cardgames.mid_screen import *
 from cardgames.betting_templates import gambling_templates
+from cardgames.declare_winner import *
 import random
-from cardgames.Card import Card
-from cardgames.turns import switch_turn
-import copy
+from cardgames.Card_Compare import Card
 from Time_limit import player_choose_card_timed
-
-
-def show_cards(card: Card):
-    face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
-    card_name = face_names.get(card.value, card.value)
-
-    display_text = f"--- {card_name} of {card.suit} ---\n"
-
-    for line in card.image:
-        display_text += line + "\n"
-
-    return display_text
-
-def select_card(self, player):  # Function by Tyson
-    # Denotes the change of turn
-    print(f"\n--- {player.name}'s Turn ---")
-
-    # Added by Sam's suggestion
-    if len(player.hand) == 0:
-        print(f"{player.name} has no cards left to play!")
-        # Intentionally set to None since player cannot pick a card
-        player.chosen_card = None
-        return
-
-    player.showHand(printShort=True)
-
-    while True:
-        try:
-            max_choice = len(player.hand)
-            # Prompting player to pick a card
-            choice = int(input(f"Select a card to play (1-{max_choice}): "))
-
-            if 1 <= choice <= max_choice:
-                # Assign the chosen card using player.hand
-                player.chosen_card = player.hand[choice - 1]
-                print(f"Great! You selected {player.chosen_card}.")
-                break
-            else:
-                # Error handling in case they pick a number outside the options
-                print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
-        except ValueError:
-            print("Invalid input. Please enter a valid number.")
-
 
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
@@ -84,8 +41,7 @@ class HighCardDrawInstructions:
 {cls.GAME_KEY.upper()} - {topic.upper()}
 {cls._TOPICS[topic]}
 """.strip()
-
-"""
+    
 def declare_winner(player1, player2):
     card1 = player1.chosen_card
     card2 = player2.chosen_card
@@ -102,6 +58,7 @@ def declare_winner(player1, player2):
 
         Raises:
             ValueError: if topic is unknown.
+        
         topic_key = (topic or "overview").strip().lower()
         if topic_key not in cls._TOPICS:
             valid = ", ".join(cls.topics())
@@ -109,37 +66,32 @@ def declare_winner(player1, player2):
 
         title = f"{cls.GAME_KEY}: {topic_key}".upper()
         bar = "=" * len(title)
-        return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"""
-
-def declare_winner(player1, player2):
-    card1 = player1.chosen_card
-    card2 = player2.chosen_card
-    try:
-        if card1.compare(card2) == 1:  # player1 wins
-            return player1.name
-        elif card1.compare(card2) == -1:  # player2 wins
-            return player2.name
-        elif card1.compare(card2) == 0:
-            return "It's a tie!"
-    except TypeError:  # tie
-        print("Error: Both players must have chosen a card.")
+        return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
 
 
 def show_cards(card: Card):
+        face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+        card_name = face_names.get(card.value, card.value)
+        
+        display_text = f"--- {card_name} of {card.suit} ---\n"
+        
+        for line in card.image:
+            display_text += line + "\n"
+            
+        return display_text
+
     face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
     card_name = face_names.get(card.value, card.value)
-
+        
     display_text = f"--- {card_name} of {card.suit} ---\n"
-
+        
     for line in card.image:
         display_text += line + "\n"
-
+            
     return display_text
 
 
 class Games:
-    
-
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
@@ -151,6 +103,7 @@ class Games:
     # =====================================================
     # ONLY CHANGE: setup_gamemode UPDATED (BEST OF SYSTEM)
     # =====================================================
+    """
     def setup_gamemode(self):
         """Game setup locked to High Card Draw rules."""
 
@@ -220,8 +173,10 @@ class Games:
                 self.print_stats(game_stats)
 
         print("\nGame Over! Thanks for playing.")
-
+    """
+    """
     def declare_winner(self, player1, player2):
+    def declare_winner(self):
         p1, p2 = self.players[0], self.players[1]
 
         print("\n" + "="*30)
@@ -236,7 +191,7 @@ class Games:
             return p2.name
         elif p2.chosen_card is None:
             print(f"{p2.name} timed out. {p1.name} wins by default!")
-            """return p1.name
+            return p1.name
         else:
             print(f"{p1.name} played:\n{p1.chosen_card}")
             print(f"{p2.name} played:\n{p2.chosen_card}")
@@ -246,8 +201,7 @@ class Games:
                 return p1.name
             elif p2.chosen_card.value > p1.chosen_card.value:
                 print(f"*** Winner: {p2.name}! ***")
-                return p2.name"""
-
+                return p2.name
         else:
             # Both players made a choice, compare card values
             if p1.chosen_card.value > p2.chosen_card.value:
@@ -255,10 +209,39 @@ class Games:
             elif p2.chosen_card.value > p1.chosen_card.value:
                 print(f"{p2.name} wins with {p2.chosen_card}!")
             else:
-                print("It's a tie!")
                 return "It's a tie!"
         self._game_stats = None
+    """
+    def select_card(self, player):
+        # Denotes the change of turn 
+        print(f"\n--- {player.name}'s Card Options ---")
+        if len(player.hand) == 0: # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
 
+        for i, card in enumerate(player.hand):
+            print("\n" + show_cards(card))
+        
+        while True:
+            try:
+                max_choice = len(player.hand)
+                # Prompting player to pick a card
+                choice = int(input(f"Select one of the cards to play (1-{max_choice}): "))
+                
+                # Check if choice is valid
+                if 1 <= choice <= max_choice:
+                    # Assign the chosen card using player.hand
+                    player.chosen_card = player.hand[choice - 1]
+                    print(f"\nGreat! You selected \n\n{show_cards(player.chosen_card)}.")
+                    break 
+                else:
+                    # error handling in case they pick a number outside the options
+                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
+                    
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
+                
     def handle_ties(self, players: list[Player]):
         """Legacy compatibility helper for tie-handling tests."""
         if len(players) < 2:
@@ -276,6 +259,7 @@ class Games:
         print(f"[BETTING POP-UP] {message}")
         return message
 
+    """
     def playthrough(
         self,
         *,
@@ -285,9 +269,9 @@ class Games:
         input_fn=input,
         print_fn=print,
     ) -> dict:
-        """Run one high-card-draw round using existing game components.
+        """#Run one high-card-draw round using existing game components.
 
-        Returns a summary dict with players, winner, deck, and chosen indices.
+       # Returns a summary dict with players, winner, deck, and chosen indices.
         """
         if players is None:
             players = [Player("Player 1"), Player("Player 2")]
@@ -318,7 +302,7 @@ class Games:
             player1.chosen_card = player1.hand[p1_choice_idx]
             player2.chosen_card = player2.hand[p2_choice_idx]
         else:
-            select_card(self, player1)
+            self.select_card(player1)
             if player1.chosen_card is None:
                 raise ValueError("Player 1 did not choose a card")
 
@@ -340,23 +324,11 @@ class Games:
             "deck": deck,
             "chosen_indices": [p1_choice_idx, p2_choice_idx],
         }
-
+    """
     def main(self, test_mode=False):
         print('Welcome to High Card Draw!')
-        print('First 3 cards in standard 52-card deck:')
-        for card in self.deck.cards[:3]:
-            print(card)
-
-        if not test_mode:
-            input('Press [Enter] to exit.')
-
-        # Example usage of New Feature: instructions display.
-        # This is the demo only - the rules system itself is tested through pytest.
-        print("\nHigh Card Draw Instructions (overview):")
         print(HighCardDrawInstructions.get("overview"))
-
-        if not test_mode:
-            input('Press [Enter] to start.')
+        input('\nPress [Enter] to start...')
 
         # Initiate variables
         player1 = Player("Player 1")
@@ -365,51 +337,68 @@ class Games:
         deck.shuffle()
         dealer = Dealer(deck)
 
-        # Deal cards to players
-        dealer.dealCards(3, [player1, player2])
+        while True:
+            begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+            if begin == "":
+                break
+            else:
+                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
+        
+        dealer.dealCards(3, [player1])
+        self.select_card(player1)
 
-        if test_mode:
-            player1.chosen_card = player1.hand[0]
-            player2.chosen_card = player2.hand[0]
-        else:
-            # Display player 1's cards
-            print(f"\n{player1.name}'s cards:")
-            for card in player1.hand:
-                print(show_cards(card))
+        # swap turn function
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player1.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
+        
+        while True:
+            begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+            if begin == "":
+                break
+            else:
+                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
+        
+        dealer.dealCards(3, [player2])
+        self.select_card(player2)
 
-            # Player 1 chooses a card
-            select_card(self, player1)
-            if player1.chosen_card is None:
-                raise ValueError("Player 1 did not choose a card")
+        self.show_betting_popup(player2.name)
 
-            p1_choice_idx = player1.hand.index(player1.chosen_card)
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player2.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
 
-            print("Switched turns. Player 2's turn to choose a card.")
-            # Hide Player 1 hand before Player 2 selects.
-            player1.hideHand()
+        while True:
+            display_winner = input("\nPress [Enter] to display the winner: ")
+            if display_winner == "":
+                # Call the function and store the result
+                winner = declare_winner(player1, player2)
+                while winner == "It's a tie!":
+                    self.handle_ties([player1, player2])
+        
+                # Display results
+                print("-" * 30)
+                print(f"THE WINNER IS: {winner}")
+                print("-" * 30)
+                print(f"\n{player1.name} chose: \n{player1.chosen_card}")
+                print(f"\n{player2.name} chose: \n{player2.chosen_card}")
+                print("\n" + "-" * 30)
+            
+                # Break the loop now that we have a valid result
+                break
+            else:
+                # Error feedback for anything other than Enter
+                print(f"Invalid input: '{display_winner}'. Please press the [Enter] key only.")
 
-            # Display player 2's cards
-            print(f"\n{player2.name}'s cards:")
-            for card in player2.hand:
-                print(show_cards(card))
-
-            _next_idx, p2_choice_idx = switch_turn(
-                players=[player1, player2],
-                current_player_index=0,
-                chosen_card_index=p1_choice_idx,
-                input_fn=input,
-                print_fn=print,
-            )
-            player2.chosen_card = player2.hand[p2_choice_idx]
-
-        # Display winner
-        winner = declare_winner(player1, player2)
-        print("The winner is: ", winner)
-        print(player1.name + " chose: ")
-        print(player1.chosen_card)
-        print(player2.name + " chose: ")
-        print(player2.chosen_card)
-
+        # Return the state after the loop is finished
         return player1, player2, deck
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
@@ -494,19 +483,18 @@ class Games:
             elif players[1].chosen_card.value > players[1].chosen_card.value:
                 print(f"*** Winner: {players[1].name}! ***")
             else:
-                print("It's a tie!")
                 return "It's a tie!"
 
-    """def get_game_stats(self, winner: str, players: list, game_stats=None):
+    def get_game_stats(self, winner: str, players: list, game_stats=None):
         if game_stats is None:
             game_stats = {}
+
             #Update winner's win streak and highest win streak
             game_stats[winner]["Win Streak"] += 1
             if game_stats[winner]["Win Streak"] > game_stats[winner]["Highest Win Streak"]:
                 game_stats[winner]["Highest Win Streak"] = game_stats[winner]["Win Streak"]
 
             #Reset everyone else's win streak
->>>>>>> origin/dev_backrow_buggers
             for player in players:
                 game_stats[player] = {"Wins": 0, "Win-Rate": ""}
             game_stats["Ties"] = 0
@@ -525,7 +513,6 @@ class Games:
 
         for player in players:
             win_rate = (game_stats[player]["Wins"] / total_games * 100) if total_games else 0
-=======
             effective_winner = winner if winner in game_stats else (players[0] if players else player_keys[0])
             game_stats[effective_winner]["Wins"] += 1
             game_stats[effective_winner]["Win Streak"] += 1
@@ -536,9 +523,9 @@ class Games:
 
             for player in player_keys:
                 if player != effective_winner:
-                    game_stats[player]["Win Streak"] = 0"""
+                    game_stats[player]["Win Streak"] = 0
 
-        """#Total games is the sum of wins and ties
+        #Total games is the sum of wins and ties
         total_games = 0
         for player in players:
             total_games += game_stats[player]["Wins"]
@@ -549,7 +536,7 @@ class Games:
         for player in players:
             win_rate = game_stats[player]["Wins"] / total_games * 100
             value = f"{win_rate:.2f}" + "%"
-            game_stats[player]["Win-Rate"] = value"""
+            game_stats[player]["Win-Rate"] = value
 
         # Total games is the sum of wins and ties.
         total_games = sum(game_stats[player]["Wins"] for player in player_keys) + game_stats["Ties"]
@@ -563,7 +550,6 @@ class Games:
             self._game_stats = copy.deepcopy(game_stats)
         return game_stats
 
-
     def print_stats(self, game_stats: dict):
         print("\n--- Current Standings ---")
         for p in self.players:
@@ -572,26 +558,6 @@ class Games:
             print(f"  {p.name}: {wins} win(s) | Win Rate: {rate}")
         print(f"  Ties: {game_stats['Ties']}")
 
-
-    def display_game_stats(self, game_stats):
-        print("-"*30)
-        print("Game Statistics")
-        print("-"*30)
-        print(f"Total Games Played: {game_stats['Total Games']}\n")
-        print("          | Wins | Win Rate | Current Win Streak | Highest Win Streak |")
-        for player, stats in game_stats.items():
-            if not isinstance(stats, dict):
-                continue
-            #For when iterating over "Ties" and "Total Games"
-
-            wins = stats['Wins']
-            winrate = stats['Win-Rate']
-            win_streak = stats['Win Streak']
-            high_win_streak = stats['Highest Win Streak']
-            print(f"{player:9} | {wins:4} | {winrate:8} | {win_streak:18} | {high_win_streak:18} |")
-        ties = game_stats['Ties']
-        print(f"\nTies: {ties}")
-
 if __name__ == "__main__":
     game = Games()
-    game.main(test_mode=False)
+    game.main()

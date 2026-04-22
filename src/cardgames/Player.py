@@ -2,7 +2,6 @@ from cardgames.Card import Card
 from cardgames.Card_Compare import *
 import os
 
-
 class Player:
     def __init__(self, name):
         self.name = name
@@ -39,7 +38,6 @@ class Player:
                     image = card.shortImage[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
                 else:
-                    #image = card.image if self.knownCards[i] else card.cardBack[idx]
                     image = card.image[idx] if self.knownCards[i] else card.cardBack[idx]
                     print(image, end="")
             print()
@@ -51,11 +49,12 @@ class Player:
                 for card in self.hand:
                     print(card.cardBack[idx], end="")
                 print()
-
             print(f"{self.name}'s hand is now hidden.")
         else:
             print(f"{self.name} has no cards to hide.")
 
+    def clearHand(self):
+        self.hand = []
 
     def hide_card(self, index: int):
         if not (0 <= index < len(self.hand)):
@@ -66,6 +65,7 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
+        # CRITICAL: Reset the chosen card so the next round starts fresh
         self.chosen_card = None
 
     def add_redraw_token(self, tokens: int = 1):
