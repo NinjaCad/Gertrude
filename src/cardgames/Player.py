@@ -43,6 +43,9 @@ class Player:
         else:
             print(f"{self.name} has no cards to hide.")
 
+    def clear_screen(self):
+        os.system('cls' if os.name == 'nt' else 'clear')
+
     def hide_card(self, index: int):
         if not (0 <= index < len(self.hand)):
             raise IndexError(f"Card index out of range: {index}")

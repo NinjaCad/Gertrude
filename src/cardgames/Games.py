@@ -3,6 +3,7 @@ from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 from cardgames.Card_Compare import Card
 from cardgames.turns import switch_turn
+from cardgames.mid_screen import *
 from cardgames.betting_templates import gambling_templates
 import copy
 from cardgames.declare_winner import *
@@ -90,6 +91,36 @@ class Games:
         self.deck = Deck()
         self._game_stats = None
 
+    def select_card(self, player):
+        # Denotes the change of turn 
+        print(f"\n--- {player.name}'s Card Options ---")
+        if len(player.hand) == 0: # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
+
+        for i, card in enumerate(player.hand):
+            print("\n" + show_cards(card))
+        
+        while True:
+            try:
+                max_choice = len(player.hand)
+                # Prompting player to pick a card
+                choice = int(input(f"Select one of the cards to play (1-{max_choice}): "))
+                
+                # Check if choice is valid
+                if 1 <= choice <= max_choice:
+                    # Assign the chosen card using player.hand
+                    player.chosen_card = player.hand[choice - 1]
+                    print(f"\nGreat! You selected \n\n{show_cards(player.chosen_card)}.")
+                    break 
+                else:
+                    # error handling in case they pick a number outside the options
+                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
+                    
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
+                
     def handle_ties(self, players: list[Player]):
         """Legacy compatibility helper for tie-handling tests."""
         if len(players) < 2:
@@ -149,7 +180,7 @@ class Games:
             player1.chosen_card = player1.hand[p1_choice_idx]
             player2.chosen_card = player2.hand[p2_choice_idx]
         else:
-            select_card(self, player1)
+            self.select_card(player1)
             if player1.chosen_card is None:
                 raise ValueError("Player 1 did not choose a card")
 
@@ -174,20 +205,8 @@ class Games:
 
     def main(self, test_mode=False):
         print('Welcome to High Card Draw!')
-        print('First 3 cards in standard 52-card deck:')
-        for card in self.deck.cards[:3]:
-            print(card)
-
-        if not test_mode:
-            input('Press [Enter] to exit.')
-
-        # Example usage of New Feature: instructions display.
-        # This is the demo only - the rules system itself is tested through pytest.
-        print("\nHigh Card Draw Instructions (overview):")
         print(HighCardDrawInstructions.get("overview"))
-
-        if not test_mode:
-            input('Press [Enter] to start.')
+        input('\nPress [Enter] to start...')
 
         # Initiate variables
         player1 = Player("Player 1")
@@ -205,49 +224,6 @@ class Games:
         
         dealer.dealCards(3, [player1])
         self.select_card(player1)
-
-        if test_mode:
-            player1.chosen_card = player1.hand[0]
-            player2.chosen_card = player2.hand[0]
-        else:
-            # Display player 1's cards
-            print(f"\n{player1.name}'s cards:")
-            for card in player1.hand:
-                print(show_cards(card))
-
-            # Player 1 chooses a card
-            select_card(self, player1)
-            if player1.chosen_card is None:
-                raise ValueError("Player 1 did not choose a card")
-
-            p1_choice_idx = player1.hand.index(player1.chosen_card)
-
-            print("Switched turns. Player 2's turn to choose a card.")
-            # Hide Player 1 hand before Player 2 selects.
-            player1.hideHand()
-
-            # Display player 2's cards
-            print(f"\n{player2.name}'s cards:")
-            for card in player2.hand:
-                print(show_cards(card))
-
-            _next_idx, p2_choice_idx = switch_turn(
-                players=[player1, player2],
-                current_player_index=0,
-                chosen_card_index=p1_choice_idx,
-                input_fn=input,
-                print_fn=print,
-            )
-            player2.chosen_card = player2.hand[p2_choice_idx]
-
-        # Display winner
-        winner = declare_winner(player1, player2)
-        print("The winner is: ", winner)
-        print(player1.name + " chose: ")
-        print(player1.chosen_card)
-        print(player2.name + " chose: ")
-        print(player2.chosen_card)
-        self.show_betting_popup(player1.name)
 
         # swap turn function
         while True:
@@ -278,26 +254,14 @@ class Games:
             else:
                 print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
 
-        display_winner = input("\nPress [Enter] to display the winner: ")
-        if display_winner == "":
-            # display winner
-            winner = self.declare_winner()
-
-# HANNAH'S CODE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-            while winner == "It's a tie!":
-                self.handle_ties([player1, player2])
-                winner = self.declare_winner()
-
-# <<<<<<<<<<<<<<<<<<<<<<<<<<<<
-
         while True:
             display_winner = input("\nPress [Enter] to display the winner: ")
-        
             if display_winner == "":
                 # Call the function and store the result
                 winner = declare_winner(player1, player2)
-            
+                while winner == "It's a tie!":
+                    self.handle_ties([player1, player2])
+        
                 # Display results
                 print("-" * 30)
                 print(f"THE WINNER IS: {winner}")
@@ -392,4 +356,4 @@ class Games:
 
 if __name__ == "__main__":
     game = Games()
-    game.main(test_mode=False)
+    game.main()
