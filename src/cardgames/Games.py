@@ -22,6 +22,7 @@ class Games:
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
         self.assets_dir = Path(__file__).resolve().parents[2] / "assets"
+        self.go_fish_sound = None
         self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
         "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
 
@@ -47,13 +48,19 @@ class Games:
             return self.FULL_TEST
         return self.REPEAT_FOREVER
 
-    def play_background_music(self, playback_mode=None):
+    def _ensure_audio_ready(self):
         import pygame
 
         if pygame.mixer.get_init() is None:
             pygame.mixer.init()
 
-        selected_track = self.choose_music_track()
+        return pygame
+
+    def play_background_music(self, playback_mode=None, selected_track=None):
+        pygame = self._ensure_audio_ready()
+
+        if selected_track is None:
+            selected_track = self.choose_music_track()
         pygame.mixer.music.load(str(selected_track))
 
         if playback_mode is None:
@@ -68,6 +75,16 @@ class Games:
 
         return selected_track
 
+    def play_go_fish_sound(self):
+        try:
+            pygame = self._ensure_audio_ready()
+            if self.go_fish_sound is None:
+                self.go_fish_sound = pygame.mixer.Sound(str(self.assets_dir / self.GOLDFISH_TRACK))
+            self.go_fish_sound.play()
+            return True
+        except Exception:
+            return False
+        
     def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -132,6 +149,7 @@ __   ___________________________________________________________________   __
         print("2. Speedy (10 cards each)")
         print("3. hyper mode (13 card dealt)")
 
+    def main_Menu(self):
     def main_Menu(self):
         while True:
             print("\n1. Start Game")
@@ -214,6 +232,13 @@ __   ___________________________________________________________________   __
 
         self.turn_list = turn_list
         return turn_list
+    
+    def initialBookCheck(self, players):
+        for player in players:
+            player.bookHandling()
+            if player.books != []:
+                print(f"\n{player.name} started the following books:")
+                player.showBooks()
 
     def goFishing(self, player):
         print(UI.go_fishing)
@@ -257,20 +282,20 @@ __   ___________________________________________________________________   __
 
         self.showOpponentsHands(turn_list)
 
-        target_choice = ""
-        while target_choice not in player_number:
-            target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
-            if target_choice in player_dict:
-                target_choice = str(player_dict[target_choice])
-            elif target_choice not in player_number and target_choice not in player_dict:
-                print("Invalid Input! Enter player name or number.")
-                target_choice = ""
+        if len(player_number) == 1:
+            target_choice = player_number[0]
+        else:
+            target_choice = ""
+            while target_choice not in player_number:
+                target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
+                if target_choice in player_dict:
+                    target_choice = str(player_dict[target_choice])
+                elif target_choice not in player_number and target_choice not in player_dict:
+                    print("Invalid Input! Enter player name or number.")
+                    target_choice = ""
 
         target_player = turn_list[int(target_choice)]
         print("")
-
-        #print("Put Card Names Here /n") #Place types of cards here
-        #print(host_player.hand) #Put Function for showing cards in hand here
 
         thief_choice = 0
 
@@ -290,35 +315,34 @@ __   ___________________________________________________________________   __
                 stolen_cards += 1
         
         if stolen_cards == 0:
-            self.goFishing(host_player)
-            return False
+            pickedCard = self.goFishing(host_player)
+            return False, thief_choice, pickedCard
         else:
-            return True
+            return True, None, None
         
 
     def main(self):
         print('Welcome to the Games application!')
         print('This games application is under development.')
-        
-        self.clear()
-        self.opening_Sequence()
-        menu_choice = self.main_Menu()
-        if menu_choice == "Starting game...":
-            selected_mode = self.choose_Game_mode()
-            self.deck.shuffle()
-            players = self.create_players()
-            turn_list = self.start_game(players)
-            print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
-            
-            game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
-            while game_running:
-                for player in turn_list:
-                    input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
-                    player.isTurn = True
-                    player.takeTurn(turn_list, self)
 
-                    player.isTurn = False
+        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         
+        # Access each player by "for player in players" loop OR by using indexing (player[0].name)
+        players = self.create_players()
+        turn_list = self.start_game(players)
+        print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
+        
+        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        while game_running:
+            for player in turn_list:
+
+                # Else
+                input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
+                player.isTurn = True
+                player.takeTurn(turn_list, self)
+
+                player.isTurn = False
+    
         input('Press [Enter] to exit.')
         
 
