@@ -275,7 +275,7 @@ TIPS:
         while True: # while loop guarantees valid input
             # Getting players money
             if (type == "pairs"):
-                bet = input(f"{self.name}, you have ${self.money}. How much do you want to bet for perfect pairs? ")
+                bet = input(f"{self.name}, you have ${self.money - self.bets['standard']}. How much do you want to bet for perfect pairs? ")
             elif (type == "insurance"):
                 bet = input(f"{self.name}, you previously bet ${self.bets['standard']}. You can bet up to half for insurance! How much would you like to bet? ") 
             else:
@@ -324,10 +324,16 @@ TIPS:
         
         for bet in bet_results.keys():
             if bet_results[bet]:
-                self.money += self.bets[bet]
-                self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
+                if self.bets[bet] != 0:
+                    self.money += self.bets[bet]
+                    print(f"You made ${self.bets[bet]} on your {bet} bet!")
+                    print(f"Your new total is ${self.money}\n")
+                    self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
+                if self.bets[bet] != 0:
+                    print(f"You lost ${self.bets[bet]} on your {bet} bet")
+                    print(f"Your new total is ${self.money}\n")
                 
             self.bets[bet] = 0
             
