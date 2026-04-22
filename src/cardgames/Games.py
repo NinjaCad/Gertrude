@@ -1,19 +1,11 @@
 from cardgames.Deck import Deck
-<<<<<<< HEAD
 from cardgames.Dealer import Dealer
 from cardgames.Player import Player
-from Time_limit import player_choose_card_timed
-=======
-<<<<<<< HEAD
-from cardgames.Player import Player
-from cardgames.Dealer import Dealer
+from cardgames.Time_limit import player_choose_card_timed
 from cardgames.Card_Compare import Card
-from cardgames.Dealer import Dealer
 from cardgames.betting_templates import gambling_templates
 import random
-=======
-from cardgames.Card import Card
->>>>>>> feature/BB-25-game-stats-update
+
 import copy
 
 # ===================
@@ -79,49 +71,13 @@ def show_cards(card: Card):
             display_text += line + "\n"
             
         return display_text
-        
-def declare_winner(player1, player2):
-        card1 = player1.chosen_card
-        card2 = player2.chosen_card
-        try:
-            if card1.compare(card2)==1: # player1 wins
-                return player1.name
-            elif card1.compare(card2)==-1: # player2 wins
-                return player2.name
-            elif card1.compare(card2)==0:
-                return "It's a tie!"
-        except TypeError: # tie
-            print("Error: Both players must have chosen a card to declare a winner.")
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
+
 
 class Games:
     def __init__(self):
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
         self.players = [Player("Player 1"), Player("Player 2")]
-
-<<<<<<< HEAD
-    def main(self):
-        print('Welcome to High Card Draw!')
-        
-        # 1. SHUFFLE AND DEAL
-        self.deck.shuffle()
-        for p in self.players:
-            # Clear any old data and deal 3 fresh cards
-            p.clearHand() 
-            self.dealer.dealCards(3, [p])
-            # Ensure cards are revealed so the player can see them to choose
-            p.setHand(p.hand, isKnown=True) 
-
-        # 2. SELECTION PHASE (TIMED)
-        for p in self.players:
-            player_choose_card_timed(p, 10)
-            # Optional: Clear the screen after each player's turn 
-            # so the next player doesn't see the previous choice
-            # print("\n" * 30) 
-
-        # 3. WINNER LOGIC
-        self.declare_winner()
 
     def declare_winner(self):
         p1, p2 = self.players[0], self.players[1]
@@ -137,39 +93,40 @@ class Games:
             print(f"{p1.name} timed out. {p2.name} wins by default!")
         elif p2.chosen_card is None:
             print(f"{p2.name} timed out. {p1.name} wins by default!")
-=======
-    def select_card(self, player):
-        # Denotes the change of turn 
-        print(f"\n--- {player.name}'s Card Options ---")
-        if len(player.hand) == 0: # Added by Sam's suggestion
-            print(f"{player.name} has no cards left to play!")
-            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
-            return 
+        else:
+            # Both players made a choice, compare card values
+            if p1.chosen_card.value > p2.chosen_card.value:
+                print(f"{p1.name} wins with {p1.chosen_card}!")
+            elif p2.chosen_card.value > p1.chosen_card.value:
+                print(f"{p2.name} wins with {p2.chosen_card}!")
+            else:
+                print("It's a tie!")
+                return "It's a tie!"
 
-        for i, card in enumerate(player.hand):
-            print("\n" + show_cards(card))
+# HANNAH'S CODE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+    def handle_ties(self, players):
+        player1 = players[0]
+        player2 = players[1]
+        begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+        # Player 1 chooses a card
+        if begin == "":
+            self.select_card(player1)
+            
+        # swap turn function
+        end_turn = input("\nPress [Enter] to end your turn: ")
+        if end_turn == "":
+            player1.clear_screen()
         
-        while True:
-            try:
-                max_choice = len(player.hand)
-                # Prompting player to pick a card
-                choice = int(input(f"Select one of the cards to play (1-{max_choice}): "))
-                
-                # Check if choice is valid
-                if 1 <= choice <= max_choice:
-                    # Assign the chosen card using player.hand
-                    player.chosen_card = player.hand[choice - 1]
-                    print(f"\nGreat! You selected \n\n{show_cards(player.chosen_card)}.")
-                    break 
-                else:
-                    # error handling in case they pick a number outside the options
-                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
-                    
-            except ValueError:
-                print("Invalid input. Please enter a valid number.")
-
-    def main(self, test_mode= False):
-        print('\nWelcome to High Card Draw!')
+        begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+        # Player 2 chooses a card
+        if begin == "":
+            self.select_card(player2)
+    
+        end_turn = input("\nPress [Enter] to end your turn: ")
+        if end_turn == "":
+            player2.clear_screen()
+            
     def build_betting_notification(self, chosen_player_name):
         template = random.choice(gambling_templates)
         return template.format(player=chosen_player_name)
@@ -275,7 +232,16 @@ class Games:
         display_winner = input("\nPress [Enter] to display the winner: ")
         if display_winner == "":
             # display winner
-            winner = declare_winner(player1, player2)
+            winner = self.declare_winner()
+
+# HANNAH'S CODE >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+            while winner == "It's a tie!":
+                self.handle_ties([player1, player2])
+                winner = self.declare_winner()
+
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
             print("\nThe winner is: ", winner)
             print("\n" + player1.name + " chose: ")
             print(player1.chosen_card)
@@ -314,25 +280,20 @@ class Games:
             #Every player loses their win streak if it's a tie
             for player in players:
                 game_stats[player]["Win Streak"] = 0
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
+
         else:
             # Using the Card's __str__ method to show the card nicely
-            print(f"{p1.name} played:\n{p1.chosen_card}")
-            print(f"{p2.name} played:\n{p2.chosen_card}")
+            print(f"{players[0].name} played:\n{players[0].chosen_card}")
+            print(f"{players[1].name} played:\n{players[1].chosen_card}")
             
             # Compare the actual card values
-            if p1.chosen_card.value > p2.chosen_card.value:
-                print(f"*** Winner: {p1.name}! ***")
-            elif p2.chosen_card.value > p1.chosen_card.value:
-                print(f"*** Winner: {p2.name}! ***")
+            if players[0].chosen_card.value > players[1].chosen_card.value:
+                print(f"*** Winner: {players[0].name}! ***")
+            elif players[1].chosen_card.value > players[1].chosen_card.value:
+                print(f"*** Winner: {players[1].name}! ***")
             else:
                 print("It's a tie!")
 
-<<<<<<< HEAD
-        # 4. CLEANUP for next round
-        for p in self.players:
-            p.clearHand()
-=======
             #Update winner's win streak and highest win streak
             game_stats[winner]["Win Streak"] += 1
             if game_stats[winner]["Win Streak"] > game_stats[winner]["Highest Win Streak"]:
@@ -356,7 +317,6 @@ class Games:
             game_stats[player]["Win-Rate"] = value
 
         return game_stats
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
 
 if __name__ == "__main__":
     game = Games()
