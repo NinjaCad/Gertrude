@@ -84,7 +84,6 @@ class Games:
             return True
         except Exception:
             return False
-
     def clear(self):
         os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -332,7 +331,7 @@ class Games:
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
         
-        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        game_running = True #game runs until broken out of by game_running = false when all 13 books are formed
         while game_running:
             for player in turn_list:
 
@@ -340,9 +339,15 @@ class Games:
                 input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                 player.isTurn = True
                 player.takeTurn(turn_list, self)
-
                 player.isTurn = False
-    
+
+                #Checks to see if game is over; there is also a check in the takeTurn function that breaks out of the turn loop when this has been met so that the game ends propperly.
+                if self.dealer.checkFor13Books(players) == True:
+                    game_running = False
+        
+        #Once main game is over, prints winner(s) & scoreboard + who made what books
+        self.endGameState(players)
+
         input('Press [Enter] to exit.')
         
 
