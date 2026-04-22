@@ -7,13 +7,9 @@ class Player:
         self.name = name
         self.hand = []
         self.knownCards = []
-<<<<<<< HEAD
-        self.chosen_card = None
-=======
         self.redraw_tokens = 0
         self.chosen_card = None
         self.chosen_card = Card("", 0, [], [])
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
 
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
@@ -47,12 +43,7 @@ class Player:
                 for card in self.hand:
                     print(card.cardBack[idx], end="")
                 print()
-<<<<<<< HEAD
-            print(f"{self.name}'s hand is now hidden.")
-=======
-            
             print(f"\n{self.name}'s hand is now hidden.")
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
         else:
             print(f"{self.name} has no cards to hide.")
 
@@ -66,10 +57,8 @@ class Player:
     def clearHand(self):
         self.hand = []
         self.knownCards = []
-<<<<<<< HEAD
         # CRITICAL: Reset the chosen card so the next round starts fresh
         self.chosen_card = None
-=======
 
     def add_redraw_token(self, tokens: int = 1):
         if tokens < 0:
@@ -87,4 +76,3 @@ class Player:
             return False
         self.redraw_tokens -= 1
         return True
->>>>>>> 96c1c706ed905127f82872d092a86f696cffd9fd
