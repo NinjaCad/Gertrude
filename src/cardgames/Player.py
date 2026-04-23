@@ -126,26 +126,25 @@ class Player:
         self.knownCards = []
 
     def takeTurn(self, players, game):
-        ### If the player's hand and the deck are empty, their turn is skipped
-        if len(self.hand) == 0 and len(game.deck.cards) == 0:
-            print(f"\n{self.name}'s hand and the deck are empty, next player...")
+        #This check catches recursion calls after the last book is made so that no mater what way leads to the 13th book being made, if it is then this function call ends so that the main game loop moves forward to the ending state (implemented in games.py while loop in main()).
+        if game.dealer.checkFor13Books(players) == True:
             return
-
-        ### Show books
-        if self.numBooks != 0:
-            print("\nYour books: ")
-            self.showBooks()
-        
-        ### If opponents' hands are empty, draw
-        noCardsPlayers = []
-        for player in players:
-            if not player.isTurn and player.hand == []: # Skips the player whos turn it is, and takes players with empty hands
-                noCardsPlayers.append(player)
-        
-        ### If opponents' hands are empty and Deck is empty, skip
-        if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) == 0:
-            print("\nThe deck and everyone elses' hands are empty! Nothing to do but skip...")
-            return
+        else:
+            ### Show books
+            if self.numBooks != 0:
+                print("\nYour books: ")
+                self.showBooks()
+            
+            ### Testing if all opponents' hands are empty
+            noCardsPlayers = []
+            for player in players:
+                if not player.isTurn and player.hand == []: # Skips the player whos turn it is, and takes players with empty hands
+                    noCardsPlayers.append(player)
+            
+            ### If opponents' hands are empty and Deck is empty, skip
+            if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) == 0:
+                print("\nThe deck and everyone elses' hands are empty! Nothing to do but skip...")
+                return
 
         ### If opponents' hands are empty, draw
         if len(noCardsPlayers) == len(players) - 1 and len(game.deck.cards) != 0:
@@ -155,7 +154,14 @@ class Player:
             print("You picked up:")
             self.showHand()
             if self.bookHandling():
-                print("\nAnd you've made a book!")
+                print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
                 self.showBooks()
                 input("\nYou get to go again! Hit ENTER to continue...")
                 self.takeTurn(players, game)
@@ -169,29 +175,53 @@ class Player:
             print("You picked up:")
             self.showHand()
             if self.bookHandling():
-                print("\nAnd you've made a book!")
+                print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
                 self.showBooks()
                 input("\nYou get to go again! Hit ENTER to continue...")
                 self.takeTurn(players, game)
                 return 
 
-        ### Show hand
-        self.hand = self.sortHandIntoValues() #Causing error messages?
-        print("\nYour hand:")
-        self.showHand()
+            ### Show hand
+            self.hand = self.sortHandIntoValues()
+            print("\nYour hand:")
+            self.showHand()
 
         ### Stealing cards
         if game.card_thievery(players, self):
-            print("\nYou stole some cards!", "")
+            print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗    ███████╗████████╗ ██████╗ ██╗     ███████╗    ███████╗ ██████╗ ███╗   ███╗███████╗     ██████╗ █████╗ ██████╗ ██████╗ ███████╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║    ██╔════╝╚══██╔══╝██╔═══██╗██║     ██╔════╝    ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
+ ╚████╔╝ ██║   ██║██║   ██║    ███████╗   ██║   ██║   ██║██║     █████╗      ███████╗██║   ██║██╔████╔██║█████╗      ██║     ███████║██████╔╝██║  ██║███████╗██║
+  ╚██╔╝  ██║   ██║██║   ██║    ╚════██║   ██║   ██║   ██║██║     ██╔══╝      ╚════██║██║   ██║██║╚██╔╝██║██╔══╝      ██║     ██╔══██║██╔══██╗██║  ██║╚════██║╚═╝
+   ██║   ╚██████╔╝╚██████╔╝    ███████║   ██║   ╚██████╔╝███████╗███████╗    ███████║╚██████╔╝██║ ╚═╝ ██║███████╗    ╚██████╗██║  ██║██║  ██║██████╔╝███████║██╗
+   ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝   ╚═╝    ╚═════╝ ╚══════╝╚══════╝    ╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝                                                                                                                                                    
+      """)
             if self.bookHandling():
-                print("And you've made a book!")
+                print(r"""\n
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
             input("\nYou get to go again, press ENTER to continue...")
             self.takeTurn(players, game)
         else:
-            if self.bookHandling():
-                print("Lucky draw, you've made a book!")
+            if self.bookHandling(): # If picked up card makes a book
+                print("\nLucky draw, you've made a book!")
+                print("\nYour books: ")
+                self.showBooks()
+            if game.valueDict[requestedCard] == pickedCard.value: # If the player picks up the card they asked another player for
+                print("\nYou picked up the same card you asked for!")
                 input("\nYou get to go again, press ENTER to continue...")
                 self.takeTurn(players, game)
             else:
                 input("\nEnd of your turn! Hit enter to continue...")
-                print('\n' * 50)

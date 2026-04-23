@@ -28,6 +28,7 @@ def test_cardSteal():
     FishThatAteNemosFamily = Player("ThatGuy")
 
     players = [Marlin, Dory, Nemo, FishThatAteNemosFamily]
+    #players = [Marlin, Dory]
     Dory.setHand([cards[0], cards[1], cards[2], cards[3], cards[3]], isKnown=True)
     Marlin.setHand([cards[0], cards[0], cards[1], cards[1], cards[0]], isKnown=True) #Test stealing queen multiples
     Nemo.setHand([cards[0], cards[1], cards[2], cards[3], cards[4]], isKnown=True) #Test stealing singles
