@@ -13,7 +13,7 @@ def test_gofish():
     print("\n Marlin's Cards: "+str(len(Marlin.hand)))
 
     #Test for when player has book for recursive draw
-    assert len(Marlin.hand) == 1 #Once book is made, should only have 1 card in hand.
+    assert len(Marlin.hand) == 4 #Books will be handled by Player Turn function.
 
     Nemo = Player("Nemo")
     while len(Nemo.hand) < 2:

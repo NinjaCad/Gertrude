@@ -26,7 +26,7 @@ def test_shuffle_keeps_52_cards():
 
 def test_shuffle_actually_shuffles():
     deck = Deck()
-    original_order = deck.cards
+    original_order = deck.cards[:]
     deck.shuffle()
     new_order = deck.cards
     assert original_order != new_order

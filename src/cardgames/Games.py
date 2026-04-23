@@ -1,4 +1,3 @@
-from cardgames import Card
 from cardgames.Deck import Deck
 from cardgames.Player import Player
 from cardgames.Dealer import Dealer
@@ -7,6 +6,7 @@ import time
 import sys
 import os
 from pathlib import Path
+
 
 class Games:
     TEN_SECOND_TEST = "tenSecondTest"
@@ -22,9 +22,8 @@ class Games:
         self.deck = Deck()
         self.dealer = Dealer(self.deck)
         self.assets_dir = Path(__file__).resolve().parents[2] / "assets"
-        self.go_fish_sound = None
-        self.valueDict = {"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
-        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"jack":11,"jacks":11,"queen":12,"queens":12,"king":13,"kings":13}
+        self.valueDict = {"a":1,"ace":1,"aces":1,"two":2,"twos":2,"three":3,"threes":3,"four":4,"fours":4,"five":5,"fives":5,"six":6,"sixes":6,"seven":7,
+        "sevens":7,"eight":8,"eights":8,"nine":9,"nines":9,"ten":10,"tens":10,"j":11,"jack":11,"jacks":11,"q":12,"queen":12,"queens":12,"k":13,"king":13,"kings":13}
 
     def choose_music_track(self):
         if random.random() < 0.8:
@@ -126,7 +125,7 @@ __   ___________________________________________________________________   __
 ("================================\n
     """
         
-    def slow_print(text, delay=0.03):
+    def slow_print(self, text, delay=0.03):
         for char in text:
             print(char, end="")
             sys.stdout.flush()
@@ -134,14 +133,14 @@ __   ___________________________________________________________________   __
         print()
     
     def opening_Sequence(self):
-        print(UI.TITLE)
+        print(self.UI.TITLE)
         lines = [
             "The cards are shuffled...",
             "Your opponents are ready...",
             "Time to test your luck..."
         ]
         for line in lines:
-            UI.slow_print(line, 0.04)
+            self.slow_print(line, 0.04)
     
     def choose_Game_mode(self):
         print("\nSelect Game Mode:")
@@ -149,7 +148,6 @@ __   ___________________________________________________________________   __
         print("2. Speedy (10 cards each)")
         print("3. hyper mode (13 card dealt)")
 
-    def main_Menu(self):
     def main_Menu(self):
         while True:
             print("\n1. Start Game")
@@ -159,7 +157,7 @@ __   ___________________________________________________________________   __
             if choice == "1":
                 return "Starting game..."
             elif choice == "2":
-                print(UI.RULES)
+                print(self.UI.RULES)
             elif choice == "3":
                 print("Bye bye!")
                 exit()
@@ -217,21 +215,20 @@ __   ___________________________________________________________________   __
         self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         playerlist = players[:]
         random.shuffle(playerlist)
-        turn_list = playerlist
         
         if mode == "speedy":
-            cardsdealt = 10
+            cardsdealt = 3
         elif mode == "hyper":
             cardsdealt = 13
         else:
             cardsdealt = 7 if len(players) < 4 else 5
 
         print(f" {mode.capitalize()} Mode: Dealing {cardsdealt} cards each")
-        self.dealer.dealCards(cardsdealt, turn_list)
-        list.reverse(turn_list) #last dealt goes first
+        self.dealer.dealCards(cardsdealt, playerlist)
+        list.reverse(playerlist) #last dealt goes first
 
-        self.turn_list = turn_list
-        return turn_list
+        self.turn_list = playerlist
+        return playerlist
     
     def initialBookCheck(self, players):
         for player in players:
@@ -241,7 +238,7 @@ __   ___________________________________________________________________   __
                 player.showBooks()
 
     def goFishing(self, player):
-        print(UI.go_fishing)
+        print(self.UI.go_fishing)
         card = self.deck.getCard()
         print(f"You drew: {card}")
         player.addCard(card)
@@ -272,44 +269,67 @@ __   ___________________________________________________________________   __
                 player.showBooks()
         print()
 
-    def card_thievery(self, turn_list, host_player):
-        player_number = []
-        player_dict = {}
-        for playerNum, player in enumerate(turn_list):
-            if player != host_player and len(player.hand) != 0:
-                player_number.append(str(playerNum))
-                player_dict[(str(player.name)).lower()] = playerNum
+    def playersWithCards(self, turn_list, host_player): #Players who still have cards
 
+        playerNumberList = []
+        player_dict = {}
+        
+        for playerNum, player in enumerate(turn_list):
+            if len(player.hand) != 0:
+                if turn_list[playerNum] != host_player:
+                    playerNumberList.append(playerNum)
+                    player_dict[(str(player.name)).lower()] = playerNum
+        return(playerNumberList, player_dict)
+
+    def card_thievery(self, turn_list, host_player):
+        playerNumber, playerDict = self.playersWithCards(turn_list, host_player)
         self.showOpponentsHands(turn_list)
 
-        if len(player_number) == 1:
-            target_choice = player_number[0]
+        if len(playerNumber) == 1:
+            targetNumber = playerNumber[0]
         else:
-            target_choice = ""
-            while target_choice not in player_number:
-                target_choice = (str(input("\n"+"Choose player to steal from: "))).lower()
-                if target_choice in player_dict:
-                    target_choice = str(player_dict[target_choice])
-                elif target_choice not in player_number and target_choice not in player_dict:
-                    print("Invalid Input! Enter player name or number.")
-                    target_choice = ""
+            targetNumber = -1
+        while targetNumber not in playerNumber:
+            targetChoice = (str(input("\n"+"Choose player to steal from: "))).lower()
+            if targetChoice in playerDict:
+                if turn_list[playerDict[targetChoice]] == host_player:
+                    print("Invalid Input! You cannot choose yourself!")
+                else:
+                    targetNumber = int(playerDict[targetChoice])
+            elif targetChoice in ["0","1","2","3"]:
+                if int(targetChoice) not in playerNumber:
+                    print("Invalid Input! You cannot choose player with no cards!")
+                elif turn_list[int(targetChoice)] == host_player:
+                    print("Invalid Input! You cannot choose yourself!")
+                else:
+                    targetNumber = int(targetChoice)
+            else:
+                print("Invalid Input! Enter player name or number.")
 
-        target_player = turn_list[int(target_choice)]
+        target_player = turn_list[int(targetNumber)]
         print("")
+        
+        valuesInHand = []
+        for card in host_player.hand:
+            if card.value not in valuesInHand:
+                valuesInHand.append(card.value)
 
-        thief_choice = 0
-
-        while thief_choice not in self.valueDict:
+        thief_choice = None
+        while thief_choice not in valuesInHand:
+            host_player.showHand()
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
-            if thief_choice not in self.valueDict:
-                print("Invalid Choice! Choose Card Type, eg: aces, twos, ones, etc.\n")
-
+            
+            if thief_choice in self.valueDict:
+                thief_choice = self.valueDict[thief_choice]
+            elif thief_choice in ["1","2","3","4","5","6","7","8","9","10","11","12","13"]:
+                thief_choice = int(thief_choice)
+            if thief_choice not in valuesInHand:
+                print("You must choose a card in hand: ")
 
         stolen_cards = 0
-        card_counter = 0
         target_list = target_player.hand[:]
         for card in target_list:
-            if card.value == self.valueDict[thief_choice]:
+            if card.value == thief_choice:
                 host_player.addCard(card)
                 target_player.removeCard(card)
                 stolen_cards += 1
