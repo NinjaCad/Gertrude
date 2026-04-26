@@ -3,7 +3,9 @@ from cardgames.Player import Player
 from cardgames.Dealer import Dealer
 from cardgames.Card_Compare import Card
 from cardgames.betting_templates import gambling_templates
+from cardgames.declare_winner import *
 import random
+from cardgames.Card import Card
 import copy
 
 # ===================
@@ -141,41 +143,69 @@ class Games:
         deck.shuffle()
         dealer = Dealer(deck)
 
-        begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
-        # Player 1 chooses a card
-        if begin == "":
-            dealer.dealCards(3, [player1])
-            self.select_card(player1)
+        while True:
+            begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+            if begin == "":
+                break
+            else:
+                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
+        
+        dealer.dealCards(3, [player1])
+        self.select_card(player1)
 
         self.show_betting_popup(player1.name)
 
         # swap turn function
-        end_turn = input("\nPress [Enter] to end your turn: ")
-        if end_turn == "":
-            player1.clear_screen()
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player1.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
         
-        begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
-        # Player 2 chooses a card
-        if begin == "":
-            dealer.dealCards(3, [player2])
-            self.select_card(player2)
-    
+        while True:
+            begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+            if begin == "":
+                break
+            else:
+                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
+        
+        dealer.dealCards(3, [player2])
+        self.select_card(player2)
+
         self.show_betting_popup(player2.name)
 
-        end_turn = input("\nPress [Enter] to end your turn: ")
-        if end_turn == "":
-            player2.clear_screen()
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player2.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
 
-        display_winner = input("\nPress [Enter] to display the winner: ")
-        if display_winner == "":
-            # display winner
-            winner = declare_winner(player1, player2)
-            print("\nThe winner is: ", winner)
-            print("\n" + player1.name + " chose: ")
-            print(player1.chosen_card)
-            print("\n" + player2.name + " chose: ")
-            print(player2.chosen_card, "\n")
+        while True:
+            display_winner = input("\nPress [Enter] to display the winner: ")
+        
+            if display_winner == "":
+                # Call the function and store the result
+                winner = declare_winner(player1, player2)
+            
+                # Display results
+                print("-" * 30)
+                print(f"THE WINNER IS: {winner}")
+                print("-" * 30)
+                print(f"\n{player1.name} chose: \n{player1.chosen_card}")
+                print(f"\n{player2.name} chose: \n{player2.chosen_card}")
+                print("\n" + "-" * 30)
+            
+                # Break the loop now that we have a valid result
+                break
+            else:
+                # Error feedback for anything other than Enter
+                print(f"Invalid input: '{display_winner}'. Please press the [Enter] key only.")
 
+        # Return the state after the loop is finished
         return player1, player2, deck
 
 
