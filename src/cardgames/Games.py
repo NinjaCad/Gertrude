@@ -130,89 +130,70 @@ class Games:
         print(popup)
         return message
 
-    def main(self, test_mode= False):
+    def main(self, test_mode=False):
         print('Welcome to High Card Draw!')
         print(HighCardDrawInstructions.get("overview"))
         input('\nPress [Enter] to start...')
 
-        # initiate variables
+        # Initialize players and stats outside the loop so they persist
         player1 = Player("Player 1")
         player2 = Player("Player 2")
-        deck = Deck()
-        deck.shuffle()
-        dealer = Dealer(deck)
+        game_stats = None # Starts empty, will be updated by get_game_stats
 
         while True:
-            begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
-            if begin == "":
-                break
-            else:
-                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
-        
-        dealer.dealCards(3, [player1])
-        self.select_card(player1)
-
-        self.show_betting_popup(player1.name)
-
-        # swap turn function
-        while True:
-            end_turn = input("\nPress [Enter] to end your turn: ")
-            if end_turn == "":
-                player1.clear_screen()
-                break
-            else:
-                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
-        
-        while True:
-            begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
-            if begin == "":
-                break
-            else:
-                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
-        
-        dealer.dealCards(3, [player2])
-        self.select_card(player2)
-
-        self.show_betting_popup(player2.name)
-
-        while True:
-            end_turn = input("\nPress [Enter] to end your turn: ")
-            if end_turn == "":
-                player2.clear_screen()
-                break
-            else:
-                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
-
-        while True:
-            display_winner = input("\nPress [Enter] to display the winner: ")
-        
-            if display_winner == "":
-                # Call the function and store the result
-                winner = declare_winner(player1, player2)
+            # Re-initiate/Shuffle deck for every new round
+            deck = Deck()
+            deck.shuffle()
+            dealer = Dealer(deck)
             
-                # Display results
-                print("-" * 30)
-                print(f"THE WINNER IS: {winner}")
-                print("-" * 30)
-                print(f"\n{player1.name} chose: \n{player1.chosen_card}")
-                print(f"\n{player2.name} chose: \n{player2.chosen_card}")
-                print("\n" + "-" * 30)
+            # Clear hands from previous round
+            player1.hand = []
+            player2.hand = []
 
-                game_return = self.get_game_stats(str(winner), [player1.name, player2.name])
-                self.display_game_stats(game_return)
+            # --- Player 1 Turn ---
+            while True:
+                begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+                if begin == "": break
+                print(f"Error: Please press ONLY the [Enter] key.")
             
-                # Break the loop now that we have a valid result
-                break
-            else:
-                # Error feedback for anything other than Enter
-                print(f"Invalid input: '{display_winner}'. Please press the [Enter] key only.")
+            dealer.dealCards(3, [player1])
+            self.select_card(player1)
+            self.show_betting_popup(player1.name)
 
+            input("\nPress [Enter] to end your turn: ")
+            player1.clear_screen()
+
+            # --- Player 2 Turn ---
+            while True:
+                begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+                if begin == "": break
+                print(f"Error: Please press ONLY the [Enter] key.")
             
+            dealer.dealCards(3, [player2])
+            self.select_card(player2)
+            self.show_betting_popup(player2.name)
 
+            input("\nPress [Enter] to end your turn: ")
+            player2.clear_screen()
 
-        # Return the state after the loop is finished
+            # --- Display Winner & Update Stats ---
+            winner = declare_winner(player1, player2)
+            print("-" * 30)
+            print(f"THE WINNER IS: {winner}")
+            print("-" * 30)
+            
+            # Update game_stats and pass it back into the function next time
+            game_stats = self.get_game_stats(str(winner), [player1.name, player2.name], game_stats)
+            self.display_game_stats(game_stats)
+
+            # --- The "Play Again" Logic ---
+            choice = input("\nPress [Enter] to play again, or type 'exit' to finish: ").lower().strip()
+            
+            if choice == 'exit':
+                print("\nThanks for playing High Card Draw! Final stats shown above.")
+                break 
+            
         return player1, player2, deck
-
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
         #Below is for every time a game has been ran
