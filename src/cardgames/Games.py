@@ -201,8 +201,10 @@ def slap():
         GAME_STATE["slap_list"].append(slapper)
 
     if len(GAME_STATE["slap_list"]) == len(player_list):
-        GAME_STATE, loser = resolve_slap(GAME_STATE, player_list)
-        if loser: 
+        GAME_STATE, player = resolve_slap(GAME_STATE, player_list)
+        if win_check(player_list):
+            return render_template("page_4.html", winner=player)
+        else: 
             rank_to_match, next_idx = increase_counter(GAME_STATE, player_list)
             GAME_STATE["current_art"] = ""
             GAME_STATE["current_player"] = player_list[next_idx]
@@ -264,7 +266,7 @@ def test_game():
 def win_page():
     global player_list
     global GAME_STATE
-    winner_name, GAME_STATE = resolve_slap(GAME_STATE, player_list)
+    GAME_STATE, winner_name = resolve_slap(GAME_STATE, player_list)
     return render_template("page_4.html", winner=winner_name)
 
 if __name__ == "__main__":
