@@ -197,12 +197,18 @@ class Games:
                 print(f"\n{player1.name} chose: \n{player1.chosen_card}")
                 print(f"\n{player2.name} chose: \n{player2.chosen_card}")
                 print("\n" + "-" * 30)
+
+                game_return = self.get_game_stats(str(winner), [player1.name, player2.name])
+                self.display_game_stats(game_return)
             
                 # Break the loop now that we have a valid result
                 break
             else:
                 # Error feedback for anything other than Enter
                 print(f"Invalid input: '{display_winner}'. Please press the [Enter] key only.")
+
+            
+
 
         # Return the state after the loop is finished
         return player1, player2, deck
@@ -220,6 +226,7 @@ class Games:
                 game_stats[player]["Win Streak"] = 0
                 game_stats[player]["Highest Win Streak"] = 0
             game_stats["Ties"] = 0
+            game_stats["Total Games"] = 0
         
         #Error handling
         game_stats = copy.deepcopy(game_stats)
@@ -255,6 +262,7 @@ class Games:
         for player in players:
             total_games += game_stats[player]["Wins"]
         total_games += game_stats["Ties"]
+        game_stats["Total Games"] += 1
 
         #Calculate and update the win rate for both players
         for player in players:
@@ -263,6 +271,25 @@ class Games:
             game_stats[player]["Win-Rate"] = value
 
         return game_stats
+    
+    def display_game_stats(self, game_stats):
+        print("-"*30)
+        print("Game Statistics")
+        print("-"*30)
+        print(f"Total Games Played: {game_stats['Total Games']}\n")
+        print("          | Wins | Win Rate | Current Win Streak | Highest Win Streak |")
+        for player, stats in game_stats.items():
+            if not isinstance(stats, dict):
+                continue
+            #For when iterating over "Ties" and "Total Games"
+
+            wins = stats['Wins']
+            winrate = stats['Win-Rate']
+            win_streak = stats['Win Streak']
+            high_win_streak = stats['Highest Win Streak']
+            print(f"{player:9} | {wins:4} | {winrate:8} | {win_streak:18} | {high_win_streak:18} |")
+        ties = game_stats['Ties']
+        print(f"\nTies: {ties}")
 
 if __name__ == "__main__":
     game = Games()
