@@ -11,15 +11,6 @@ class Player:
         self.chosen_card: "Card | None" = None
         self.redraw_tokens = 0
     
-    def consume_redraw_token(self):
-        if self.redraw_tokens > 0:
-            self.redraw_tokens -= 1
-            return True
-        return False
-        self.redraw_tokens = 0
-        self.chosen_card = None
-        self.chosen_card = Card("", 0, [], [])
-
     def addCard(self, card: Card, isKnown: bool = True):
         self.hand.append(card)
         if isKnown:
@@ -53,14 +44,18 @@ class Player:
         else:
             print(f"{self.name} has no cards to hide.")
 
-    def clearHand(self):
-        self.hand = []
-
     def hide_card(self, index: int):
         if not (0 <= index < len(self.hand)):
             raise IndexError(f"Card index out of range: {index}")
         self.knownCards[index] = False
         return self.hand[index]
+
+    def clear_screen(self):
+        # If the OS is Windows, run 'cls', otherwise run 'clera'
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
 
     def clearHand(self):
         self.hand = []
