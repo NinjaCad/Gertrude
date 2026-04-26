@@ -207,6 +207,7 @@ def slap():
         if win_check(player_list):
             GAME_STATE["winner"] = player
             GAME_STATE["game_won"] = True
+            GAME_STATE["game_started"] = False
         else: 
             rank_to_match, next_idx = increase_counter(GAME_STATE, player_list)
             GAME_STATE["current_art"] = ""
