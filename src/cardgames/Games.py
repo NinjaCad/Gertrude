@@ -27,7 +27,9 @@ GAME_STATE: Dict[str, Any] = {
     "slap_list": [],
     "slap_in_progress": False,
     "counter": 0,
-    "game_started": False
+    "game_started": False,
+    "game_won": False,
+    "winner": None
 }
 last_player_joined = None
 
@@ -203,14 +205,25 @@ def slap():
     if len(GAME_STATE["slap_list"]) == len(player_list):
         GAME_STATE, player = resolve_slap(GAME_STATE, player_list)
         if win_check(player_list):
-            return render_template("page_4.html", winner=player)
+            GAME_STATE["winner"] = player
+            GAME_STATE["game_won"] = True
         else: 
             rank_to_match, next_idx = increase_counter(GAME_STATE, player_list)
             GAME_STATE["current_art"] = ""
             GAME_STATE["current_player"] = player_list[next_idx]
             GAME_STATE["match_rank"] = rank_to_match
 
-    return ("", 204)  
+    return ("", 204)
+
+@app.route("/win_stream")
+def game_is_won():
+    def stream():
+        while GAME_STATE["game_started"]:
+            if GAME_STATE["game_won"]:
+                yield "data: win\n\n"
+                break
+            time.sleep(0.1)
+        return Response(stream(), mimetype='text/event-stream')  
 
 @app.route("/start_game", methods=["GET", "POST"])
 def start_game():
@@ -223,51 +236,12 @@ def start_game():
     card = ""
     return render_template("page_3.html", players=player_list, card=card, counter=(1, 0))       #displays players, card, and counter--counter=(rank, player_index)
 
-# TESTING WIN SCREEN
-@app.route("/test_win")
-def test_win():
-    class fake_player:
-        def __init__(self, name):
-            self.name = name
-
-    fake_winner = fake_player("Test Player")
-
-    return render_template("page_4.html", winner=fake_winner)
-
-# TESTING GAME SCREEN
-@app.route("/test_game")
-def test_game():
-    class fake_player:
-        def __init__(self, name):
-            self.name = name
-
-    fake_players = [
-        fake_player("Eli"),
-        fake_player("Joseph"),
-        fake_player("Faith"),
-        fake_player("Rose")
-    ]
-
-    fake_card = """┌─────────┐
-│A        │
-│    ♠    │
-│        A│
-└─────────┘"""
-
-    return render_template(
-        "page_3.html",
-        rank="Ace",
-        current_player="Joseph",
-        player_list=fake_players,
-        session_player_name="David",
-        card=fake_card
-    )
 @app.route("/win_page")
 def win_page():
     global player_list
     global GAME_STATE
     GAME_STATE, winner_name = resolve_slap(GAME_STATE, player_list)
-    return render_template("page_4.html", winner=winner_name)
+    return render_template("page_4.html", winner=GAME_STATE["winner"])
 
 if __name__ == "__main__":
     app.run('0.0.0.0', port=5000, threaded=True, debug = True)

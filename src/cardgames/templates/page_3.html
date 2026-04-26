@@ -212,6 +212,14 @@
 
                 return false;
             }
+
+            const gameWinSource = new EventSource("/win_stream");
+
+            gameWinSource.onmessage = (event) => {
+                if (event.data === "win"){
+                    window.location.href = "{{ url_for('game') }}";
+                }
+            } 
         </script>
     </body>    
 </html>
