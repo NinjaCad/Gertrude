@@ -217,7 +217,7 @@
 
             gameWinSource.onmessage = (event) => {
                 if (event.data === "win"){
-                    window.location.href = "{{ url_for('game') }}";
+                    window.location.href = "{{ url_for('win_page') }}";
                 }
             } 
         </script>
