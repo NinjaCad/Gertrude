@@ -6,10 +6,10 @@ from cardgames.betting_templates import *
 from cardgames.Player import *
 from cardgames.Dealer import *
 import copy
+
 # ==========================================================
 # New Feature (Sprint 1): High Card Draw instructions display
 # ==========================================================
-#
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game.
@@ -23,8 +23,9 @@ class HighCardDrawInstructions:
     # two topics plus validation.
     _TOPICS = {
         "overview": (
-            "High Card Draw is a 2-player, 1-round game. Each player is dealt 3 cards, "
+            "\nHigh Card Draw is a 2-player, 1-round game. \n\nEach player is dealt 3 cards, "
             "chooses 1 card in secret, then both cards are revealed at the same time."
+            "\n\nNote: Clubs are higher than Diamonds, which are higher than Hearts, which are higher than Spades!"
         ),
         "winning": (
             "Winning:\n"
@@ -131,17 +132,18 @@ class Games:
         return message
 
     def main(self, test_mode=False):
-        print('Welcome to High Card Draw!')
-        print(HighCardDrawInstructions.get("overview"))
-        input('\nPress [Enter] to start...')
-
-        # Initialize players and stats outside the loop so they persist
+        # Initialize players and stats
         player1 = Player("Player 1")
         player2 = Player("Player 2")
         game_stats = None # Starts empty, will be updated by get_game_stats
 
+        player1.clear_screen()
+        print('\nWelcome to High Card Draw!\n')
+        print(HighCardDrawInstructions.get("\noverview\n"))
+        input('\n------Press [Enter] to start------')
+
         while True:
-            # Re-initiate/Shuffle deck for every new round
+            # Re-shuffle deck for every new round
             deck = Deck()
             deck.shuffle()
             dealer = Dealer(deck)
@@ -177,27 +179,40 @@ class Games:
             player2.clear_screen()
 
             # --- Display Winner & Update Stats ---
+            while True:
+                display_winner = input("\nPress [Enter] to display the winner!")
+                if display_winner == "": break
+                else:
+                    print("Please press ONLY the [Enter] key.")
             winner = declare_winner(player1, player2)
             print("-" * 30)
             print(f"THE WINNER IS: {winner}")
             print("-" * 30)
+            print(f"Player 1 chose:\n{player1.chosen_card}")
+            print(f"Player 2 chose:\n{player2.chosen_card}")
             
+        
             # Update game_stats and pass it back into the function next time
             game_stats = self.get_game_stats(str(winner), [player1.name, player2.name], game_stats)
             self.display_game_stats(game_stats)
 
             # --- The "Play Again" Logic ---
-            choice = input("\nPress [Enter] to play again, or type 'exit' to finish: ").lower().strip()
-            
-            if choice == 'exit':
-                print("\nThanks for playing High Card Draw! Final stats shown above.")
-                break 
-            
-        return player1, player2, deck
+            while True:
+                user_input = input("\nPress [Enter] to play again, or type 'exit' to finish: ")
+
+                if user_input == "":
+                    break
+
+                elif user_input.lower().strip() == "exit":
+                    print("\nThanks for playing High Card Draw! Final stats shown above.\n")
+                    return player1, player2, deck
+
+                else:
+                    print(f"Error: You pressed '{user_input}', please ONLY press [Enter] or 'exit'")
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
-        #Below is for every time a game has been ran
-        #Set up game_stats dict if it is empty
+        # Below is for every time a game has been ran
+        # Set up game_stats dict if it is empty
         if game_stats == None:
             game_stats = {}
             for player in players:
@@ -209,7 +224,7 @@ class Games:
             game_stats["Ties"] = 0
             game_stats["Total Games"] = 0
         
-        #Error handling
+        # Error handling
         game_stats = copy.deepcopy(game_stats)
         keys = list(game_stats.keys())
         if winner not in keys and winner != "It's a tie!":
@@ -218,27 +233,27 @@ class Games:
             if player not in keys:
                 raise ValueError("Player not found")
 
-        #Increment the number of wins or ties
+        # Increment the number of wins or ties
         if winner == "It's a tie!":
             game_stats["Ties"] += 1
 
-            #Every player loses their win streak if it's a tie
+            # Every player loses their win streak if it's a tie
             for player in players:
                 game_stats[player]["Win Streak"] = 0
         else:
             game_stats[winner]["Wins"] += 1
 
-            #Update winner's win streak and highest win streak
+            # Update winner's win streak and highest win streak
             game_stats[winner]["Win Streak"] += 1
             if game_stats[winner]["Win Streak"] > game_stats[winner]["Highest Win Streak"]:
                 game_stats[winner]["Highest Win Streak"] = game_stats[winner]["Win Streak"]
 
-            #Reset everyone else's win streak
+            # Reset everyone else's win streak
             for player in players:
                 if player != winner:
                     game_stats[player]["Win Streak"] = 0
 
-        #Total games is the sum of Player1 wins, Player2 wins, and ties
+        # Total games is the sum of Player1 wins, Player2 wins, and ties
         total_games = 0
         for player in players:
             total_games += game_stats[player]["Wins"]
@@ -262,7 +277,7 @@ class Games:
         for player, stats in game_stats.items():
             if not isinstance(stats, dict):
                 continue
-            #For when iterating over "Ties" and "Total Games"
+            # For when iterating over "Ties" and "Total Games"
 
             wins = stats['Wins']
             winrate = stats['Win-Rate']
@@ -275,3 +290,11 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
+
+    # Adjustments
+    """
+
+    3. Player profiles?
+    print chosen cards
+
+    """
