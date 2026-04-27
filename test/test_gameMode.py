@@ -4,6 +4,9 @@ def test_game_modes_dealing():
     game = Games()
     
 #hyper mode
+    
+    game.dealer = Dealer(Deck())
+    
     players_hyper = [Player("zack"), Player("gary")]
     print("\n--- Testing Hyper Mode ---")
     
@@ -14,6 +17,9 @@ def test_game_modes_dealing():
         assert len(p.hand) == 13, f"Hyper mode failed: {p.name} has {len(p.hand)} cards."
 
 #speedy mode
+
+    game.dealer = Dealer(Deck())
+
     players_speedy = [Player("mom"), Player("dad")]
     print("\n--- Testing Speedy Mode ---")
     
@@ -21,19 +27,20 @@ def test_game_modes_dealing():
     
     for p in players_speedy:
         print(f"Player {p.name} hand size: {len(p.hand)}")
-        assert len(p.hand) == 3, f"Speedy mode failed: {p.name} has {len(p.hand)} cards."
+        assert len(p.hand) == 10, f"Speedy mode failed: {p.name} has {len(p.hand)} cards."
 
 #regular mode
-    #Not giving cards for three players? tested with the test_startgame.py, works fine, just not here?
-    #players_reg = [Player("p1"), Player("p2"), Player("p3")] 
-    players_reg = [Player("p1"), Player("p2"), Player("p3"), Player("p4")]
+
+    game.dealer = Dealer(Deck())
+
+    players_reg = [Player("ron"), Player("dan"), Player("max")] 
     print("\n--- Testing Regular Mode (3 Players) ---")
     
-    game.start_game(players_reg, mode="regular")
+    RegPlayers = game.start_game(players_reg, mode="regular")
     
-    for p in players_reg:
+    for p in RegPlayers:
         print(f"Player {p.name} hand size: {len(p.hand)}")
-        assert len(p.hand) == 5, f"Regular (4p) failed: {p.name} has {len(p.hand)} cards."
+        assert len(p.hand) == 7, f"Regular (3p) failed: {p.name} has {len(p.hand)} cards."
 
 
 if __name__ == "__main__":

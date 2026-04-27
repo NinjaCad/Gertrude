@@ -7,7 +7,7 @@ def test_basic():
 
     players = [Dory] #Test Players
 
-    turn_list = game.start_game(players)
+    turn_list = game.start_game(players, "regular")
     assert isinstance(turn_list, list) == True
     print("turn_list is type List")
     assert isinstance(turn_list[0], Player) == True
@@ -21,7 +21,7 @@ def test_2player():
 
     players = [Marvin, Dory]
 
-    turn_list = game.start_game(players)
+    turn_list = game.start_game(players, "regular")
     assert len(turn_list) == 2
     print("Length of list = 2")
     for player in turn_list:
@@ -36,7 +36,7 @@ def test_3player():
 
     players = [Marvin, Dory, Nemo]
 
-    turn_list = game.start_game(players)
+    turn_list = game.start_game(players, "regular")
     assert len(turn_list) == 3
     print("Length of list = 3")
     for player in turn_list:
@@ -51,7 +51,7 @@ def test_4player():
     FishThatAteNemosFamily = Player("ThatGuy")
 
     players = [Marlin, Dory, Nemo, FishThatAteNemosFamily]
-    turn_list = game.start_game(players)
+    turn_list = game.start_game(players, "regular")
 
     assert turn_list != players
     print("May fail randomization test sometimes")
