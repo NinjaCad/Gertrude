@@ -1,7 +1,7 @@
 from testing_base import *
 import random
 
-def manual_test_showBooks_basic():
+def test_showBooks_basic():
     print("Running test_showBooks_Basic()")
     players = [Player("1"), Player("2"), Player("3"), Player("4")]
     values = ["Aces", "Twos", "Threes", "Fours", "Fives", "Sixes", "Sevens", "Eights", "Nines", "Tens", "Jacks", "Queens", "Kings"]
@@ -55,7 +55,7 @@ def test_showBooks_error():
     players[0].showBooks()
 
 if __name__ == "__main__":
-    manual_test_showBooks_basic()
+    test_showBooks_basic()
     test_showBooks_no_value()
     test_showBooks_isolated()
     test_showBooks_error()
