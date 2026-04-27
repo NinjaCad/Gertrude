@@ -1,12 +1,15 @@
+from cardgames.Player import *
+from cardgames.Deck import *
+from cardgames.Card_Compare import *
+from cardgames.Deck import *
+from cardgames.betting_templates import *
+from cardgames.Player import *
+from cardgames.Dealer import *
 import copy
-import random
-
-from cardgames.Card_Compare import Card
-from cardgames.Dealer import Dealer
-from cardgames.Deck import Deck
-from cardgames.Player import Player
-from cardgames.betting_templates import gambling_templates
-
+# ==========================================================
+# New Feature (Sprint 1): High Card Draw instructions display
+# ==========================================================
+#
 
 class HighCardDrawInstructions:
     """Rules/instructions provider for the High Card Draw game."""
@@ -68,6 +71,36 @@ class Games:
 
     def __init__(self):
         self.deck = Deck()
+
+    def select_card(self, player):
+        # Denotes the change of turn 
+        print(f"\n--- {player.name}'s Card Options ---")
+        if len(player.hand) == 0: # Added by Sam's suggestion
+            print(f"{player.name} has no cards left to play!")
+            player.chosen_card = None  # Intentionally set to None since player cannot pick a card
+            return 
+
+        for i, card in enumerate(player.hand):
+            print("\n" + show_cards(card))
+        
+        while True:
+            try:
+                max_choice = len(player.hand)
+                # Prompting player to pick a card
+                choice = int(input(f"Select one of the cards to play (1-{max_choice}): "))
+                
+                # Check if choice is valid
+                if 1 <= choice <= max_choice:
+                    # Assign the chosen card using player.hand
+                    player.chosen_card = player.hand[choice - 1]
+                    print(f"\nGreat! You selected \n\n{show_cards(player.chosen_card)}.")
+                    break 
+                else:
+                    # error handling in case they pick a number outside the options
+                    print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
+                    
+            except ValueError:
+                print("Invalid input. Please enter a valid number.")
 
     def build_betting_notification(self, chosen_player_name):
         template = random.choice(gambling_templates)
@@ -174,23 +207,75 @@ class Games:
             input("\nPress [Enter] to end your turn...")
             player2.clear_screen()
 
-            input("\nPress [Enter] to display the winner...")
-            winner = declare_winner(player1, player2)
-            round_number += 1
+        while True:
+            begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+            if begin == "":
+                break
+            else:
+                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
+        
+        dealer.dealCards(3, [player1])
+        self.select_card(player1)
 
-        if winner == player1.name:
-            player1.add_xp(1)
-        elif winner == player2.name:
-            player2.add_xp(1)
+        self.show_betting_popup(player1.name)
 
-        print("\nThe winner is:", winner)
-        print(f"\n{player1.profile_display_name()} chose:")
-        print(player1.chosen_card)
-        print(f"\n{player2.profile_display_name()} chose:")
-        print(player2.chosen_card, "\n")
-        print(f"{player1.profile_display_name()} XP: {player1.get_xp()}")
-        print(f"{player2.profile_display_name()} XP: {player2.get_xp()}")
+        # swap turn function
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player1.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
+        
+        while True:
+            begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+            if begin == "":
+                break
+            else:
+                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
+        
+        dealer.dealCards(3, [player2])
+        self.select_card(player2)
 
+        self.show_betting_popup(player2.name)
+
+        while True:
+            end_turn = input("\nPress [Enter] to end your turn: ")
+            if end_turn == "":
+                player2.clear_screen()
+                break
+            else:
+                print(f"Error: You pressed '{end_turn}'. Please press ONLY the [Enter] key.")
+
+        while True:
+            display_winner = input("\nPress [Enter] to display the winner: ")
+        
+            if display_winner == "":
+                # Call the function and store the result
+                winner = declare_winner(player1, player2)
+            
+                # Display results
+                print("-" * 30)
+                print(f"THE WINNER IS: {winner}")
+                print("-" * 30)
+                print(f"\n{player1.name} chose: \n{player1.chosen_card}")
+                print(f"\n{player2.name} chose: \n{player2.chosen_card}")
+                print("\n" + "-" * 30)
+
+                game_return = self.get_game_stats(str(winner), [player1.name, player2.name])
+                self.display_game_stats(game_return)
+            
+                # Break the loop now that we have a valid result
+                break
+            else:
+                # Error feedback for anything other than Enter
+                print(f"Invalid input: '{display_winner}'. Please press the [Enter] key only.")
+
+            
+
+
+        # Return the state after the loop is finished
         return player1, player2, deck
 
     def get_game_stats(self, winner: str, players: list, game_stats=None):
@@ -203,6 +288,7 @@ class Games:
                 game_stats[player]["Win Streak"] = 0
                 game_stats[player]["Highest Win Streak"] = 0
             game_stats["Ties"] = 0
+            game_stats["Total Games"] = 0
 
         game_stats = copy.deepcopy(game_stats)
         keys = list(game_stats.keys())
@@ -229,6 +315,7 @@ class Games:
         for player in players:
             total_games += game_stats[player]["Wins"]
         total_games += game_stats["Ties"]
+        game_stats["Total Games"] += 1
 
         for player in players:
             win_rate = game_stats[player]["Wins"] / total_games * 100
@@ -237,8 +324,26 @@ class Games:
 
         return game_stats
 
+    def display_game_stats(self, game_stats):
+        print("-"*30)
+        print("Game Statistics")
+        print("-"*30)
+        print(f"Total Games Played: {game_stats['Total Games']}\n")
+        print("          | Wins | Win Rate | Current Win Streak | Highest Win Streak |")
+        for player, stats in game_stats.items():
+            if not isinstance(stats, dict):
+                continue
+            #For when iterating over "Ties" and "Total Games"
+
+            wins = stats['Wins']
+            winrate = stats['Win-Rate']
+            win_streak = stats['Win Streak']
+            high_win_streak = stats['Highest Win Streak']
+            print(f"{player:9} | {wins:4} | {winrate:8} | {win_streak:18} | {high_win_streak:18} |")
+        ties = game_stats['Ties']
+        print(f"\nTies: {ties}")
+
 
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
-

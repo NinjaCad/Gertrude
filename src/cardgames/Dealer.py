@@ -18,14 +18,27 @@ class Dealer:
                     print(image, end="")
             print()
 
-    def dealCards(self, numCards: int, players: "list[Player]"):
+    # was def dealCards(self, numCards_or_players, players: "list[Player]" = None):
+    def dealCards(self, numCards_or_players, players: "list[Player] | None" = None):
+        # Backward compatibility:
+        # - dealCards(3, players)
+        # - dealCards(players)  -> defaults to 3 cards/player
+        if players is None:
+            players = numCards_or_players
+            numCards = 3
+        else:
+            numCards = numCards_or_players
+        
+        # I added this to make sure the list isn't empty -- Tyson
+        if not players or not isinstance(players, list):
+            return False
+
         if numCards * len(players) > self.deck.size:
             return False
         for player in players:
             for _ in range(numCards):
                 player.addCard(self.deck.getCard())
         return True
-
 
     def resetDeck(self):
         self.deck.reset()
