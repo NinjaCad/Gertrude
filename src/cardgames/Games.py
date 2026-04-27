@@ -359,26 +359,25 @@ __   ___________________________________________________________________   __
         self.deck.shuffle()
         game_running = self.main_Menu()
 
+        try:
+            self.play_background_music(
+                playback_mode=self.REPEAT_FOREVER,
+                selected_track=self.assets_dir / self.SMOOTH_JAZZ_TRACK
+            )
+        except Exception:
+            print("Audio unavailable; continuing without background music.")
+
         players = self.create_players()
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
         
-        #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
             for player in turn_list:
                 
-
-                if player.hand == []:
-                    if self.deck.size != 0:
-                        print("\n"*20)
-                        input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
-                        player.isTurn = True
-                        player.takeTurn(turn_list, self)
-                else:
-                    print("\n"*20)
-                    input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
-                    player.isTurn = True
-                    player.takeTurn(turn_list, self)
+                print("\n"*20)
+                input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
+                player.isTurn = True
+                player.takeTurn(turn_list, self)
                 
                 player.isTurn = False
                 if self.dealer.checkFor13Books(turn_list):
