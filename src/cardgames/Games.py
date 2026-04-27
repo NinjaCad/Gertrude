@@ -145,30 +145,42 @@ class Games:
         deck = Deck()
         deck.shuffle()
         dealer = Dealer(deck)
-        dealer.dealCards(3, [player1, player2])
-
         self.show_betting_popup(player1.profile_display_name())
         self.show_betting_popup(player2.profile_display_name())
 
-        input(f"\n{player1.profile_display_name()}, press [Enter] to begin your turn...")
-        self.select_card(player1)
-        input("\nPress [Enter] to end your turn...")
-        player1.clear_screen()
+        winner = "It's a tie!"
+        round_number = 1
 
-        input(f"\n{player2.profile_display_name()}, press [Enter] to begin your turn...")
-        self.select_card(player2)
-        input("\nPress [Enter] to end your turn...")
-        player2.clear_screen()
+        while winner == "It's a tie!":
+            if round_number > 1:
+                print("\nTie game! Replaying round...\n")
 
-        input("\nPress [Enter] to display the winner...")
-        winner = declare_winner(player1, player2)
+            player1.clearHand()
+            player2.clearHand()
+            player1.chosen_card = None
+            player2.chosen_card = None
+
+            if not dealer.dealCards(3, [player1, player2]):
+                dealer.resetDeck()
+                dealer.dealCards(3, [player1, player2])
+
+            input(f"\n{player1.profile_display_name()}, press [Enter] to begin your turn...")
+            self.select_card(player1)
+            input("\nPress [Enter] to end your turn...")
+            player1.clear_screen()
+
+            input(f"\n{player2.profile_display_name()}, press [Enter] to begin your turn...")
+            self.select_card(player2)
+            input("\nPress [Enter] to end your turn...")
+            player2.clear_screen()
+
+            input("\nPress [Enter] to display the winner...")
+            winner = declare_winner(player1, player2)
+            round_number += 1
 
         if winner == player1.name:
             player1.add_xp(1)
         elif winner == player2.name:
-            player2.add_xp(1)
-        else:
-            player1.add_xp(1)
             player2.add_xp(1)
 
         print("\nThe winner is:", winner)
