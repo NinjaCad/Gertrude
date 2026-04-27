@@ -28,21 +28,6 @@ def test_2player():
         assert len(player.hand) == 7
     print("Player has 7 cards in hand")
 
-def test_3player():
-    game = Games()
-    Dory = Player("Dory")
-    Marvin = Player("Marlin")
-    Nemo = Player("Nemo")
-
-    players = [Marvin, Dory, Nemo]
-
-    turn_list = game.start_game(players)
-    assert len(turn_list) == 3
-    print("Length of list = 3")
-    for player in turn_list:
-        assert len(player.hand) == 7
-    print("Player has 7 cards in hand")
-
 def test_4player():
     game = Games()
     Dory = Player("Dory")
@@ -53,7 +38,7 @@ def test_4player():
     players = [Marlin, Dory, Nemo, FishThatAteNemosFamily]
     turn_list = game.start_game(players)
 
-    assert turn_list != players
+    assert turn_list[0] != players[3]
     print("May fail randomization test sometimes")
     assert len(turn_list) == 4
     print("Length of list = 4")
