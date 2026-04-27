@@ -363,7 +363,7 @@ HELPFUL TIPS:
     # AKA, you can pass in all bets at once or one at a time depending on when and how we resolve the different bets. Order does not matter. Not every bet needs to be resolved at once.
     # outputs: none
     # goal: a) add or subtract bet attribute from money attribute based on whether or not player one
-    def resolve_bet(self, bet_results):
+    def resolve_bet(self, bet_results, tipping_included = True):
         
         for bet in bet_results.keys():
             if bet_results[bet]:
@@ -371,7 +371,8 @@ HELPFUL TIPS:
                     self.money += self.bets[bet]
                     print(f"You made ${self.bets[bet]} on your {bet} bet!")
                     print(f"Your new total is ${self.money}\n")
-                    self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
+                    if tipping_included and bet == "standard": #only ask to tip if they won money on their standard bet and if tipping is included in this game
+                        self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
             else:
                 self.money -= self.bets[bet]
              
@@ -382,7 +383,7 @@ HELPFUL TIPS:
             self.bets[bet] = 0
         
         #GERT-54 putting bankrupt checker into resolve_bet()
-        self.checkBankrupt 
+        self.checkBankrupt()
         return
     
     def tipDealer(self):
@@ -463,7 +464,7 @@ HELPFUL TIPS:
     # goals: check self.hand for flush, straight, three of a kind, and straight flush
     def twentyone(self, dealersCard = None):
         # Requirements
-        if dealersCard is not None and len(self.hand) == 2:
+        if dealersCard is not None and len(self.hand) == 2 and self.bets["21+3"] != 0:
             # Get the three cards
             c1, c2, c3 = self.hand[0], self.hand[1], dealersCard
 
