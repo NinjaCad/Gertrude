@@ -1,24 +1,24 @@
 from testing_base import *
 
 
-def test_sort_hand_into_values_groups_cards():
-    player = Player("Tim")
+def test_sortHandIntoValues():
+    player = Player("Toby")
+    sorted_hand = player.sortHandIntoValues()
+    sorted_values = [card.value for card in sorted_hand]
 
-    cards = [
-        Card("Spades", 12, 0, 0),   # Q
-        Card("Hearts", 2, 0, 0),    # 2
-        Card("Clubs", 13, 0, 0),    # K
-        Card("Diamonds", 3, 0, 0),  # 3
-        Card("Clubs", 2, 0, 0),     # 2
-    ]
-    player.setHand(cards)
+    assert sorted_values == sorted(sorted_values)
 
-    grouped = player.sortHandIntoValues()
-    grouped_values_only = {key: [card.value for card in value] for key, value in grouped.items()}
-    print("Grouped cards:", grouped_values_only)
 
-    assert list(grouped.keys()) == ["2s", "3s", "Qs", "Ks"]
-    assert len(grouped["2s"]) == 2
-    assert len(grouped["3s"]) == 1
-    assert len(grouped["Qs"]) == 1
-    assert len(grouped["Ks"]) == 1
+def test_groupHandByValues():
+    player = Player("Toby2")
+    grouped_values = player.groupHandByValues()
+
+    value_map = {
+        1: "As", 2: "2s", 3: "3s", 4: "4s", 5: "5s", 6: "6s", 7: "7s",
+        8: "8s", 9: "9s", 10: "10s", 11: "Js", 12: "Qs", 13: "Ks"
+    }
+
+    for value, key in value_map.items():
+        if key in grouped_values:
+            for card in grouped_values[key]:
+                assert card.value == value

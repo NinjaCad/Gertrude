@@ -9,7 +9,7 @@ def test_deal_output_order():
         Player("Tam"),
     ]
 
-    turn_list = game.start_game(players)
+    turn_list = game.start_game(players, "regular")
 
     print("=== Dealt Hands (turn order) ===")
     for idx, player in enumerate(turn_list, start=1):

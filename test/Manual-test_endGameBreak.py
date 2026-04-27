@@ -11,6 +11,6 @@ from testing_base import *
 
 def endGameBreakTest():
     game = Games()
-    game.main()  #verify the above criterium by playing them out
+    game.mainGameLoop()  #verify the above criterium by playing them out
 
 endGameBreakTest()
