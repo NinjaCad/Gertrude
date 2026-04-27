@@ -22,7 +22,7 @@ class Games:
 
     def main(self):
         """
-        Main game loop
+            Main game loop
         """
 
         print("""=====================================
@@ -68,8 +68,17 @@ Welcome to the Gertrude\'s BlackJack!
             dealer.showHand()
 
             # Calculate results
-            self.calculateWinner(self.playerList)
-            
+            self.calculateWinner(self.playerList, self.side_bets_included["tipping"])
+
+            forceEndGame = False
+            for player in self.playerList[1:]:
+                if player.money >= 5:
+                    forceEndGame = True
+                    break
+            if not forceEndGame:
+                print("All players have run out of money! Game over.\n")
+                break
+
             # Play again
             quit = input("\nPlay another round? (y/n): ").strip().lower()
             while quit not in ["y", "yes", "n", "no"]:
@@ -99,6 +108,9 @@ Welcome to the Gertrude\'s BlackJack!
                 self.deck.reset()
                 self.deck.shuffle()
         
+        self.endGame(starting_money)
+        
+    def endGame(self, starting_money):
         #begin finish summary functionality
         results_list = [] #create new results list that will be added in from the for loop below, then sorted based on money
         print("Total money made or lost by each player:")
@@ -135,7 +147,7 @@ Welcome to the Gertrude\'s BlackJack!
         if sorted_results_list[0][1] < starting_money: #if NO player made any money, only lost money to varying degrees, this returns True
             print(f"Gertrude looks away: 'Although now that I think about it, {store} didn't actually make any money...", end='')
             print("You know what they say, the house ALWAYS wins...'")
-            print("Gertrude smiles eerily...")
+            print("Gertrude and her starving cult smiles hungerily...")
             print("\n")
         print("Gertrude laughs: 'Losers... better luck next time!'")
         print("\nThanks for playing!")
@@ -188,7 +200,7 @@ Welcome to the Gertrude\'s BlackJack!
         # User can decide which bets to include in this game
         print("")
         side_bets_included = { }
-        for type in ["insurance", "perfect pairs", "21+3"]:
+        for type in ["insurance", "perfect pairs", "21+3", "tipping"]:
             
             include = input(f"Do you want to include the {type} side bet in this game? (y/n): ")
             while include.strip().lower() not in ["y", "n"]:
@@ -298,7 +310,7 @@ Welcome to the Gertrude\'s BlackJack!
     # goals: a) using self.playerList, compare every human player score to Gertrude player's score using player.check_cards()
     #        b) reapportion player money based on player bets earlier (see resolve_bet() in Player.py for more information on format)
     #        c) GERT-30 call trashtalk() on the players who lose
-    def calculateWinner(self, playerList):
+    def calculateWinner(self, playerList, tipping_included = True):
         dealer = playerList[0]
         dealerScore = dealer.check_cards()
         print(f"{dealer.name} ends with a hand value of {dealerScore}.\n") #this prints the value of Gertrude's hand too! 
@@ -329,7 +341,7 @@ Welcome to the Gertrude\'s BlackJack!
                 
                 player = playerList[playerList.index(player) - 1]
                 player.bets["split"] = split_bet
-                player.resolve_bet( { "split": standard_result } )
+                player.resolve_bet( { "split": standard_result }, tipping_included) #split bet results are resolved immediately and independently from the other bets, so tipping is not included here since the player can only tip after resolving their standard bet at the end of the round
             else:
                 # Calculate results and give money for perfect pairs
                 player.resolve_bet({
@@ -337,7 +349,7 @@ Welcome to the Gertrude\'s BlackJack!
                     "pairs": player.perfectPairs(),
                     "insurance": player.insurance(self.playerList[0]),
                     "21+3": player.twentyone(dealer.hand[0])
-                })
+                }, tipping_included)
             
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
