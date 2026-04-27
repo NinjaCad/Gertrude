@@ -154,7 +154,7 @@ class Player:
             print("You picked up:")
             self.showHand()
             if self.bookHandling():
-                print(r"""\n
+                print(r"""
 ██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
 ╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
  ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
@@ -194,8 +194,9 @@ class Player:
             self.showHand()
 
         ### Stealing cards
-        if game.card_thievery(players, self):
-            print(r"""\n
+        stoleACard, requestedCard, pickedCard = game.card_thievery(players, self)
+        if stoleACard:
+            print(r""" 
 ██╗   ██╗ ██████╗ ██╗   ██╗    ███████╗████████╗ ██████╗ ██╗     ███████╗    ███████╗ ██████╗ ███╗   ███╗███████╗     ██████╗ █████╗ ██████╗ ██████╗ ███████╗██╗
 ╚██╗ ██╔╝██╔═══██╗██║   ██║    ██╔════╝╚══██╔══╝██╔═══██╗██║     ██╔════╝    ██╔════╝██╔═══██╗████╗ ████║██╔════╝    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔════╝██║
  ╚████╔╝ ██║   ██║██║   ██║    ███████╗   ██║   ██║   ██║██║     █████╗      ███████╗██║   ██║██╔████╔██║█████╗      ██║     ███████║██████╔╝██║  ██║███████╗██║
@@ -204,7 +205,7 @@ class Player:
    ╚═╝    ╚═════╝  ╚═════╝     ╚══════╝   ╚═╝    ╚═════╝ ╚══════╝╚══════╝    ╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚══════╝     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝╚═╝                                                                                                                                                    
       """)
             if self.bookHandling():
-                print(r"""\n
+                print(r""" 
 ██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
 ╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
  ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
@@ -212,6 +213,8 @@ class Player:
    ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
    ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
                       """)
+            if game.dealer.checkFor13Books(players) == True:
+                return
             input("\nYou get to go again, press ENTER to continue...")
             self.takeTurn(players, game)
         else:
@@ -219,7 +222,7 @@ class Player:
                 print("\nLucky draw, you've made a book!")
                 print("\nYour books: ")
                 self.showBooks()
-            if game.valueDict[requestedCard] == pickedCard.value: # If the player picks up the card they asked another player for
+            if requestedCard == pickedCard.value: # If the player picks up the card they asked another player for
                 print("\nYou picked up the same card you asked for!")
                 input("\nYou get to go again, press ENTER to continue...")
                 self.takeTurn(players, game)

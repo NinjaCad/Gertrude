@@ -143,10 +143,19 @@ __   ___________________________________________________________________   __
             self.slow_print(line, 0.04)
     
     def choose_Game_mode(self):
+        modeDict = {"2":"speedy","3":"hyper","1":"regular"}
         print("\nSelect Game Mode:")
         print("1. Regular (standard dealing)")
         print("2. Speedy (10 cards each)")
         print("3. hyper mode (13 card dealt)")
+        gameMode = str(input("\nChoose an option: "))
+        while gameMode.lower() not in ["speedy","hyper","regular"]:
+            if gameMode in modeDict:
+                gameMode = modeDict[gameMode]
+            else:
+                print("Invalid Input! \n")
+                gameMode = input(str("Choose an option: "))
+        return gameMode.lower()
 
     def main_Menu(self):
         while True:
@@ -155,7 +164,7 @@ __   ___________________________________________________________________   __
             print("3. Quit")
             choice = input("\nChoose an option: ")
             if choice == "1":
-                return "Starting game..."
+                return True
             elif choice == "2":
                 print(self.UI.RULES)
             elif choice == "3":
@@ -211,19 +220,21 @@ __   ___________________________________________________________________   __
 
             player.knownCards = knownCardsStore # Reverses cards to be visible
     
-    def start_game(self, players, mode="regular"):
+    def start_game(self, players, mode=None):
         self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
         playerlist = players[:]
         random.shuffle(playerlist)
+        if mode == None:
+            mode = self.choose_Game_mode()
         
         if mode == "speedy":
-            cardsdealt = 3
+            cardsdealt = 10
         elif mode == "hyper":
             cardsdealt = 13
         else:
             cardsdealt = 7 if len(players) < 4 else 5
 
-        print(f" {mode.capitalize()} Mode: Dealing {cardsdealt} cards each")
+        print(f"{mode.capitalize()} Mode: Dealing {cardsdealt} cards each")
         self.dealer.dealCards(cardsdealt, playerlist)
         list.reverse(playerlist) #last dealt goes first
 
@@ -240,7 +251,7 @@ __   ___________________________________________________________________   __
     def goFishing(self, player):
         print(self.UI.go_fishing)
         card = self.deck.getCard()
-        print(f"You drew: {card}")
+        print(f"You drew: \n{card}")
         player.addCard(card)
         return card
 
@@ -315,6 +326,7 @@ __   ___________________________________________________________________   __
                 valuesInHand.append(card.value)
 
         thief_choice = None
+        host_player.hand = host_player.sortHandIntoValues()
         while thief_choice not in valuesInHand:
             host_player.showHand()
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
@@ -324,7 +336,7 @@ __   ___________________________________________________________________   __
             elif thief_choice in ["1","2","3","4","5","6","7","8","9","10","11","12","13"]:
                 thief_choice = int(thief_choice)
             if thief_choice not in valuesInHand:
-                print("You must choose a card in hand: ")
+                print("You must choose a card you have in hand! ")
 
         stolen_cards = 0
         target_list = target_player.hand[:]
@@ -334,7 +346,7 @@ __   ___________________________________________________________________   __
                 target_player.removeCard(card)
                 stolen_cards += 1
         
-        if stolen_cards == 0:
+        if stolen_cards == 0: #if they went fishing:
             pickedCard = self.goFishing(host_player)
             return False, thief_choice, pickedCard
         else:
@@ -342,28 +354,37 @@ __   ___________________________________________________________________   __
         
 
     def main(self):
-        print('Welcome to the Games application!')
-        print('This games application is under development.')
 
-        self.deck.shuffle() #object.method() - games gets the shuffle ability from deck.py
-        
-        # Access each player by "for player in players" loop OR by using indexing (player[0].name)
+        self.opening_Sequence()
+        self.deck.shuffle()
+        game_running = self.main_Menu()
+
         players = self.create_players()
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
         
-        game_running = True #game essentially runs forever. logic is needed to state when the game ends!!!!
+        #game essentially runs forever. logic is needed to state when the game ends!!!!
         while game_running:
             for player in turn_list:
+                
 
-                # Else
-                input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
-                player.isTurn = True
-                player.takeTurn(turn_list, self)
-
+                if player.hand == []:
+                    if self.deck.size != 0:
+                        print("\n"*20)
+                        input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
+                        player.isTurn = True
+                        player.takeTurn(turn_list, self)
+                else:
+                    print("\n"*20)
+                    input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
+                    player.isTurn = True
+                    player.takeTurn(turn_list, self)
+                
                 player.isTurn = False
+                if self.dealer.checkFor13Books(turn_list):
+                    game_running = False
     
-        input('Press [Enter] to exit.')
+        self.endGameState(players)
         
 
 if __name__ == "__main__":
