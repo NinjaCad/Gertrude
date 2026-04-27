@@ -353,7 +353,7 @@ __   ___________________________________________________________________   __
             return True, None, None
         
 
-    def main(self):
+    def mainGameLoop(self):
 
         self.opening_Sequence()
         self.deck.shuffle()
@@ -388,4 +388,4 @@ __   ___________________________________________________________________   __
 
 if __name__ == "__main__":
     game = Games()
-    game.main()
+    game.mainGameLoop()
