@@ -362,7 +362,6 @@ Welcome to the Gertrude\'s BlackJack!
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
                 player.name = player.name[:-12]
-                player.money += tempmoneystore
             
         
 
