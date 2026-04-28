@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 
 from cardgames.Player import Player, Gertrude
 from cardgames.Dealer import Dealer
@@ -55,12 +55,6 @@ def hand_to_ascii(player, compress=False):
 
 
 class UiGameAdapter:
-    """
-    Small adapter so Player.split(game) works from the UI.
-    Your newest Player.split expects a game object with:
-    - game.playerList
-    - game.dealer
-    """
     def __init__(self, players, dealer):
         self.playerList = players
         self.dealer = dealer
@@ -84,16 +78,68 @@ class HandPanel(ttk.LabelFrame):
         self.hand_text.configure(state="disabled", font=("Courier New", 10))
 
 
+class ScrollableFrame(ttk.Frame):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.canvas = tk.Canvas(self, highlightthickness=0)
+        self.vertical_scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+        self.horizontal_scrollbar = ttk.Scrollbar(self, orient="horizontal", command=self.canvas.xview)
+
+        self.content = ttk.Frame(self.canvas)
+        self.window_id = self.canvas.create_window((0, 0), window=self.content, anchor="nw")
+
+        self.canvas.configure(
+            yscrollcommand=self.vertical_scrollbar.set,
+            xscrollcommand=self.horizontal_scrollbar.set
+        )
+
+        self.canvas.grid(row=0, column=0, sticky="nsew")
+        self.vertical_scrollbar.grid(row=0, column=1, sticky="ns")
+        self.horizontal_scrollbar.grid(row=1, column=0, sticky="ew")
+
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
+
+        self.content.bind("<Configure>", self._on_content_configure)
+        self.canvas.bind("<Configure>", self._on_canvas_configure)
+
+        self.canvas.bind_all("<MouseWheel>", self._on_mousewheel)
+        self.canvas.bind_all("<Shift-MouseWheel>", self._on_shift_mousewheel)
+
+    def _on_content_configure(self, event=None):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+
+    def _on_canvas_configure(self, event):
+        # Keep content at least as wide as visible canvas.
+        self.canvas.itemconfigure(self.window_id, width=max(event.width, self.content.winfo_reqwidth()))
+
+    def _on_mousewheel(self, event):
+        try:
+            self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        except tk.TclError:
+            pass
+
+    def _on_shift_mousewheel(self, event):
+        try:
+            self.canvas.xview_scroll(int(-1 * (event.delta / 120)), "units")
+        except tk.TclError:
+            pass
+
+
 class BlackjackUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Gertrude Blackjack UI")
-        self.root.geometry("1500x950")
+        self.root.geometry("1280x800")
+        self.root.minsize(900, 650)
 
         self.players = []
         self.current_player_index = 1
         self.game_started = False
         self.betting_mode = False
+        self.insurance_mode = False
+        self.insurance_player_index = 1
         self.round_active = False
         self.starting_money = 100
 
@@ -145,28 +191,48 @@ class BlackjackUI:
         side_frame = ttk.LabelFrame(top, text="Optional side features", padding=8)
         side_frame.grid(row=2, column=0, columnspan=5, sticky="ew", pady=(8, 0))
 
-        ttk.Checkbutton(side_frame, text="Insurance", variable=self.side_bets_included["insurance"]).grid(row=0, column=0, sticky="w")
-        ttk.Checkbutton(side_frame, text="Perfect Pairs", variable=self.side_bets_included["perfect pairs"]).grid(row=0, column=1, sticky="w", padx=(12, 0))
-        ttk.Checkbutton(side_frame, text="21+3", variable=self.side_bets_included["21+3"]).grid(row=0, column=2, sticky="w", padx=(12, 0))
-        ttk.Checkbutton(side_frame, text="Tipping", variable=self.side_bets_included["tipping"]).grid(row=0, column=3, sticky="w", padx=(12, 0))
+        self.feature_checks = [
+            ttk.Checkbutton(side_frame, text="Insurance", variable=self.side_bets_included["insurance"]),
+            ttk.Checkbutton(side_frame, text="Perfect Pairs", variable=self.side_bets_included["perfect pairs"]),
+            ttk.Checkbutton(side_frame, text="21+3", variable=self.side_bets_included["21+3"]),
+            ttk.Checkbutton(side_frame, text="Tipping", variable=self.side_bets_included["tipping"]),
+        ]
+        for i, check in enumerate(self.feature_checks):
+            check.grid(row=0, column=i, sticky="w", padx=(0 if i == 0 else 12, 0))
 
         ttk.Button(top, text="Start game", command=self.start_game).grid(row=3, column=0, columnspan=5, sticky="ew", pady=(8, 0))
 
-        left = ttk.Frame(self.root, padding=(10, 0, 10, 10))
-        left.grid(row=1, column=0, sticky="nsew")
+        left_scroll = ScrollableFrame(self.root)
+        left_scroll.grid(row=1, column=0, sticky="nsew", padx=(10, 10), pady=(0, 10))
+        left = left_scroll.content
         left.columnconfigure(0, weight=1)
-        left.rowconfigure(1, weight=1)
+        left.rowconfigure(2, weight=1)
 
-        right = ttk.Frame(self.root, padding=(0, 0, 10, 10))
-        right.grid(row=1, column=1, sticky="nsew")
+        right_scroll = ScrollableFrame(self.root)
+        right_scroll.grid(row=1, column=1, sticky="nsew", padx=(0, 10), pady=(0, 10))
+        right = right_scroll.content
         right.columnconfigure(0, weight=1)
         right.rowconfigure(3, weight=1)
 
         self.status_var = tk.StringVar(value="Set up players, then start the game.")
-        ttk.Label(left, textvariable=self.status_var, wraplength=850).grid(row=0, column=0, sticky="ew", pady=(0, 10))
+        ttk.Label(left, textvariable=self.status_var, wraplength=760).grid(row=0, column=0, sticky="ew", pady=(0, 5))
+
+        talk_box = ttk.LabelFrame(left, text="Gertrude Says", padding=8)
+        talk_box.grid(row=1, column=0, sticky="ew", pady=(0, 10))
+        talk_box.columnconfigure(0, weight=1)
+
+        self.talk_var = tk.StringVar(value="Gertrude is watching...")
+        self.talk_label = ttk.Label(
+            talk_box,
+            textvariable=self.talk_var,
+            wraplength=760,
+            font=("Helvetica", 12, "bold"),
+            foreground="#9b111e"
+        )
+        self.talk_label.grid(row=0, column=0, sticky="ew")
 
         self.table_container = ttk.Frame(left)
-        self.table_container.grid(row=1, column=0, sticky="nsew")
+        self.table_container.grid(row=2, column=0, sticky="nsew")
         self.table_container.columnconfigure(0, weight=1)
         self.table_container.columnconfigure(1, weight=1)
         self.table_container.columnconfigure(2, weight=1)
@@ -203,23 +269,29 @@ class BlackjackUI:
         self.place_bet_btn = ttk.Button(control_box, text="Place bet", command=self.place_bet)
         self.place_bet_btn.grid(row=4, column=0, columnspan=2, sticky="ew", pady=(8, 0))
 
+        self.insurance_btn = ttk.Button(control_box, text="Place insurance", command=self.place_insurance, state="disabled")
+        self.insurance_btn.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+
+        self.skip_insurance_btn = ttk.Button(control_box, text="Skip insurance", command=self.skip_insurance, state="disabled")
+        self.skip_insurance_btn.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+
         self.hit_btn = ttk.Button(control_box, text="Hit", command=self.hit_current, state="disabled")
-        self.hit_btn.grid(row=5, column=0, sticky="ew", pady=(8, 0))
+        self.hit_btn.grid(row=7, column=0, sticky="ew", pady=(8, 0))
 
         self.stand_btn = ttk.Button(control_box, text="Stand", command=self.stand_current, state="disabled")
-        self.stand_btn.grid(row=5, column=1, sticky="ew", padx=(8, 0), pady=(8, 0))
+        self.stand_btn.grid(row=7, column=1, sticky="ew", padx=(8, 0), pady=(8, 0))
 
         self.split_btn = ttk.Button(control_box, text="Split", command=self.split_current, state="disabled")
-        self.split_btn.grid(row=6, column=0, sticky="ew", pady=(8, 0))
+        self.split_btn.grid(row=8, column=0, sticky="ew", pady=(8, 0))
 
         self.double_btn = ttk.Button(control_box, text="Double Down", command=self.double_current, state="disabled")
-        self.double_btn.grid(row=6, column=1, sticky="ew", padx=(8, 0), pady=(8, 0))
+        self.double_btn.grid(row=8, column=1, sticky="ew", padx=(8, 0), pady=(8, 0))
 
         self.help_btn = ttk.Button(control_box, text="Show help", command=self.show_help, state="disabled")
-        self.help_btn.grid(row=7, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        self.help_btn.grid(row=9, column=0, columnspan=2, sticky="ew", pady=(8, 0))
 
         self.next_round_btn = ttk.Button(control_box, text="Next round", command=self.next_round, state="disabled")
-        self.next_round_btn.grid(row=8, column=0, columnspan=2, sticky="ew", pady=(8, 0))
+        self.next_round_btn.grid(row=10, column=0, columnspan=2, sticky="ew", pady=(8, 0))
 
         score_box = ttk.LabelFrame(right, text="Scoreboard", padding=10)
         score_box.grid(row=1, column=0, sticky="ew", pady=(0, 10))
@@ -250,6 +322,13 @@ class BlackjackUI:
         self.log_text.insert("end", message + "\n")
         self.log_text.see("end")
         self.log_text.configure(state="disabled")
+
+    def dealer_talk(self, event):
+        dealer = self.players[0] if self.players else None
+        if dealer and hasattr(dealer, "trashTalk"):
+            message = dealer.trashTalk(event).strip()
+            self.talk_var.set(message)
+            self.log(f"[Gertrude] {message}")
 
     def set_text(self, widget, value):
         widget.configure(state="normal")
@@ -298,6 +377,11 @@ class BlackjackUI:
     def get_enabled_side_bets(self):
         return {key: value.get() for key, value in self.side_bets_included.items()}
 
+    def lock_rule_checkboxes(self, locked=True):
+        state = "disabled" if locked else "normal"
+        for check in self.feature_checks:
+            check.configure(state=state)
+
     def start_game(self):
         names = [v.get().strip() for v in self.name_vars]
         if any(not name for name in names):
@@ -330,10 +414,14 @@ class BlackjackUI:
         self.create_player_panels()
         self.game_started = True
         self.betting_mode = True
+        self.insurance_mode = False
         self.round_active = False
         self.current_player_index = 1
+        self.lock_rule_checkboxes(True)
 
         self.place_bet_btn.configure(state="normal")
+        self.insurance_btn.configure(state="disabled")
+        self.skip_insurance_btn.configure(state="disabled")
         self.hit_btn.configure(state="disabled")
         self.stand_btn.configure(state="disabled")
         self.split_btn.configure(state="disabled")
@@ -341,6 +429,7 @@ class BlackjackUI:
         self.help_btn.configure(state="disabled")
         self.next_round_btn.configure(state="disabled")
 
+        self.talk_var.set("Gertrude: Let's play.")
         self.log("Welcome to Gertrude's BlackJack!")
         self.log(f"Players at the table: {', '.join(names)}")
         self.log(f"Starting money: ${starting_money}")
@@ -423,13 +512,16 @@ class BlackjackUI:
                 f"Money: ${fmt(player.money)} | "
                 f"Standard: ${fmt(player.bets.get('standard', 0))} | "
                 f"Pairs: ${fmt(player.bets.get('pairs', 0))} | "
-                f"21+3: ${fmt(player.bets.get('21+3', 0))}"
+                f"21+3: ${fmt(player.bets.get('21+3', 0))} | "
+                f"Insurance: ${fmt(player.bets.get('insurance', 0))}"
             )
 
             if player.money < 5 and not player.hand:
                 status = "Bankrupt"
             elif not player.hand:
                 status = "Waiting for round"
+            elif self.insurance_mode and idx == self.insurance_player_index:
+                status = "Choose insurance"
             elif player.hand and player.check_cards() == 21:
                 status = "21! Locked"
             elif player.hand and player.check_cards() > 21:
@@ -447,6 +539,8 @@ class BlackjackUI:
 
             if idx == self.current_player_index and (self.betting_mode or (player.hand and player.active)):
                 panel.configure(style="Current.TLabelframe")
+            if self.insurance_mode and idx == self.insurance_player_index:
+                panel.configure(style="Current.TLabelframe")
 
             self.set_panel_text(panel, hand_to_ascii(player, compress=False))
 
@@ -463,6 +557,7 @@ class BlackjackUI:
             player is not None
             and self.round_active
             and not self.betting_mode
+            and not self.insurance_mode
             and player.active
             and player.hand
         )
@@ -476,6 +571,9 @@ class BlackjackUI:
 
         self.split_btn.configure(state="normal" if can_split else "disabled")
         self.double_btn.configure(state="normal" if can_double else "disabled")
+
+        self.insurance_btn.configure(state="normal" if self.insurance_mode else "disabled")
+        self.skip_insurance_btn.configure(state="normal" if self.insurance_mode else "disabled")
 
     def show_current_betting_player(self):
         while self.current_player_index < len(self.players):
@@ -571,10 +669,17 @@ class BlackjackUI:
             return
 
         self.resolve_starting_side_bets()
-        self.handle_insurance_if_needed()
+        if self.start_insurance_if_needed():
+            return
 
+        self.start_player_turns()
+
+    def start_player_turns(self):
+        self.insurance_mode = False
         self.current_player_index = 1
         self.place_bet_btn.configure(state="disabled")
+        self.insurance_btn.configure(state="disabled")
+        self.skip_insurance_btn.configure(state="disabled")
         self.next_round_btn.configure(state="disabled")
 
         self.log("")
@@ -607,22 +712,77 @@ class BlackjackUI:
             if results:
                 self.resolve_bets_no_prompt(player, results, label="side bet")
 
-    def handle_insurance_if_needed(self):
+    def start_insurance_if_needed(self):
         side_bets = self.get_enabled_side_bets()
         dealer = self.players[0]
 
         if not side_bets["insurance"]:
-            return
+            return False
         if not dealer.hand or dealer.hand[0].value != 1:
+            return False
+
+        self.insurance_mode = True
+        self.insurance_player_index = 1
+        self.current_player_index = 1
+
+        self.log("")
+        self.log("Gertrude shows an Ace. Insurance is available.")
+        self.show_current_insurance_player()
+        return True
+
+    def show_current_insurance_player(self):
+        while self.insurance_player_index < len(self.players):
+            player = self.players[self.insurance_player_index]
+            max_insurance = int(player.bets["standard"] // 2)
+            if player.active and max_insurance > 0 and player.money - player.bet_totals() > 0:
+                break
+            self.insurance_player_index += 1
+
+        if self.insurance_player_index >= len(self.players):
+            self.start_player_turns()
             return
 
-        self.log("Gertrude shows an Ace. Insurance is available.")
+        player = self.players[self.insurance_player_index]
+        max_insurance = int(player.bets["standard"] // 2)
+        self.insurance_bet_var.set("0")
+        self.status_var.set(f"{player.name}: enter insurance bet, max ${max_insurance}, or skip.")
+        self.refresh_all()
 
-        for player in self.players[1:]:
-            if player.active:
-                max_insurance = int(player.bets["standard"] // 2)
-                if max_insurance > 0:
-                    self.log(f"{player.name} can place up to ${max_insurance} insurance before their turn.")
+    def place_insurance(self):
+        if not self.insurance_mode:
+            return
+
+        player = self.players[self.insurance_player_index]
+        max_insurance = int(player.bets["standard"] // 2)
+
+        try:
+            amount = self.read_bet_value(self.insurance_bet_var, "Insurance bet")
+        except ValueError as exc:
+            messagebox.showerror("Invalid insurance", str(exc))
+            return
+
+        if amount > max_insurance:
+            messagebox.showerror("Invalid insurance", f"Insurance cannot be more than ${max_insurance}.")
+            return
+
+        if player.money - player.bet_totals() - amount < 0:
+            messagebox.showerror("Invalid insurance", "Player cannot bet more money than they have.")
+            return
+
+        player.bets["insurance"] = float(amount)
+        self.log(f"{player.name} places ${fmt(amount)} insurance.")
+        self.insurance_player_index += 1
+        self.show_current_insurance_player()
+
+    def skip_insurance(self):
+        if not self.insurance_mode:
+            return
+
+        player = self.players[self.insurance_player_index]
+        player.bets["insurance"] = 0.0
+        self.log(f"{player.name} skips insurance.")
+        self.insurance_player_index += 1
+        self.show_current_insurance_player()
 
     def current_player(self):
         if 1 <= self.current_player_index < len(self.players):
@@ -648,13 +808,13 @@ class BlackjackUI:
         score = player.check_cards()
         if score > 21:
             self.log(f"{player.name} busts with {score}.")
-            self.log(self.players[0].trashTalk("bust"))
+            self.dealer_talk("bust")
             self.advance_to_next_player()
         elif score == 21:
             self.log(f"{player.name} hits 21. Standard bet is now worth ${fmt(player.bets['standard'])} if they win.")
             self.advance_to_next_player()
         else:
-            self.log(self.players[0].trashTalk("hit"))
+            self.dealer_talk("hit")
             self.status_var.set(f"{player.name}'s turn. Hand value: {score}")
 
         self.refresh_all()
@@ -666,7 +826,7 @@ class BlackjackUI:
 
         player.stand()
         self.log(f"{player.name} stands with {player.check_cards()}.")
-        self.log(self.players[0].trashTalk("stand"))
+        self.dealer_talk("stand")
         self.advance_to_next_player()
         self.refresh_all()
 
@@ -686,7 +846,7 @@ class BlackjackUI:
 
         if len(self.players) != old_count:
             self.log(f"{player.name} split their hand.")
-            self.log(self.players[0].trashTalk("split"))
+            self.dealer_talk("split")
         else:
             self.log(f"{player.name} attempted to split.")
 
@@ -703,12 +863,12 @@ class BlackjackUI:
 
         player.double_down(self.dealer)
         self.log(f"{player.name} doubles down. Standard bet is now ${fmt(player.bets['standard'])}.")
-        self.log(self.players[0].trashTalk("double down"))
+        self.dealer_talk("double down")
 
         score = player.check_cards()
         if score > 21:
             self.log(f"{player.name} busts with {score}.")
-            self.log(self.players[0].trashTalk("bust"))
+            self.dealer_talk("bust")
         elif score == 21:
             self.log(f"{player.name} reaches 21. Standard bet is now worth ${fmt(player.bets['standard'])} if they win.")
 
@@ -772,7 +932,7 @@ class BlackjackUI:
         self.log("--- Results ---")
         tipping_enabled = self.side_bets_included["tipping"].get()
 
-        for player in self.players[1:]:
+        for player in list(self.players[1:]):
             if not player.hand:
                 continue
 
@@ -802,7 +962,7 @@ class BlackjackUI:
                 left_player.bets["split"] = split_bet
                 self.resolve_bets_no_prompt(left_player, {"split": standard_result}, label="split")
             else:
-                insurance_result = player.insurance(dealer) if self.side_bets_included["insurance"].get() else False
+                insurance_result = self.resolve_insurance_result(player, dealer)
                 self.resolve_bets_no_prompt(
                     player,
                     {"standard": standard_result, "insurance": insurance_result},
@@ -819,12 +979,54 @@ class BlackjackUI:
         self.next_round_btn.configure(state="normal")
         self.refresh_all()
 
+    def resolve_insurance_result(self, player, dealer):
+        if not self.side_bets_included["insurance"].get():
+            return False
+        if player.bets.get("insurance", 0) == 0:
+            return False
+
+        # Use backend method if available. It prints in console, but this UI also logs clearly.
+        result = player.insurance(dealer)
+        if result:
+            self.log(f"{player.name} wins insurance because Gertrude has blackjack.")
+        else:
+            self.log(f"{player.name} loses insurance because Gertrude does not have blackjack.")
+        return bool(result)
+
+    def ask_for_tip(self, player):
+        if player.money <= 0:
+            return
+
+        wants_tip = messagebox.askyesno(
+            "Tip Gertrude?",
+            f"{player.name}, you have ${fmt(player.money)}.\nDo you want to tip Gertrude?"
+        )
+
+        if not wants_tip:
+            self.log("Gertrude looks at you blankly...")
+            return
+
+        while True:
+            amount = simpledialog.askinteger(
+                "Tip amount",
+                f"How much do you want to tip?\nAvailable: ${fmt(player.money)}",
+                parent=self.root,
+                minvalue=1,
+                maxvalue=int(player.money)
+            )
+
+            if amount is None:
+                self.log("Gertrude looks at you blankly...")
+                return
+
+            if amount <= player.money:
+                player.money -= amount
+                player.niceGert = True
+                self.log(f"{player.name} tips Gertrude ${amount}.")
+                self.log("Gertrude smiles warmly: Thanks for the tip sweetie!")
+                return
+
     def resolve_bets_no_prompt(self, player, bet_results, label="", tipping_enabled=False):
-        """
-        UI-safe version of resolve_bet.
-        Avoids console input from tipDealer(), because Tkinter should not block on terminal input.
-        Matches Player.resolve_bet money logic.
-        """
         for bet, won in bet_results.items():
             if bet not in player.bets:
                 player.bets[bet] = 0.0
@@ -836,7 +1038,7 @@ class BlackjackUI:
                     player.money += amount
                     self.log(f"{player.name} made ${fmt(amount)} on {bet}. New total: ${fmt(player.money)}.")
                     if tipping_enabled and bet == "standard":
-                        self.log("Tipping is enabled in the rules, but the UI skips terminal tip prompts.")
+                        self.ask_for_tip(player)
             else:
                 player.money -= amount
                 if amount != 0:
@@ -871,10 +1073,13 @@ class BlackjackUI:
         self.deck.shuffle()
 
         self.betting_mode = True
+        self.insurance_mode = False
         self.round_active = False
         self.current_player_index = 1
 
         self.place_bet_btn.configure(state="normal")
+        self.insurance_btn.configure(state="disabled")
+        self.skip_insurance_btn.configure(state="disabled")
         self.hit_btn.configure(state="disabled")
         self.stand_btn.configure(state="disabled")
         self.split_btn.configure(state="disabled")
@@ -889,6 +1094,7 @@ class BlackjackUI:
             self.refresh_all()
             return
 
+        self.talk_var.set("Gertrude: Place your bets.")
         self.log("")
         self.log("Prepare bets for the next round.")
         self.status_var.set("Place bets for each active player.")
@@ -907,7 +1113,30 @@ class BlackjackUI:
             moves.append("double down")
         moves.append("help")
 
-        messagebox.showinfo("Blackjack help", player.help(moves))
+        help_window = tk.Toplevel(self.root)
+        help_window.title("Blackjack Help")
+        help_window.geometry("760x620")
+        help_window.minsize(520, 420)
+
+        help_window.columnconfigure(0, weight=1)
+        help_window.rowconfigure(0, weight=1)
+
+        text_frame = ttk.Frame(help_window, padding=10)
+        text_frame.grid(row=0, column=0, sticky="nsew")
+        text_frame.columnconfigure(0, weight=1)
+        text_frame.rowconfigure(0, weight=1)
+
+        help_text = tk.Text(text_frame, wrap="word", font=("TkDefaultFont", 11))
+        help_scroll = ttk.Scrollbar(text_frame, orient="vertical", command=help_text.yview)
+        help_text.configure(yscrollcommand=help_scroll.set)
+
+        help_text.grid(row=0, column=0, sticky="nsew")
+        help_scroll.grid(row=0, column=1, sticky="ns")
+
+        help_text.insert("1.0", player.help(moves))
+        help_text.configure(state="disabled")
+
+        ttk.Button(help_window, text="Close", command=help_window.destroy).grid(row=1, column=0, sticky="ew", padx=10, pady=(0, 10))
 
 
 def main():
