@@ -270,6 +270,11 @@ HELPFUL TIPS:
                     "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
                     "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'",
                 ],
+                "double down": [
+                    "Gertrude looks at your bet: 'More for me!'",
+                    "Gertrude smiles: 'This will help me pay my mortgage!'",
+                    "Gertrude takes a sip of tea: 'This usually ends pretty poorly'"
+                ]
             }
         else:
             lines_by_event = {
@@ -291,6 +296,10 @@ HELPFUL TIPS:
                     "Gertrude pats the table: 'Aw, unlucky. Shake it off—we go again next round.'",
                     "Gertrude sighs kindly: 'Oof. That one hurt. You were close though.'",
                 ],
+                "double down": [
+                    "Gertrude looks at you with approval: 'That's what I woulda done!'",
+                    "Gertrude smiles: 'A wise choice.'",
+                ]
             }
 
         # fallback if an unknown event comes in

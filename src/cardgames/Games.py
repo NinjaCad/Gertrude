@@ -290,7 +290,7 @@ Welcome to the Gertrude\'s BlackJack!
                     elif choice in ["double down", "dd"]:
                         player.double_down(self.dealer)
                         if random.random() < 0.50: #probablility of gert talking when you split (feel free to change (0.1-1.0))
-                            print(self.playerList[0].trashTalk("split"))
+                            print(self.playerList[0].trashTalk("double down"))
                             input('Press [Enter] to continue.')
 
                     elif choice in ["help", "?"]:
@@ -344,10 +344,10 @@ Welcome to the Gertrude\'s BlackJack!
             # unique resolve_bet run if there was a split
             if "'s right hand" in player.name:
                 split_bet = player.bets["standard"]
-                temp_index = playerList.index(player)
-                playerList.remove(player)
-                player = playerList[temp_index - 1]
-
+                # temp_index = playerList.index(player)
+                # playerList.remove(player)
+                # player = playerList[temp_index - 1]
+                player = playerList[playerList.index(player) - 1]
                 player.bets["split"] = split_bet
                 player.resolve_bet( { "split": standard_result }, tipping_included) #split bet results are resolved immediately and independently from the other bets, so tipping is not included here since the player can only tip after resolving their standard bet at the end of the round
             else:
@@ -362,6 +362,9 @@ Welcome to the Gertrude\'s BlackJack!
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
                 player.name = player.name[:-12]
+                player.money += tempmoneystore
+            
+        
 
 
 if __name__ == "__main__":
