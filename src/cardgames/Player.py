@@ -449,8 +449,8 @@ HELPFUL TIPS:
                     print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 5} bet because you got a mixed pair!')
                 return True
         
-        if self.bets["pairs"] != 0:
-            print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matches!')
+        #if self.bets["pairs"] != 0:
+            #print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matched pairs!')
             
         return False
     
@@ -506,7 +506,7 @@ HELPFUL TIPS:
                 self.bets["21+3"] *= 5
                 print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 5} bet because you got a flush!')
             else:
-                print(f'{self.name}, you lost ${self.bets["21+3"]} from your bet because you got no matches!')
+                #print(f'{self.name}, you lost ${self.bets["21+3"]} from your 21+3 bet because you got no matches!')
                 return False
             return True
         else:

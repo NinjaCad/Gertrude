@@ -266,26 +266,32 @@ Welcome to the Gertrude\'s BlackJack!
                         player.hit(self.dealer)
                         if player.check_cards() > 21:
                             print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
+                            input('Press [Enter] to continue.')
                         else:
-                            if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
+                            if random.random() < 0.50: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
                                 print(self.playerList[0].trashTalk("hit"))
+                                input('Press [Enter] to continue.')
                     elif choice in ["stand", "s"]:
                         player.stand()
-                        if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                        if random.random() < 0.50: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
                             print(self.playerList[0].trashTalk("stand"))
+                            input('Press [Enter] to continue.')
 
                     elif choice in ["split", "sp"]:
                         player.split(self)
-                        
-                        print(f"playerList: {[p.name for p in self.playerList]}")
-                        print(f"i: {i}")
-                        for p in self.playerList:
-                            print(f"{p.name}.active = {p.active}")
+                        if random.random() < 0.50: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("split"))
+                            input('Press [Enter] to continue.')
+                        # print(f"playerList: {[p.name for p in self.playerList]}")
+                        # print(f"i: {i}")
+                        # for p in self.playerList:
+                        #     print(f"{p.name}.active = {p.active}")
                         
                     elif choice in ["double down", "dd"]:
                         player.double_down(self.dealer)
-                        if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
+                        if random.random() < 0.50: #probablility of gert talking when you split (feel free to change (0.1-1.0))
                             print(self.playerList[0].trashTalk("split"))
+                            input('Press [Enter] to continue.')
 
                     elif choice in ["help", "?"]:
                         print(player.help(enabled_moves + aliases))
