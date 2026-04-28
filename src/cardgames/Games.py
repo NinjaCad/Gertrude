@@ -47,6 +47,13 @@ Welcome to the Gertrude\'s BlackJack!
 
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
+
+            print()
+            for player in self.playerList[1:]:
+                player.resolve_bet({
+                        "pairs": player.perfectPairs(),
+                        "21+3": player.twentyone(self.playerList[0].hand[0])
+                    }, False)
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
@@ -266,26 +273,32 @@ Welcome to the Gertrude\'s BlackJack!
                         player.hit(self.dealer)
                         if player.check_cards() > 21:
                             print(self.playerList[0].trashTalk("bust")) #gert always talks when you bust (feel free to change (0.1-1.0))
+                            input('Press [Enter] to continue.')
                         else:
-                            if random.random() < 0.30: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
+                            if random.random() < 0.50: #probablility of gert talking when you hit (feel free to change (0.1-1.0))
                                 print(self.playerList[0].trashTalk("hit"))
+                                input('Press [Enter] to continue.')
                     elif choice in ["stand", "s"]:
                         player.stand()
-                        if random.random() < 0.30: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                        if random.random() < 0.50: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
                             print(self.playerList[0].trashTalk("stand"))
+                            input('Press [Enter] to continue.')
 
                     elif choice in ["split", "sp"]:
                         player.split(self)
-                        
-                        print(f"playerList: {[p.name for p in self.playerList]}")
-                        print(f"i: {i}")
-                        for p in self.playerList:
-                            print(f"{p.name}.active = {p.active}")
+                        if random.random() < 0.50: #probablility of gert talking when you stand (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("split"))
+                            input('Press [Enter] to continue.')
+                        # print(f"playerList: {[p.name for p in self.playerList]}")
+                        # print(f"i: {i}")
+                        # for p in self.playerList:
+                        #     print(f"{p.name}.active = {p.active}")
                         
                     elif choice in ["double down", "dd"]:
                         player.double_down(self.dealer)
-                        if random.random() < 0.30: #probablility of gert talking when you split (feel free to change (0.1-1.0))
-                            print(self.playerList[0].trashTalk("split"))
+                        if random.random() < 0.50: #probablility of gert talking when you split (feel free to change (0.1-1.0))
+                            print(self.playerList[0].trashTalk("double down"))
+                            input('Press [Enter] to continue.')
 
                     elif choice in ["help", "?"]:
                         print(player.help(enabled_moves + aliases))
@@ -336,9 +349,11 @@ Welcome to the Gertrude\'s BlackJack!
                 player.bets["standard"] = 0
             
             # unique resolve_bet run if there was a split
-            if "right hand" in player.name:
+            if "'s right hand" in player.name:
                 split_bet = player.bets["standard"]
-                
+                # temp_index = playerList.index(player)
+                # playerList.remove(player)
+                # player = playerList[temp_index - 1]
                 player = playerList[playerList.index(player) - 1]
                 player.bets["split"] = split_bet
                 player.resolve_bet( { "split": standard_result }, tipping_included) #split bet results are resolved immediately and independently from the other bets, so tipping is not included here since the player can only tip after resolving their standard bet at the end of the round
@@ -346,15 +361,18 @@ Welcome to the Gertrude\'s BlackJack!
                 # Calculate results and give money for perfect pairs
                 player.resolve_bet({
                     "standard": standard_result,
-                    "pairs": player.perfectPairs(),
-                    "insurance": player.insurance(self.playerList[0]),
-                    "21+3": player.twentyone(dealer.hand[0])
+                    "insurance": player.insurance(self.playerList[0])
                 }, tipping_included)
             
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
                 player.name = player.name[:-12]
 
+        for i in range(len(self.playerList)-1, -1, -1):
+            player = self.playerList[i]
+            if "right hand" in player.name:
+                del self.playerList[i]
+                        
 
 if __name__ == "__main__":
     game = Games()

@@ -200,6 +200,7 @@ SIDE BETS:
       - You can bet on what your starting hand will be and will get payed extra
         - Colored Pairs -> 10:1
         - Mixed Pairs -> 5:1
+      - If you get perfect pairs, but you split your hand, then the perfect pair is cancelled and you get no money due to your perfect pairs bet
   - 21+3:
       - You can bet on what your starting hand and the face card of the dealer will be and will get paid extra
         - Flush -> 5:1
@@ -270,6 +271,11 @@ HELPFUL TIPS:
                     "Gertrude smirks: 'Busted. The house appreciates your generous donation.'",
                     "Gertrude adjusts her sleeves: 'I’ll mark that down as: “Player vs. Basic Arithmetic.”'",
                 ],
+                "double down": [
+                    "Gertrude looks at your bet: 'More for me!'",
+                    "Gertrude smiles: 'This will help me pay my mortgage!'",
+                    "Gertrude takes a sip of tea: 'This usually ends pretty poorly'"
+                ]
             }
         else:
             lines_by_event = {
@@ -291,6 +297,10 @@ HELPFUL TIPS:
                     "Gertrude pats the table: 'Aw, unlucky. Shake it off—we go again next round.'",
                     "Gertrude sighs kindly: 'Oof. That one hurt. You were close though.'",
                 ],
+                "double down": [
+                    "Gertrude looks at you with approval: 'That's what I woulda done!'",
+                    "Gertrude smiles: 'A wise choice.'",
+                ]
             }
 
         # fallback if an unknown event comes in
@@ -369,7 +379,7 @@ HELPFUL TIPS:
             if bet_results[bet]:
                 if self.bets[bet] != 0:
                     self.money += self.bets[bet]
-                    print(f"You made ${self.bets[bet]} on your {bet} bet!")
+                    print(f"{self.name}, you made ${self.bets[bet]} on your {bet} bet!")
                     print(f"Your new total is ${self.money}\n")
                     if tipping_included and bet == "standard": #only ask to tip if they won money on their standard bet and if tipping is included in this game
                         self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
@@ -377,7 +387,7 @@ HELPFUL TIPS:
                 self.money -= self.bets[bet]
              
                 if self.bets[bet] != 0:
-                    print(f"You lost ${self.bets[bet]} on your {bet} bet")
+                    print(f"{self.name}, you lost ${self.bets[bet]} on your {bet} bet")
                     print(f"Your new total is ${self.money}\n")
                 
             self.bets[bet] = 0
@@ -404,12 +414,12 @@ HELPFUL TIPS:
                         print("That is not an integer value! Try again")
                     
                 self.money -= self.tipAmt
-                print("Gertrude smiles warmly: Thanks for the tip sweetie! ")
+                print("Gertrude smiles warmly: Thanks for the tip sweetie!\n")
                 self.niceGert = True    
                 break
 
             elif self.tipChoice == "n":
-                print("Gertrude looks at you blankly...")
+                print("Gertrude looks at you blankly...\n")
                 break
 
             else:
@@ -423,7 +433,7 @@ HELPFUL TIPS:
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
     def insurance(self, gert):
         if self.bets["insurance"] != 0:
-            if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+            if gert.gertBlackJack(): #Checking for Ace! 
                 print(f'{self.name}, you won ${self.bets["insurance"]} from your bet because gertrude got a blackjack!')
                 return True  
             else:
@@ -449,8 +459,8 @@ HELPFUL TIPS:
                     print(f'{self.name}, you won ${self.bets["pairs"]} from your ${self.bets["pairs"] / 5} bet because you got a mixed pair!')
                 return True
         
-        if self.bets["pairs"] != 0:
-            print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matches!')
+        #if self.bets["pairs"] != 0:
+            #print(f'{self.name}, you lost ${self.bets["pairs"]} from your bet because you got no matched pairs!')
             
         return False
     
@@ -464,7 +474,7 @@ HELPFUL TIPS:
     # goals: check self.hand for flush, straight, three of a kind, and straight flush
     def twentyone(self, dealersCard = None):
         # Requirements
-        if dealersCard is not None and len(self.hand) == 2 and self.bets["21+3"] != 0:
+        if dealersCard is not None and len(self.hand) >= 2 and self.bets["21+3"] != 0:
             # Get the three cards
             c1, c2, c3 = self.hand[0], self.hand[1], dealersCard
 
@@ -506,7 +516,7 @@ HELPFUL TIPS:
                 self.bets["21+3"] *= 5
                 print(f'{self.name}, you won ${self.bets["21+3"]} from your ${self.bets["21+3"] / 5} bet because you got a flush!')
             else:
-                print(f'{self.name}, you lost ${self.bets["21+3"]} from your bet because you got no matches!')
+                #print(f'{self.name}, you lost ${self.bets["21+3"]} from your 21+3 bet because you got no matches!')
                 return False
             return True
         else:
@@ -572,3 +582,21 @@ class Gertrude(Player):
                 return curr_score
             else: #the dealer needs to hit if their score is less than 17
                 super().hit(dealer, True)
+    
+    def gertBlackJack(self):
+        total_score = 0 
+        for card_id in self.hand:
+            rank_index = card_id.value  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+
+            if rank_index == 1:        # It's an Ace
+                val = 11
+            elif rank_index >= 11:     # It's a Face Card
+                val = 10
+            else:                      # It's 2 through 10
+                val = rank_index
+            
+            total_score += val
+        if total_score > 21:
+            return True #gertrude busted
+        else:
+            return False #gert did not bust
