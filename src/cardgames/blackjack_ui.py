@@ -79,6 +79,7 @@ class HandPanel(ttk.LabelFrame):
 
 
 class ScrollableFrame(ttk.Frame):
+    # Scrollable container for large UI sections using canvas
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
@@ -128,6 +129,7 @@ class ScrollableFrame(ttk.Frame):
 
 
 class BlackjackUI:
+    # Main controller for UI and game flow
     def __init__(self, root):
         self.root = root
         self.root.title("Gertrude Blackjack UI")
@@ -167,6 +169,7 @@ class BlackjackUI:
         style.configure("Current.TLabelframe.Label", font=("TkDefaultFont", 10, "bold"))
 
     def setup_ui(self):
+        # Build all UI components (left table, right controls, logs)
         self.root.columnconfigure(0, weight=3)
         self.root.columnconfigure(1, weight=2)
         self.root.rowconfigure(1, weight=1)
@@ -318,12 +321,14 @@ class BlackjackUI:
         self.build_name_fields()
 
     def log(self, message=""):
+        # Append message to game log
         self.log_text.configure(state="normal")
         self.log_text.insert("end", message + "\n")
         self.log_text.see("end")
         self.log_text.configure(state="disabled")
 
     def dealer_talk(self, event):
+        # Update Gertrude trash talk panel and log message
         dealer = self.players[0] if self.players else None
         if dealer and hasattr(dealer, "trashTalk"):
             message = dealer.trashTalk(event).strip()
@@ -383,6 +388,7 @@ class BlackjackUI:
             check.configure(state=state)
 
     def start_game(self):
+        # Initialize players, dealer, and begin betting phase
         names = [v.get().strip() for v in self.name_vars]
         if any(not name for name in names):
             messagebox.showerror("Missing name", "Every player needs a name.")
@@ -607,6 +613,7 @@ class BlackjackUI:
         return value
 
     def place_bet(self):
+        # Read bet inputs, validate, and move to next player
         if not self.game_started or not self.betting_mode:
             return
 
@@ -655,6 +662,7 @@ class BlackjackUI:
         self.refresh_all()
 
     def begin_round(self):
+        # Deal cards and start round after betting
         self.betting_mode = False
         self.round_active = True
 
@@ -713,6 +721,7 @@ class BlackjackUI:
                 self.resolve_bets_no_prompt(player, results, label="side bet")
 
     def start_insurance_if_needed(self):
+        # Trigger insurance phase if dealer shows Ace
         side_bets = self.get_enabled_side_bets()
         dealer = self.players[0]
 
@@ -790,6 +799,7 @@ class BlackjackUI:
         return None
 
     def hit_current(self):
+        # Handle hit action (draw card and update state)
         player = self.current_player()
         if player is None:
             return
@@ -820,6 +830,7 @@ class BlackjackUI:
         self.refresh_all()
 
     def stand_current(self):
+        # Handle stand action (end player turn)
         player = self.current_player()
         if player is None:
             return
@@ -831,6 +842,7 @@ class BlackjackUI:
         self.refresh_all()
 
     def split_current(self):
+        # Handle split action (create second hand if allowed)
         player = self.current_player()
         if player is None:
             return
@@ -853,6 +865,7 @@ class BlackjackUI:
         self.refresh_all()
 
     def double_current(self):
+        # Handle double down (double bet and draw once)
         player = self.current_player()
         if player is None:
             return
@@ -876,6 +889,7 @@ class BlackjackUI:
         self.refresh_all()
 
     def advance_past_finished_players(self, initial=False):
+        # Skip players who are done (bust, 21, inactive)
         while True:
             player = self.current_player()
             if player is None:
@@ -907,6 +921,7 @@ class BlackjackUI:
         self.advance_past_finished_players()
 
     def finish_players_phase(self):
+        # Execute dealer turn after all players finish
         self.hit_btn.configure(state="disabled")
         self.stand_btn.configure(state="disabled")
         self.split_btn.configure(state="disabled")
@@ -925,6 +940,7 @@ class BlackjackUI:
         self.resolve_round()
 
     def resolve_round(self):
+        # Compare scores and resolve all bets
         dealer = self.players[0]
         dealer_score = dealer.check_cards()
 
@@ -994,6 +1010,7 @@ class BlackjackUI:
         return bool(result)
 
     def ask_for_tip(self, player):
+        # Prompt player to tip dealer after a win
         if player.money <= 0:
             return
 
@@ -1055,6 +1072,7 @@ class BlackjackUI:
                 del self.players[i]
 
     def next_round(self):
+        # Reset state and prepare next round
         for i in range(len(self.players) - 1, -1, -1):
             player = self.players[i]
 
@@ -1102,6 +1120,7 @@ class BlackjackUI:
         self.show_current_betting_player()
 
     def show_help(self):
+        # Show available actions in scrollable popup
         player = self.current_player()
         if player is None:
             return
