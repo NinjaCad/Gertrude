@@ -44,7 +44,7 @@ def test_cardSteal():
     #Test ThatGuy (Fish that ate nemos family) for lack of an ace. (go fishing.)
     
 
-    targeted_player = game.cardThievery(Dory, players)
+    targeted_player = game.card_thievery(Dory, players)
 
     print("")
     print("Dory's Hand:")
@@ -53,7 +53,5 @@ def test_cardSteal():
         print(Dory.hand[len(Dory.hand) - 1])
         Dory.removeCard(Dory.hand[len(Dory.hand) - 1])
     print("\n")
-    print("Target's Hand:")
-    print(len(targeted_player.hand))
 
 test_cardSteal()
