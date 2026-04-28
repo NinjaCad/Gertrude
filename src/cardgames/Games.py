@@ -47,6 +47,13 @@ Welcome to the Gertrude\'s BlackJack!
 
             # Each player and gertrude is given 2 cards
             self.dealer.dealCards(2, self.playerList)
+
+            print()
+            for player in self.playerList[1:]:
+                player.resolve_bet({
+                        "pairs": player.perfectPairs(),
+                        "21+3": player.twentyone(self.playerList[0].hand[0])
+                    }, False)
             
             # GERT-24 check dealers hand to see if their revealed card is an ACE
             # If so, ask each player if they want to place an insurance bet. If so, call player.insurance()
@@ -354,14 +361,15 @@ Welcome to the Gertrude\'s BlackJack!
                 # Calculate results and give money for perfect pairs
                 player.resolve_bet({
                     "standard": standard_result,
-                    "pairs": player.perfectPairs(),
-                    "insurance": player.insurance(self.playerList[0]),
-                    "21+3": player.twentyone(dealer.hand[0])
+                    "insurance": player.insurance(self.playerList[0])
                 }, tipping_included)
             
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
                 player.name = player.name[:-12]
+
+            print()
+
         for i in range(len(self.playerList)-1, -1, -1):
             player = self.playerList[i]
             if "right hand" in player.name:

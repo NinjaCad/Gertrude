@@ -379,7 +379,7 @@ HELPFUL TIPS:
             if bet_results[bet]:
                 if self.bets[bet] != 0:
                     self.money += self.bets[bet]
-                    print(f"You made ${self.bets[bet]} on your {bet} bet!")
+                    print(f"{self.name}, you made ${self.bets[bet]} on your {bet} bet!")
                     print(f"Your new total is ${self.money}\n")
                     if tipping_included and bet == "standard": #only ask to tip if they won money on their standard bet and if tipping is included in this game
                         self.tipDealer() #the player won the round so tipDealer() is called to see if they want to tip the dealer
@@ -387,7 +387,7 @@ HELPFUL TIPS:
                 self.money -= self.bets[bet]
              
                 if self.bets[bet] != 0:
-                    print(f"You lost ${self.bets[bet]} on your {bet} bet")
+                    print(f"{self.name}, you lost ${self.bets[bet]} on your {bet} bet")
                     print(f"Your new total is ${self.money}\n")
                 
             self.bets[bet] = 0
@@ -474,7 +474,7 @@ HELPFUL TIPS:
     # goals: check self.hand for flush, straight, three of a kind, and straight flush
     def twentyone(self, dealersCard = None):
         # Requirements
-        if dealersCard is not None and len(self.hand) == 2 and self.bets["21+3"] != 0:
+        if dealersCard is not None and len(self.hand) >= 2 and self.bets["21+3"] != 0:
             # Get the three cards
             c1, c2, c3 = self.hand[0], self.hand[1], dealersCard
 
