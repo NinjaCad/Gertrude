@@ -311,11 +311,3 @@ class Games:
 if __name__ == "__main__":
     game = Games()
     game.main(test_mode=False)
-
-    # Adjustments
-    """
-
-    3. Player profiles?
-    print chosen cards
-
-    """
