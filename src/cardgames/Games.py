@@ -12,10 +12,15 @@ import copy
 # ==========================================================
 
 class HighCardDrawInstructions:
-    """Rules/instructions provider for the High Card Draw game."""
+    """Rules/instructions provider for the High Card Draw game.
+
+    The design goal is to keep display/UI separate from the rules text.
+    Callers can print the returned strings or show them in any UI.
+    """
 
     GAME_KEY = "high_card_draw"
 
+    # two topics plus validation.
     _TOPICS = {
         "overview": (
             "\nHigh Card Draw is a 2-player, 1-round game. \n\nEach player is dealt 3 cards, "
@@ -31,10 +36,22 @@ class HighCardDrawInstructions:
 
     @classmethod
     def topics(cls) -> list[str]:
+        """Return a sorted list of available instruction topics."""
         return sorted(cls._TOPICS.keys())
 
     @classmethod
     def get(cls, topic: str = "overview") -> str:
+        """Get formatted High Card Draw instructions for a specific topic.
+
+        Args:
+            topic: One of: 'overview', 'winning'
+
+        Returns:
+            A formatted multi-line string suitable for printing.
+
+        Raises:
+            ValueError: if topic is unknown.
+        """
         topic_key = (topic or "overview").strip().lower()
         if topic_key not in cls._TOPICS:
             valid = ", ".join(cls.topics())
@@ -44,29 +61,29 @@ class HighCardDrawInstructions:
         bar = "=" * len(title)
         return f"{bar}\n{title}\n{bar}\n{cls._TOPICS[topic_key]}"
 
-
 def show_cards(card: Card):
-    face_names = {1: "Ace", 11: "Jack", 12: "Queen", 13: "King"}
-    card_name = face_names.get(card.value, card.value)
-
-    display_text = f"--- {card_name} of {card.suit} ---\n"
-    for line in card.image:
-        display_text += line + "\n"
-    return display_text
-
-
+        face_names = {1: 'Ace', 11: 'Jack', 12: 'Queen', 13: 'King'}
+        card_name = face_names.get(card.value, card.value)
+        
+        display_text = f"--- {card_name} of {card.suit} ---\n"
+        
+        for line in card.image:
+            display_text += line + "\n"
+            
+        return display_text
+        
 def declare_winner(player1, player2):
-    card1 = player1.chosen_card
-    card2 = player2.chosen_card
-    try:
-        if card1.compare(card2) == 1:
-            return player1.name
-        if card1.compare(card2) == -1:
-            return player2.name
-        return "It's a tie!"
-    except TypeError:
-        print("Error: Both players must have chosen a card to declare a winner.")
-
+        card1 = player1.chosen_card
+        card2 = player2.chosen_card
+        try:
+            if card1.compare(card2)==1: # player1 wins
+                return player1.name
+            elif card1.compare(card2)==-1: # player2 wins
+                return player2.name
+            elif card1.compare(card2)==0:
+                return "It's a tie!"
+        except TypeError: # tie
+            print("Error: Both players must have chosen a card to declare a winner.")
 
 class Games:
 
@@ -108,11 +125,12 @@ class Games:
         return template.format(player=chosen_player_name)
 
     def show_betting_popup(self, chosen_player_name):
+        """Print a popup-style betting message and return it for testability."""
         message = self.build_betting_notification(chosen_player_name)
         popup = f"\n[BETTING POP-UP] {message}"
         print(popup)
         return message
-
+	
     def create_player_profile(self, player_number):
         print(f"\nSet up profile for Player {player_number}")
 
@@ -134,95 +152,10 @@ class Games:
         print(f"Profile saved: {player.profile_display_name()} | Level: {player.level}")
         return player
 
-    def select_card(self, player):
-        print(f"\n--- {player.name}'s Turn ---")
-
-        if len(player.hand) == 0:
-            print(f"{player.name} has no cards left to play!")
-            player.chosen_card = None
-            return
-
-        player.showHand(printShort=True)
-
-        while True:
-            try:
-                max_choice = len(player.hand)
-                choice = int(input(f"Select a card to play (1-{max_choice}): "))
-                if 1 <= choice <= max_choice:
-                    player.chosen_card = player.hand[choice - 1]
-                    print(f"Great! You selected {player.chosen_card}.")
-                    break
-                print(f"Invalid choice. Please pick a number between 1 and {max_choice}.")
-            except ValueError:
-                print("Invalid input. Please enter a valid number.")
-
-    def main(self, test_mode=False):
-        print("Welcome to High Card Draw!")
-
-        if test_mode:
-            player1 = Player("Player 1")
-            player2 = Player("Player 2")
-            deck = Deck()
-            deck.shuffle()
-            dealer = Dealer(deck)
-            dealer.dealCards(3, [player1, player2])
-            player1.chosen_card = player1.hand[0]
-            player2.chosen_card = player2.hand[0]
-            return player1, player2, deck
-
-        print(HighCardDrawInstructions.get("overview"))
-        input("\nPress [Enter] to start...")
-
-        player1 = self.create_player_profile(1)
-        player2 = self.create_player_profile(2)
-
-        deck = Deck()
-        deck.shuffle()
-        dealer = Dealer(deck)
-        self.show_betting_popup(player1.profile_display_name())
-        self.show_betting_popup(player2.profile_display_name())
-
-        winner = "It's a tie!"
-        round_number = 1
-
-        while winner == "It's a tie!":
-            if round_number > 1:
-                print("\nTie game! Replaying round...\n")
-
-            player1.clearHand()
-            player2.clearHand()
-            player1.chosen_card = None
-            player2.chosen_card = None
-
-            if not dealer.dealCards(3, [player1, player2]):
-                dealer.resetDeck()
-                dealer.dealCards(3, [player1, player2])
-
-            input(f"\n{player1.profile_display_name()}, press [Enter] to begin your turn...")
-            self.select_card(player1)
-            input("\nPress [Enter] to end your turn...")
-            player1.clear_screen()
-
-            input(f"\n{player2.profile_display_name()}, press [Enter] to begin your turn...")
-            self.select_card(player2)
-            input("\nPress [Enter] to end your turn...")
-            player2.clear_screen()
-
-        while True:
-            begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
-            if begin == "":
-                break
-            else:
-                print(f"Error: You pressed '{begin}'. Please press ONLY the [Enter] key.")
-        
-        dealer.dealCards(3, [player1])
-        self.select_card(player1)
-
-        self.show_betting_popup(player1.name)
     def main(self, test_mode=False):
         # Initialize players and stats
-        player1 = Player("Player 1")
-        player2 = Player("Player 2")
+        player1 = self.create_player_profile(1)
+        player2 = self.create_player_profile(2)
         game_stats = None # Starts empty, will be updated by get_game_stats
 
         player1.clear_screen()
@@ -242,26 +175,26 @@ class Games:
 
             # --- Player 1 Turn ---
             while True:
-                begin = input("\nIt is now Player 1's turn! Press [Enter] to begin!")
+                begin = input(f"\n{player1.profile_display_name()}, press [Enter] to begin your turn...")
                 if begin == "": break
                 print(f"Error: Please press ONLY the [Enter] key.")
             
             dealer.dealCards(3, [player1])
             self.select_card(player1)
-            self.show_betting_popup(player1.name)
+            self.show_betting_popup(player1.profile_display_name())
 
             input("\nPress [Enter] to end your turn: ")
             player1.clear_screen()
 
             # --- Player 2 Turn ---
             while True:
-                begin = input("\nIt is now Player 2's turn! Press [Enter] to begin!")
+                begin = input(f"\n{player2.profile_display_name()}, press [Enter] to begin your turn...")
                 if begin == "": break
                 print(f"Error: Please press ONLY the [Enter] key.")
             
             dealer.dealCards(3, [player2])
             self.select_card(player2)
-            self.show_betting_popup(player2.name)
+            self.show_betting_popup(player2.profile_display_name())
 
             input("\nPress [Enter] to end your turn: ")
             player2.clear_screen()
@@ -276,8 +209,8 @@ class Games:
             print("-" * 30)
             print(f"THE WINNER IS: {winner}")
             print("-" * 30)
-            print(f"Player 1 chose:\n{player1.chosen_card}")
-            print(f"Player 2 chose:\n{player2.chosen_card}")
+            print(f"{player1.profile_display_name()} chose:\n{player1.chosen_card}")
+            print(f"{player2.profile_display_name()} chose:\n{player2.chosen_card}")
             
         
             # Update game_stats and pass it back into the function next time
@@ -348,13 +281,14 @@ class Games:
         total_games += game_stats["Ties"]
         game_stats["Total Games"] += 1
 
+        #Calculate and update the win rate for both players
         for player in players:
             win_rate = game_stats[player]["Wins"] / total_games * 100
-            value = f"{win_rate:.1f}%"
+            value = f"{win_rate:.1f}" + "%"
             game_stats[player]["Win-Rate"] = value
 
         return game_stats
-
+    
     def display_game_stats(self, game_stats):
         print("-"*30)
         print("Game Statistics")
@@ -373,7 +307,6 @@ class Games:
             print(f"{player:9} | {wins:4} | {winrate:8} | {win_streak:18} | {high_win_streak:18} |")
         ties = game_stats['Ties']
         print(f"\nTies: {ties}")
-
 
 if __name__ == "__main__":
     game = Games()
