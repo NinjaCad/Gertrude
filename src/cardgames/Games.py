@@ -240,7 +240,7 @@ def start_game():
 def win_page():
     global player_list
     global GAME_STATE
-    GAME_STATE, winner_name = resolve_slap(GAME_STATE, player_list)
+    # GAME_STATE, winner_name = resolve_slap(GAME_STATE, player_list)
     return render_template("page_4.html", winner=GAME_STATE["winner"])
 
 if __name__ == "__main__":

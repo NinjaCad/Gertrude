@@ -4,6 +4,7 @@ import random
 def global_card_change(game_state):
     current_player = game_state["current_player"]
     if current_player is None or not current_player.hand:
+        game_state["current_card"] = None
         return "No card to play", game_state
     
     
