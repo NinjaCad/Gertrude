@@ -362,9 +362,11 @@ Welcome to the Gertrude\'s BlackJack!
             # reset player name to original name (without 'left hand'/'right hand') (for split only)
             if "left hand" in player.name:
                 player.name = player.name[:-12]
-            
-        
-
+        for i in range(len(self.playerList)-1, -1, -1):
+            player = self.playerList[i]
+            if "right hand" in player.name:
+                del self.playerList[i]
+                        
 
 if __name__ == "__main__":
     game = Games()
