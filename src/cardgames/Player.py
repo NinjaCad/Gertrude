@@ -414,12 +414,12 @@ HELPFUL TIPS:
                         print("That is not an integer value! Try again")
                     
                 self.money -= self.tipAmt
-                print("Gertrude smiles warmly: Thanks for the tip sweetie! ")
+                print("Gertrude smiles warmly: Thanks for the tip sweetie!\n")
                 self.niceGert = True    
                 break
 
             elif self.tipChoice == "n":
-                print("Gertrude looks at you blankly...")
+                print("Gertrude looks at you blankly...\n")
                 break
 
             else:

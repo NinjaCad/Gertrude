@@ -368,8 +368,6 @@ Welcome to the Gertrude\'s BlackJack!
             if "left hand" in player.name:
                 player.name = player.name[:-12]
 
-            print()
-
         for i in range(len(self.playerList)-1, -1, -1):
             player = self.playerList[i]
             if "right hand" in player.name:
