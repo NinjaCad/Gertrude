@@ -200,6 +200,7 @@ SIDE BETS:
       - You can bet on what your starting hand will be and will get payed extra
         - Colored Pairs -> 10:1
         - Mixed Pairs -> 5:1
+      - If you get perfect pairs, but you split your hand, then the perfect pair is cancelled and you get no money due to your perfect pairs bet
   - 21+3:
       - You can bet on what your starting hand and the face card of the dealer will be and will get paid extra
         - Flush -> 5:1
