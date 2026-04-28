@@ -342,10 +342,12 @@ Welcome to the Gertrude\'s BlackJack!
                 player.bets["standard"] = 0
             
             # unique resolve_bet run if there was a split
-            if "right hand" in player.name:
+            if "'s right hand" in player.name:
                 split_bet = player.bets["standard"]
-                
-                player = playerList[playerList.index(player) - 1]
+                temp_index = playerList.index(player)
+                playerList.remove(player)
+                player = playerList[temp_index - 1]
+
                 player.bets["split"] = split_bet
                 player.resolve_bet( { "split": standard_result }, tipping_included) #split bet results are resolved immediately and independently from the other bets, so tipping is not included here since the player can only tip after resolving their standard bet at the end of the round
             else:

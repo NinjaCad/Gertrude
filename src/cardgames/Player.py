@@ -423,7 +423,7 @@ HELPFUL TIPS:
     # goals: get the users bet and assign it to self.bets["insurance"]. make sure bet input is valid.
     def insurance(self, gert):
         if self.bets["insurance"] != 0:
-            if gert.hand[0].value == 1 and gert.hand[1].value >= 10: #Checking for Ace! 
+            if gert.gertBlackJack(): #Checking for Ace! 
                 print(f'{self.name}, you won ${self.bets["insurance"]} from your bet because gertrude got a blackjack!')
                 return True  
             else:
@@ -572,3 +572,21 @@ class Gertrude(Player):
                 return curr_score
             else: #the dealer needs to hit if their score is less than 17
                 super().hit(dealer, True)
+    
+    def gertBlackJack(self):
+        total_score = 0 
+        for card_id in self.hand:
+            rank_index = card_id.value  # 0=Ace, 1=2, ..., 10=J, 11=Q, 12=K
+
+            if rank_index == 1:        # It's an Ace
+                val = 11
+            elif rank_index >= 11:     # It's a Face Card
+                val = 10
+            else:                      # It's 2 through 10
+                val = rank_index
+            
+            total_score += val
+        if total_score > 21:
+            return True #gertrude busted
+        else:
+            return False #gert did not bust
