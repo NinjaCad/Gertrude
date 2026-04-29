@@ -213,18 +213,20 @@ class Player:
                 print("\nLucky draw, you've made a book!")
                 print("\nYour books: ")
                 self.showBooks()
-            if requestedCard == pickedCard.value: # If the player picks up the card they asked another player for
-                print("\nYou picked up the same card you asked for!")
-                input("\nYou get to go again, press ENTER to continue...")
-                self.takeTurn(players, game)
-            else:
-                if self.bookHandling(): # If picked up card makes a book
-                    print("\nLucky draw, you've made a book!")
-                    print("\nYour books: ")
-                    self.showBooks()
+            if pickedCard != None:
                 if requestedCard == pickedCard.value: # If the player picks up the card they asked another player for
                     print("\nYou picked up the same card you asked for!")
                     input("\nYou get to go again, press ENTER to continue...")
                     self.takeTurn(players, game)
                 else:
-                    input("\nEnd of your turn! Hit enter to continue...")
+                    if self.bookHandling(): # If picked up card makes a book
+                        print("\nLucky draw, you've made a book!")
+                        print("\nYour books: ")
+                        self.showBooks()
+                    if pickedCard != None:
+                        if requestedCard == pickedCard.value: # If the player picks up the card they asked another player for
+                            print("\nYou picked up the same card you asked for!")
+                            input("\nYou get to go again, press ENTER to continue...")
+                            self.takeTurn(players, game)
+                        else:
+                            input("\nEnd of your turn! Hit enter to continue...")
