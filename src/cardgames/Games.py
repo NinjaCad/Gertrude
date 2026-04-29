@@ -251,7 +251,8 @@ __   ___________________________________________________________________   __
     def goFishing(self, player):
         print(self.UI.go_fishing)
         if self.deck.size == 0:
-            print("Deck is Empty! :(")
+            print("Deck is Empty! :( \n")
+            input("Press Enter to continue...")
             return None
         else:
             card = self.deck.getCard()
