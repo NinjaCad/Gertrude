@@ -166,6 +166,7 @@ class Player:
    ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
                       """)
                 self.showBooks()
+                game.play_go_fish_sound()
                 input("\nYou get to go again! Hit ENTER to continue...")
                 self.takeTurn(players, game)
             return
@@ -208,16 +209,43 @@ class Player:
    ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
    ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
                       """)
+                game.play_go_fish_sound()
             if game.dealer.checkFor13Books(players) == True:
                 return
             input("\nYou get to go again, press ENTER to continue...")
             self.takeTurn(players, game)
         else:
             if self.bookHandling(): # If picked up card makes a book
-                print("\nLucky draw, you've made a book!")
+                print("\nLucky draw!")
+                print(r""" 
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
                 print("\nYour books: ")
                 self.showBooks()
-            if pickedCard != None:
+                game.play_go_fish_sound()
+            if requestedCard == pickedCard.value: # If the player picks up the card they asked another player for
+                print("\nYou picked up the same card you asked for!")
+                input("\nYou get to go again, press ENTER to continue...")
+                self.takeTurn(players, game)
+            else:
+                if self.bookHandling(): # If picked up card makes a book
+                    print("\nLucky draw!")
+                    print(r""" 
+██╗   ██╗ ██████╗ ██╗   ██╗██╗   ██╗███████╗    ███╗   ███╗ █████╗ ██████╗ ███████╗     █████╗     ██████╗  ██████╗  ██████╗ ██╗  ██╗██╗
+╚██╗ ██╔╝██╔═══██╗██║   ██║██║   ██║██╔════╝    ████╗ ████║██╔══██╗██╔══██╗██╔════╝    ██╔══██╗    ██╔══██╗██╔═══██╗██╔═══██╗██║ ██╔╝██║
+ ╚████╔╝ ██║   ██║██║   ██║██║   ██║█████╗      ██╔████╔██║███████║██║  ██║█████╗      ███████║    ██████╔╝██║   ██║██║   ██║█████╔╝ ██║
+  ╚██╔╝  ██║   ██║██║   ██║╚██╗ ██╔╝██╔══╝      ██║╚██╔╝██║██╔══██║██║  ██║██╔══╝      ██╔══██║    ██╔══██╗██║   ██║██║   ██║██╔═██╗ ╚═╝
+   ██║   ╚██████╔╝╚██████╔╝ ╚████╔╝ ███████╗    ██║ ╚═╝ ██║██║  ██║██████╔╝███████╗    ██║  ██║    ██████╔╝╚██████╔╝╚██████╔╝██║  ██╗██╗
+   ╚═╝    ╚═════╝  ╚═════╝   ╚═══╝  ╚══════╝    ╚═╝     ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝    ╚═╝  ╚═╝    ╚═════╝  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝
+                      """)
+                    print("\nYour books: ")
+                    self.showBooks()
+                    game.play_go_fish_sound()
                 if requestedCard == pickedCard.value: # If the player picks up the card they asked another player for
                     print("\nYou picked up the same card you asked for!")
                     input("\nYou get to go again, press ENTER to continue...")
