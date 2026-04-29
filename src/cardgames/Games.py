@@ -247,6 +247,7 @@ __   ___________________________________________________________________   __
             if player.books != []:
                 print(f"\n{player.name} started the following books:")
                 player.showBooks()
+        input("\nPress Enter to continue...")
 
     def goFishing(self, player):
         print(self.UI.go_fishing)
@@ -272,12 +273,13 @@ __   ___________________________________________________________________   __
         #single winner:
         else:
             winner = mostBooksHolders[0]
+            print("\n" * 100)
             print(f"{winner} wins with {mostBooks} books!")
         #scoreboard/lists all player's scores
         print("\nFinal scores:")
         for player in players:
             if player.numBooks == 0:
-                print(f"{player.name} has 0 books.")
+                print(f"\n{player.name} has 0 books.")
             elif player.numBooks == 1:
                 print(f"{player.name}: {player.numBooks} book.\nThey have the following book: {player.books}")
                 player.showBooks()
@@ -334,7 +336,6 @@ __   ___________________________________________________________________   __
         thief_choice = None
         host_player.hand = host_player.sortHandIntoValues()
         while thief_choice not in valuesInHand:
-            host_player.showHand()
             thief_choice = (str(input("Choose card type you wish to steal: "))).lower()
             
             if thief_choice in self.valueDict:
@@ -377,6 +378,7 @@ __   ___________________________________________________________________   __
         players = self.create_players()
         turn_list = self.start_game(players)
         print(f"\nTurn order: {', '.join(player.name for player in turn_list)}")
+        self.initialBookCheck(turn_list)
         
         while game_running:
             for player in turn_list:
@@ -384,7 +386,7 @@ __   ___________________________________________________________________   __
                 if self.dealer.checkFor13Books(turn_list):
                     game_running = False
                 else:
-                    print("\n"*70)
+                    print("\n"*100)
                     input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                     player.isTurn = True
                     player.takeTurn(turn_list, self)
