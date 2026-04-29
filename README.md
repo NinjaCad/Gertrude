@@ -1,7 +1,3 @@
-Here’s the complete **README.md file content** (just paste this directly into a file named `README.md` in your repo):
-
----
-
 # 🃏 Gertrude’s Blackjack
 
 Welcome to **Gertrude’s Blackjack**, a terminal-based Blackjack game with personality, side bets, and a dealer who *will* judge your decisions.
