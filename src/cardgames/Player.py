@@ -173,11 +173,15 @@ class Player:
             ### If hand is empty draw a card
         if len(self.hand) == 0: 
             print("\nYour hand is empty! ", '')
-            self.hand.append(game.deck.getCard())
-            self.knownCards.append(True)
-            print("You picked up:")
-            self.showHand()
-            return
+            if game.deck.size != 0:
+                self.hand.append(game.deck.getCard())
+                self.knownCards.append(True)
+                print("You picked up:")
+                self.showHand()
+                return
+            else:
+                print("Deck is Empty! :( \n")
+                return
 
         ### Show hand
         #self.hand = self.sortHandIntoValues()
