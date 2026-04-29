@@ -180,9 +180,9 @@ class Player:
             return
 
         ### Show hand
-        self.hand = self.sortHandIntoValues()
-        print("\nYour hand:")
-        self.showHand()
+        #self.hand = self.sortHandIntoValues()
+        #print("\nYour hand:")
+        #self.showHand()
 
         ### Stealing cards
         stoleACard, requestedCard, pickedCard = game.card_thievery(players, self)
