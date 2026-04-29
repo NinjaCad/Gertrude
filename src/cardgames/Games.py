@@ -360,6 +360,7 @@ __   ___________________________________________________________________   __
         
 
     def mainGameLoop(self):
+        print("\n"*70)
 
         self.opening_Sequence()
         self.deck.shuffle()

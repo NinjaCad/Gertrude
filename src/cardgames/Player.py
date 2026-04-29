@@ -180,7 +180,7 @@ class Player:
                 self.showHand()
                 return
             else:
-                Print("Deck is Empty! :( \n")
+                print("Deck is Empty! :( \n")
                 return
 
         ### Show hand
