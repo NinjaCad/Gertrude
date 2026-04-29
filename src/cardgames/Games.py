@@ -250,10 +250,15 @@ __   ___________________________________________________________________   __
 
     def goFishing(self, player):
         print(self.UI.go_fishing)
-        card = self.deck.getCard()
-        print(f"You drew: \n{card}")
-        player.addCard(card)
-        return card
+        if self.deck.size == 0:
+            print("Deck is Empty! :(")
+            return None
+        else:
+            card = self.deck.getCard()
+            print(f"You drew: \n{card}")
+            player.addCard(card)
+            return card
+
 
     #this function will be called once the while loop for the main game logic is broken out of when checkFor13Books returns true
     def endGameState(self, players):
@@ -377,7 +382,7 @@ __   ___________________________________________________________________   __
                 if self.dealer.checkFor13Books(turn_list):
                     game_running = False
                 else:
-                    print("\n"*20)
+                    print("\n"*70)
                     input(f"\n{player.name}'s turn, when ready hit the ENTER key... ")
                     player.isTurn = True
                     player.takeTurn(turn_list, self)
