@@ -2,7 +2,7 @@
 
 ### 🎮 Overview
 
-*Gertrude’s Blackjack* is a command-line blackjack game where players compete against a dealer with personality. The game includes multiple betting options, player actions, and dynamic dialogue to make each round feel interactive.
+*Gertrude’s Blackjack* is a command-line blackjack game where players compete against a dealer with personality. The game includes multiple betting options, player actions, and dynamic dialogue to make each round feel interactive. Made in a team with 5 other people.
 
 ---
 
@@ -55,6 +55,8 @@
 * Handling **user input and validation**
 * Designing **game loops and state management**
 * Using **Git** for version control and collaboration
+* Using **Jira** for task organization
+* Using **Bitbucket** for sharing code
 * Using **Docker** to run and manage the project in a consistent environment
 
 ---
